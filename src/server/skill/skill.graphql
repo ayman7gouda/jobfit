@@ -1,0 +1,27 @@
+enum SkillFramework {
+  Sfia
+  Cbok
+  Generic
+  BurningGlass
+}
+
+type Skill {
+  id: String!
+  name: String!
+  description: String!
+  framework: SkillFramework!
+}
+
+input SkillInput {
+  name: String!
+  description: String!
+  framework: SkillFramework!
+}
+
+extend type Query {
+  skills: [Skill!]!
+}
+
+extend type Mutation {
+  insertSkill(skill: SkillInput): Skill
+}

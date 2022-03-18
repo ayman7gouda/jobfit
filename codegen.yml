@@ -1,0 +1,20 @@
+overwrite: true
+schema: "http://localhost:3000/api/graphql"
+documents: "src/**/*.graphql"
+config:
+  contextType: pages/api/graphql#Context
+generates:
+  src/generated/serverTypes.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+  src/generated/clientTypes.ts:
+    - typescript
+  src/:
+    preset: near-operation-file
+    presetConfig:
+      extension: .generated.tsx
+      baseTypesPath: generated/clientTypes.ts
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
