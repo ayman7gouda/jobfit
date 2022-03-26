@@ -1,8 +1,11 @@
 module.exports = {
   mode: "jit",
-  purge: ['./src/**/*.{js,ts,jsx,tsx}'],
-  darkMode: true, // or 'media' or 'class'
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  //darkMode: class, // or 'media' or 'class'
   theme: {
+    boxShadow:{
+      sm: '0 4px 32px 0 rgba(0, 0, 0, 0.16)',
+    },
     extend: {
       colors:{
         'safe-orange': '#ab4d00',
@@ -71,11 +74,35 @@ module.exports = {
         'mid-grey': '#898687',
         'dark-grey': '#3a3537',
         'deep-grey': '#272727',
+      },
+      fontFamily: {
+        OpenSans: ["Open Sans", "sans-serif"],
+        chronicle: ["Chronicle Text G1"],
+      },
+      spacing:{
+        frame: '270px'
+      },
+      lineHeight: {
+        'wsu': '1.41',
+       }
+    },
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        lg: "1124px",
+        xl: "1124px",
+        "2xl": "1124px",
       }
     },
+  },
+  corePlugins: {
+    aspectRatio: false,
   },
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+  ],
 };
