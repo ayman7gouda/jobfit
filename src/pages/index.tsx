@@ -5,7 +5,7 @@ import { UserInfo } from "components/Auth/UserInfo";
 import { SkillsList } from "components/SkillsList/SkillsList";
 import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
-import Landing from "templates/LandingPage/Landing";
+import Landing from "pages/Landing";
 
 
 export default function Home({ csrfToken }) {

@@ -1,25 +1,27 @@
 export default function MarketJobFit() {
   return (
     <section className=" bg-backgrounds-light-grey font-OpenSans">
-      <div className=" container flex flex-col-reverse lg:flex-row gap-12 pt-12 pb-12 lg:pt-24 lg:pb-24">
+      <div className="container flex flex-col-reverse lg:flex-row gap-12 pt-12 pb-12 lg:pt-24 lg:pb-24">
         <div className="flex flex-1 flex-col">
-            <div className="flex flex-1">
+          <div className="flex flex-1">
             <div className="relative top-0 left-0 w-max">
-            <img
-              src="images/image.png"
-              alt=""
-              className="relative top-0 left 0 w-96 z-10"
-            />
-            <img
-              src="images/dude.png"
-              alt=""
-              className="absolute top-10 left-10 w-96 z-20"
-            />
+              <img
+                src="images/image.png"
+                alt=""
+                className="relative top-0 left 0 w-96 z-10"
+              />
+              <img
+                src="images/dude.png"
+                alt=""
+                className="absolute top-10 left-10 w-96 z-20"
+              />
             </div>
-            </div>
-            <div className="flex flex-1">
-                <button type="button" className="">Watch how JobFit works</button></div>
-            
+          </div>
+          <div className="flex flex-1">
+            <button type="button" className="">
+              Watch how JobFit works
+            </button>
+          </div>
         </div>
         <div className="flex flex-1 flex-col items-start lg:items-start gap-12">
           <h2 className="text-3xl font-extrabold">How JobFit Works</h2>
