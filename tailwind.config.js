@@ -74,6 +74,7 @@ module.exports = {
         'mid-grey': '#898687',
         'dark-grey': '#3a3537',
         'deep-grey': '#272727',
+        'cherry-red': '#ed0033',
       },
       fontFamily: {
         OpenSans: ["Open Sans", "sans-serif"],
@@ -90,9 +91,9 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        lg: "1124px",
-        xl: "1124px",
-        "2xl": "1124px",
+        lg: "1148px",
+        xl: "1148px",
+        "2xl": "1148px",
       }
     },
   },
