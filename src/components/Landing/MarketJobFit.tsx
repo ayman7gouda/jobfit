@@ -11,8 +11,10 @@ export default function MarketJobFit() {
           <div className="w-84 h-84 absolute bottom-0 right-0 z-20">
             <img src="images/dude.png" alt="" className="" />
           </div>
-          <div className="bg-[#e90133] h-16 w-32 content-center absolute -bottom-16 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
-            <button className="text-white">Try jobFit</button>
+          <div className="content-center absolute -bottom-[12rem] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+          <button type="button" className="w-full lg:w-[24rem] h-[10rem] lg:h-[10rem] btn-red">
+              <div className="text-xs lg:text-2xl text-bold text-white">Tryout JobFit Now</div>
+            </button>
           </div>
         </div>
         <div className="flex flex-1 flex-col items-start lg:items-start gap-12">
