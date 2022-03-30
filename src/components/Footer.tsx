@@ -1,9 +1,7 @@
 export default function Footer(){
 
     return (
-    <div className="antialiased">
-        
-    </div>
+        <h1>TEST</h1>
 
     );
 }

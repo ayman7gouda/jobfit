@@ -6,7 +6,9 @@ import { SkillsList } from "components/SkillsList/SkillsList";
 import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import Landing from "pages/Landing";
-
+import TempContainerTest from "components/TempContainerTest";
+import Footer from "components/Footer";
+import JobFitFrame from "components/JobFitFrame";
 
 export default function Home({ csrfToken }) {
   const session = useSession();
@@ -17,7 +19,7 @@ export default function Home({ csrfToken }) {
         <title>JobFit</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-    <Landing />
+      <Landing />
     </div>
   );
 }
