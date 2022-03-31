@@ -7,7 +7,7 @@ export default function JobFitFrame({ title, icon, content }) {
         <img src={icon} alt="" className="" />
         <h3 className="font-bold text-[24px]">{title}</h3>
       </div>
-      <p className="text-[16px] leading-wsu text-black items-start sm:text-center px-2">
+      <p className="text-[1rem] leading-wsu text-black items-start sm:text-center px-2">
         {content}
       </p>
     </div>

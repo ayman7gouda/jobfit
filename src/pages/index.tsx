@@ -6,7 +6,6 @@ import { SkillsList } from "components/SkillsList/SkillsList";
 import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import Landing from "pages/Landing";
-import TempContainerTest from "components/TempContainerTest";
 import Footer from "components/Footer";
 import JobFitFrame from "components/JobFitFrame";
 

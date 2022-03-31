@@ -2,7 +2,7 @@ import JobFitFrame from "components/JobFitFrame";
 
 export default function MarketJobFit() {
   return (
-    <section className=" bg-backgrounds-light-grey font-OpenSans">
+    <section className="bg-backgrounds-light-grey">
       <div className="container flex flex-col-reverse gap-4 lg:flex-row pt-12 pb-12 lg:pt-24 lg:pb-24">
         <div className="flex-none w-1/2 h-[38rem] relative ">
           <div className="w-84 h-84 absolute top-0 left-0 z-10">
@@ -12,7 +12,7 @@ export default function MarketJobFit() {
             <img src="images/dude.png" alt="" className="" />
           </div>
           <div className="content-center absolute -bottom-[12rem] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
-          <button type="button" className="w-full lg:w-[24rem] h-[10rem] lg:h-[10rem] btn-red">
+          <button type="button" className="w-[24rem] h-[10rem] lg:h-[10rem] btn-red">
               <div className="text-xs lg:text-2xl text-bold text-white">Tryout JobFit Now</div>
             </button>
           </div>
