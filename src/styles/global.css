@@ -11,15 +11,8 @@
   }
 }
 
-:root {
-    --crimson: #990033;
-    --cherry-red: #ed0033;
-    --hilight-orange: #ff5c5e;
-    --white: #ffffff;
-  }
-
 .btn-red {
-  @apply rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange;
+  @apply hover:bg-gradient-to-r hover:from-[#b80541] hover:to-hilight-orange rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange;
 }
 
 .btn-white {

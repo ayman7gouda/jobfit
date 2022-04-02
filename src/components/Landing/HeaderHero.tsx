@@ -48,14 +48,23 @@ export default function HeaderHero() {
           </div>
         </div>
         <div className="relative">
-          <div className="absolute top-0 left-5 rotate-[24deg] z-10">
-            <img src="images/Asset_1_2.png" alt="" className="" />
+          <div className="absolute -top-6 left-[4rem] z-10">
+            <img src="images/Asset 1 2.png" alt="" className="w-[28rem] rotate-[24deg]" />
           </div>
-          <div className="absolute -bottom-[2rem] -right-[5rem] z-10">
-            <img src="images/Asset_1_2.png" alt="" className="" />
+          <div className="absolute bottom-0 right-0 z-10">
+            <img src="images/Asset 1 2.png" alt="" className="" />
           </div>
           <div className="z-20 relative">
             <img src="images/hero_01.png" alt="" />
+            <div className="absolute top-0 left-5 z-30">
+              <img src="images/grab 01.svg" alt="" className="" />
+            </div>
+            <div className="absolute top-32 right-10 z-30">
+              <img src="images/grab 02.svg" alt="" className="" />
+            </div>
+            <div className="absolute bottom-16 right-[5rem] z-30">
+              <img src="images/grab 03.svg" alt="" className="" />
+            </div>
           </div>
         </div>
       </section>

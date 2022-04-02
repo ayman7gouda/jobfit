@@ -17,9 +17,9 @@ export default function MarketJobFit() {
             </button>
           </div>
         </div>
-        <div className="flex flex-1 flex-col items-start lg:items-start gap-12">
-          <h2 className="text-3xl font-extrabold">How JobFit Works</h2>
-          <p className="leading-wsu">
+        <div className="flex flex-col items-start lg:items-start gap-12">
+          <h2 className="flex-1 text-3xl font-extrabold">How JobFit Works</h2>
+          <p className="flex-1 leading-wsu">
             When you enter the JobFit system, it intelligently monitors your
             study progress and proactively offers alternative pathways to
             maximise your acquisition of skills related to your goals.

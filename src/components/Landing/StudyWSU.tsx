@@ -26,11 +26,11 @@ export default function StudyWSU() {
         <JobFitCard title="Flexible study options" imageURL="images/flexibleStudy.png" />
       </div>
       <div className="container flex flex-col items-center gap-12 pt-12 pb-12 lg:pt-24 lg:pb-24">
-        <p className="font-chronicle text-3xl leading-wsu w-[764px]">
+        <p className="flex-1 font-chronicle text-3xl leading-wsu w-[764px]">
           "At WSU, I found a [program] that I wanted to study, and at a campus
           that was close to home. I am not wasting time travelling."
         </p>
-        <p className="leading-wsi text-[14px]">
+        <p className="flex-1 leading-wsu text-[14px]">
           — Darzana Ravindrarajah. Bachelor of Information and Communications
           Technology / Bachelor of Laws.
         </p>
