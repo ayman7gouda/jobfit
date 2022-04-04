@@ -1,34 +1,24 @@
-import { NextPageContext } from 'next';
+import { NextPageContext } from "next";
 
-import { Login } from 'components/Auth/Login';
-import { UserInfo } from 'components/Auth/UserInfo';
-import { SkillsList } from 'components/SkillsList/SkillsList';
-import { getSession, useSession } from 'next-auth/react';
-import Head from 'next/head';
+import { Login } from "components/Auth/Login";
+import { UserInfo } from "components/Auth/UserInfo";
+import { SkillsList } from "components/SkillsList/SkillsList";
+import { getSession, useSession } from "next-auth/react";
+import Head from "next/head";
+import Landing from "pages/Landing";
+import Footer from "components/Footer";
+import JobFitFrame from "components/JobFitFrame";
 
 export default function Home({ csrfToken }) {
   const session = useSession();
 
   return (
-    <div className="flex min-h-screen">
+    <div>
       <Head>
         <title>JobFit</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <section className="bg-gray-400 h-screen overflow-auto p-4">
-        <SkillsList />
-      </section>
-      <section className="flex-1 bg-red-400">
-        <h1>User</h1>
-        <UserInfo />
-        {!session && (
-          <>
-            <h1>Login</h1>
-            <Login csrfToken={csrfToken} />
-          </>
-        )}
-      </section>
+      <Landing />
     </div>
   );
 }
