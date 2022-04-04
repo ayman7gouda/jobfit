@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 
 import { getApolloClient } from 'lib/createClient';
 import { SessionProvider } from 'next-auth/react';
-import 'tailwindcss/tailwind.css';
+import 'styles/global.css';
 
 function MyApp(props) {
   // console.log(props);
