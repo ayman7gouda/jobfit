@@ -11,13 +11,6 @@
   }
 }
 
-:root {
-    --crimson: #990033;
-    --cherry-red: #ed0033;
-    --hilight-orange: #ff5c5e;
-    --white: #ffffff;
-  }
-
 .btn-red {
   @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange
   hover:bg-gradient-to-r hover:from-[#b80541] hover:to-hilight-orange active:bg-gradient-to-l active:from-[#a80125] active:to-[#03111b];
