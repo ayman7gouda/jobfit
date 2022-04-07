@@ -19,9 +19,22 @@
   }
 
 .btn-red {
-  @apply rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange;
+  @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange
+  hover:bg-gradient-to-r hover:from-[#b80541] hover:to-hilight-orange active:bg-gradient-to-l active:from-[#a80125] active:to-[#03111b];
+}
+.btn-brd{
+  @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange
 }
 
 .btn-white {
-    @apply rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-white;
+    @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-white
+    hover:bg-[#fff5f7] active:bg-[#ffdbe2];
+  }
+
+  .btn-wsu1{
+    @apply bg-hilight-orange hover:bg-black text-black hover:text-hilight-orange transition-colors ease-out duration-300;
+  }
+
+  .btn-wsu2{
+    @apply  hover:bg-black text-black hover:text-white transition ease-out duration-300;
   }
