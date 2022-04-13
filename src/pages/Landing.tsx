@@ -13,6 +13,7 @@ export default function Landing() {
       <CareerData />
       <StudyWSU />
       <ReadyApply />
+      <Footer />
     </div>
   );
 }

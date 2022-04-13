@@ -34,7 +34,7 @@ export default function StudyWSU() {
           />
         </div>
         <div className="flex flex-col items-center gap-12 pb-12 lg:pb-24">
-          <p className="font-chronicle text-2xl md:text-3xl leading-wsu md:w-3/4">
+          <p className="font-chronicle text-2xl md:text-3xl leading-wsu md:w-3/5">
             "At WSU, I found a [program] that I wanted to study, and at a campus
             that was close to home. I am not wasting time travelling."
           </p>

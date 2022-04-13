@@ -76,6 +76,13 @@ module.exports = {
         'deep-grey': '#272727',
         'cherry-red': '#ed0033',
       },
+      backgroundImage:{
+        'split-black-orange': "linear-gradient(to left, #ff5c5e 50%, #262223 50%);",
+        'split-black-grey': "linear-gradient(to left, #eaebea 50%, #262223 50%);",
+      },
+      backgroundSize:{
+        'size-200': "200% 100%;",
+      },
       fontFamily: {
         OpenSans: ["Open Sans", "sans-serif"],
         chronicle: ["Chronicle Text G1"],
