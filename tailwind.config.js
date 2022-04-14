@@ -1,6 +1,6 @@
 module.exports = {
   mode: "jit",
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './node_modules/tw-elements/dist/js/**/*.js'],
   //darkMode: class, // or 'media' or 'class'
   theme: {
     boxShadow:{
@@ -113,5 +113,6 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
+    require('tw-elements/dist/plugin'),
   ],
 };
