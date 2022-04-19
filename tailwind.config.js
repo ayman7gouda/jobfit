@@ -79,6 +79,7 @@ module.exports = {
       backgroundImage:{
         'split-black-orange': "linear-gradient(to left, #ff5c5e 50%, #262223 50%);",
         'split-black-grey': "linear-gradient(to left, #eaebea 50%, #262223 50%);",
+        'split-grey-orange': "linear-gradient(to left, #eaebea 50%, #ff5c5e 50%);",
       },
       backgroundSize:{
         'size-200': "200% 100%;",
@@ -113,6 +114,5 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
-    require('tw-elements/dist/plugin'),
   ],
 };

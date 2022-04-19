@@ -4,15 +4,16 @@ import CareerData from "../components/Landing/CareerData";
 import StudyWSU from "../components/Landing/StudyWSU";
 import Footer from "components/Footer";
 import ReadyApply from "../components/Landing/ReadyApply";
+import Footer0 from "components/Footer0";
 
 export default function Landing() {
   return (
     <div>
-      <HeaderHero />
+      {/* <HeaderHero />
       <MarketJobFit />
       <CareerData />
       <StudyWSU />
-      <ReadyApply />
+      <ReadyApply /> */}
       <Footer />
     </div>
   );

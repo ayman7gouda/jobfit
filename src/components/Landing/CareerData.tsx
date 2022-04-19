@@ -1,8 +1,7 @@
 import Accordion from "components/Accordion";
 import React from "react";
 import LineChart from "components/LineChart";
-import { UserData } from "./../Data";
-import SalaryChart from "components/SalaryChart";
+import { Data } from "components/Data";
 
 export default function CareerData() {
   const accordionItems = [
@@ -49,8 +48,8 @@ export default function CareerData() {
           <div className="w-1/3">
             <Accordion items={accordionItems} />
           </div>
-          <div className="">
-          <LineChart />
+          <div className="flex w-full items-center">
+          <LineChart info={Data} />
           </div>
         </div>
         <h2 className="text-white text-xl lg:text-2xl font-[600]">

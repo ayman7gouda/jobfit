@@ -1,61 +1,81 @@
 import React from "react";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-  } from 'chart.js';
-  import { Line } from 'react-chartjs-2';
-  
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-  );
-  
-  export const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    scales: {
+      yAxes: {
+        ticks: {
+          color: "rgba(255, 255, 255, 1)",
+        },
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
       },
-      title: {
-        display: true,
-        text: 'Chart.js Line Chart',
+
+      xAxes: {
+        ticks: {
+          color: "rgba(255, 255, 255, 1)",
+        },
+        grid: {
+          circular: true,
+          borderColor: "rgba(255, 255, 255, .2)",
+          color: "rgba(255, 255, 255, .2)",
+          borderDash: [5, 5],
+        },
       },
     },
-  };
-  
-  const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  
-  export const data = {
-    labels,
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: labels.map((l, i) => i * Math.random() * 100),
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    layout: {
+      padding: {
+        right: 10,
       },
-      {
-        label: 'Dataset 2',
-        data: labels.map((l, i) =>i * Math.random() * 100),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-    ],
-  };
-// import { Chart as ChartJS } from "chart.js/auto";
+    },
+  },
+};
 
-function LineChart({ chartData }) {
+const buildData= ({ chartData}) => ({
+  labels: chartData.labels,
+  datasets:[
+    {
+      label: '',
+      data: chartData.data,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(255, 255, 255, 1)',
+            pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+            fill: 'start',
+            tension: 0.4,
+    },
+  ],
+});
+
+
+function LineChart({ info }) {
+  const data= buildData(info);
   return <Line options={options} data={data} />;
 }
 

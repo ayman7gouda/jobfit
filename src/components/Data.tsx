@@ -1,32 +1,32 @@
-export const UserData = [
-  {
-    id: 1,
-    year: 2016,
-    userGain: 80000,
-    userLost: 823,
+export const Data = {
+  career: "Software Developer",
+  description: "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
+  chartData: {
+    labels: [
+      "2019",
+      "2020",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027",
+      "2028",
+      "2029",
+    ],
+    data: [
+      66029,
+      83088,
+      81363,
+      93940,
+      91738,
+      98273,
+      101302,
+      113812,
+      112635,
+      122391,
+      121872,
+    ],
   },
-  {
-    id: 2,
-    year: 2017,
-    userGain: 45677,
-    userLost: 345,
-  },
-  {
-    id: 3,
-    year: 2018,
-    userGain: 78888,
-    userLost: 555,
-  },
-  {
-    id: 4,
-    year: 2019,
-    userGain: 90000,
-    userLost: 4555,
-  },
-  {
-    id: 5,
-    year: 2020,
-    userGain: 4300,
-    userLost: 234,
-  },
-];
+};

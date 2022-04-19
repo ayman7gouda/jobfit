@@ -30,3 +30,7 @@
   .btn-wsu-grey{
     @apply  bg-split-black-grey bg-size-200 bg-right-bottom transition-all ease-out duration-300 hover:bg-left-bottom hover:bg-black text-black hover:text-white active:bg-wsu-black ;
   }
+
+  .btn-wsu-footer{
+    @apply bg-split-grey-orange bg-size-200 bg-right-bottom transition-all ease-out duration-300 hover:bg-left-bottom active:bg-hilight-orange
+  }

@@ -2,11 +2,11 @@ export default function Footer() {
   return (
     <footer className="bg-wsu-black font-chronicle text-white">
       <div className="container">
-        <div className="table-row w-full">
-          <div className="table-cell w-1/3">
-            <h3 className="">Footer Links</h3>
-            <div>
-              <ul>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="">
+            <h3 className="mb-10 opacity-0">Footer Links</h3>
+            <div className="">
+              <ul className="grid grid-cols-2 gap-8">
                 <li>
                   <a
                     href="https://www.westernsydney.edu.au/accessibility_statement/web_accessibility_statement"
@@ -72,26 +72,36 @@ export default function Footer() {
               </ul>
             </div>
           </div>
-          <div className="table-cell w-1/3">
-            <h3>Contact Us</h3>
+          <div className="">
+            <h3 className="mb-10">Contact Us</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-rows-2">
+                <a href="tel:1300897669">1300 897 669</a>
+                <a href="#">Email Us</a>
+              </div>
+              <address className="">
+                Locked Bag 1797 <br /> Penrith <br /> NSW 2751{" "}
+              </address>
+            </div>
           </div>
-          <div className="table-cell w-1/3">
-            <h3>Follow Us</h3>
-            <div>
-              <ul>
-                <li>
+          <div className="">
+            <h3 className="mb-10">Follow Us</h3>
+            <div className="">
+              <ul className="p-4 mx-16 space-y-4">
+                <li className=" btn-wsu-footer inline-block">
                   <a
                     href="https://www.facebook.com/westernsydneyu/"
                     target="_blank"
+                    className="relative w-14 h-14"
                   >
                     <img
                       src="/icons/icon-facebook.svg"
                       alt="Western Sydney University Facebook Account"
+                      className="w-10 absolute top-1/2 left-1/2"
                     />
                   </a>
                 </li>
-
-                <li>
+                <li className="w-14 h-14 btn-wsu-footer inline-block">
                   <a
                     href="https://www.instagram.com/westernsydneyu/"
                     target="_blank"
@@ -99,20 +109,22 @@ export default function Footer() {
                     <img
                       src="/icons/icon-instagram.svg"
                       alt="Western Sydney University Instagram Account"
+                      className="w-10"
                     />
                   </a>
                 </li>
 
-                <li>
+                <li className="w-14 h-14 btn-wsu-footer inline-block">
                   <a href="https://twitter.com/westernsydneyu" target="_blank">
                     <img
                       src="/icons/icon-twitter.svg"
                       alt="Western Sydney University Twitter Account"
+                      className="w-10"
                     />
                   </a>
                 </li>
 
-                <li>
+                <li className="w-14 h-14 btn-wsu-footer inline-block">
                   <a
                     href="https://www.snapchat.com/add/westernsydneyu"
                     target="_blank"
@@ -120,11 +132,12 @@ export default function Footer() {
                     <img
                       src="/icons/icon-snapchat.svg"
                       alt="Western Sydney University Snapchat Account"
+                      className="w-10"
                     />
                   </a>
                 </li>
 
-                <li>
+                <li className="w-14 h-14 btn-wsu-footer inline-block">
                   <a
                     href="https://au.linkedin.com/school/western-sydney-university/"
                     target="_blank"
@@ -132,6 +145,7 @@ export default function Footer() {
                     <img
                       src="/icons/icon-linkedin.svg"
                       alt="Western Sydney University LinkedIn Account"
+                      className="w-10"
                     />
                   </a>
                 </li>
