@@ -87,65 +87,69 @@ export default function Footer() {
           <div className="">
             <h3 className="mb-10">Follow Us</h3>
             <div className="">
-              <ul className="p-4 mx-16 space-y-4">
-                <li className=" btn-wsu-footer inline-block">
+              <ul className="-mx-[4px] my-0 p-0 text-[0px] leading-[0px] ">
+                <li className="inline-block list-none m-0 p-[4px]">
                   <a
+                    className="block h-14 w-14 btn-wsu-footer relative"
                     href="https://www.facebook.com/westernsydneyu/"
                     target="_blank"
-                    className="relative w-14 h-14"
                   >
                     <img
                       src="/icons/icon-facebook.svg"
                       alt="Western Sydney University Facebook Account"
-                      className="w-10 absolute top-1/2 left-1/2"
+                      className="w-10 absolute z-[7] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                   </a>
                 </li>
-                <li className="w-14 h-14 btn-wsu-footer inline-block">
+                <li className="inline-block list-none m-0 p-[4px]">
                   <a
+                    className="block h-14 w-14 btn-wsu-footer relative"
                     href="https://www.instagram.com/westernsydneyu/"
                     target="_blank"
                   >
                     <img
                       src="/icons/icon-instagram.svg"
                       alt="Western Sydney University Instagram Account"
-                      className="w-10"
+                      className="w-10 absolute z-[7] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                   </a>
                 </li>
-
-                <li className="w-14 h-14 btn-wsu-footer inline-block">
-                  <a href="https://twitter.com/westernsydneyu" target="_blank">
+                <li className="inline-block list-none m-0 p-[4px]">
+                  <a
+                    className="block h-14 w-14 btn-wsu-footer relative"
+                    href="https://twitter.com/westernsydneyu"
+                    target="_blank"
+                  >
                     <img
                       src="/icons/icon-twitter.svg"
                       alt="Western Sydney University Twitter Account"
-                      className="w-10"
+                      className="w-10 absolute z-[7] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                   </a>
                 </li>
-
-                <li className="w-14 h-14 btn-wsu-footer inline-block">
+                <li className="inline-block list-none m-0 p-[4px]">
                   <a
+                    className="block h-14 w-14 btn-wsu-footer relative"
                     href="https://www.snapchat.com/add/westernsydneyu"
                     target="_blank"
                   >
                     <img
                       src="/icons/icon-snapchat.svg"
                       alt="Western Sydney University Snapchat Account"
-                      className="w-10"
+                      className="w-10 absolute z-[7] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                   </a>
                 </li>
-
-                <li className="w-14 h-14 btn-wsu-footer inline-block">
+                <li className="inline-block list-none m-0 p-[4px]">
                   <a
+                    className="block h-14 w-14 btn-wsu-footer relative"
                     href="https://au.linkedin.com/school/western-sydney-university/"
                     target="_blank"
                   >
                     <img
                       src="/icons/icon-linkedin.svg"
                       alt="Western Sydney University LinkedIn Account"
-                      className="w-10"
+                      className="w-10 absolute z-[7] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                     />
                   </a>
                 </li>

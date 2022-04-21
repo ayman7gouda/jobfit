@@ -40,7 +40,7 @@ export default function CareerData() {
     <section className=" bg-backgrounds-dark-blue">
       <div className="container flex flex-col py-12 lg:py-24  gap-14 text-white">
         <div className="flex flex-1 flex-col item-center lg:items-center">
-          <h2 className="text-white text-2xl lg:text-3xl font-[800]">
+          <h2 className="text-2xl lg:text-3xl font-[800]">
             Setup yourself up to thrive in an area of growth
           </h2>
         </div>
@@ -52,7 +52,7 @@ export default function CareerData() {
           <LineChart info={Data} />
           </div>
         </div>
-        <h2 className="text-white text-xl lg:text-2xl font-[600]">
+        <h2 className="text-xl lg:text-2xl font-[600]">
           Not sure which career suits your interests and skills?
         </h2>
         <div className="flex flex-1 flex-col md:flex-row gap-8">
@@ -65,7 +65,7 @@ export default function CareerData() {
             type="button"
             className="w-1/2 md:w-[36rem] h-[4rem] lg:h-[4rem] btn-red"
           >
-            <div className="text-xs lg:text-2xl font-bold text-white">
+            <div className="text-xs lg:text-2xl font-bold">
               Take the JobFit questionnaire
             </div>
           </button>

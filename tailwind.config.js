@@ -7,6 +7,10 @@ module.exports = {
       sm: '0 4px 32px 0 rgba(0, 0, 0, 0.16)',
     },
     extend: {
+      bgGradientDeg: {
+        54: '54 deg',
+        61: '61 deg',
+      },
       colors:{
         'safe-orange': '#ab4d00',
         'med-blue': '#134d78',
@@ -80,6 +84,8 @@ module.exports = {
         'split-black-orange': "linear-gradient(to left, #ff5c5e 50%, #262223 50%);",
         'split-black-grey': "linear-gradient(to left, #eaebea 50%, #262223 50%);",
         'split-grey-orange': "linear-gradient(to left, #eaebea 50%, #ff5c5e 50%);",
+        'pine-green-54':"linear-gradient(54deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
+        'pine-green-61':"linear-gradient(61deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
       },
       backgroundSize:{
         'size-200': "200% 100%;",
@@ -97,12 +103,12 @@ module.exports = {
     },
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
-        md: "1280px",
-        lg: "1280px",
-        xl: "1280px",
-        '2xl': "1280px",
+        md: "1140px",
+        lg: "1140px",
+        xl: "1140px",
+        '2xl': "1140px",
       }
     },
   },
@@ -114,5 +120,6 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
+    require('tailwindcss-gradient'),
   ],
 };

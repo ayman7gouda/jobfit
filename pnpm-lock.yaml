@@ -32,6 +32,7 @@ specifiers:
   react-is: ^17.0.2
   styled-components: ^5.3.3
   tailwindcss: ^3.0.23
+  tailwindcss-gradient: ^1.0.1
   tw-elements: ^1.0.0-alpha12
   typescript: latest
 
@@ -55,6 +56,7 @@ dependencies:
   react-icons: 4.3.1_react@17.0.2
   react-is: 17.0.2
   styled-components: 5.3.3_281a4fa50a045c9112baf635f3bc27a7
+  tailwindcss-gradient: 1.0.1_tailwindcss@3.0.23
   tw-elements: 1.0.0-alpha12_autoprefixer@10.4.4
 
 devDependencies:
@@ -4573,6 +4575,14 @@ packages:
       buffer: 5.7.1
       node-fetch: 2.6.6
     dev: true
+
+  /tailwindcss-gradient/1.0.1_tailwindcss@3.0.23:
+    resolution: {integrity: sha512-wntnHroiThDogu2ly6eRynURgKHEOy2xzEriAmZCVtTLxHfchnbdi6Hx2fAXrIYVHStVn+Au35cuXuZKeRZcwg==}
+    peerDependencies:
+      tailwindcss: 3.x
+    dependencies:
+      tailwindcss: 3.0.23_autoprefixer@10.4.4
+    dev: false
 
   /tailwindcss/3.0.23_autoprefixer@10.4.4:
     resolution: {integrity: sha512-+OZOV9ubyQ6oI2BXEhzw4HrqvgcARY38xv3zKcjnWtMIZstEsXdI9xftd1iB7+RbOnj2HOEzkA0OyB5BaSxPQA==}

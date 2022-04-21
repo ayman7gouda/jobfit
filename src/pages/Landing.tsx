@@ -8,12 +8,13 @@ import Footer0 from "components/Footer0";
 
 export default function Landing() {
   return (
-    <div>
-      {/* <HeaderHero />
+    <div className="overflow-hidden">
+      <HeaderHero />
       <MarketJobFit />
       <CareerData />
       <StudyWSU />
-      <ReadyApply /> */}
+      <ReadyApply />
+      
       <Footer />
     </div>
   );

@@ -8,7 +8,7 @@ function Accordion({ items }: { items: Array<AccordionData> }) {
     setCurrentIdx((currentIdx) => (currentIdx !== idx ? idx: -1));
   };
   return (
-    <ul className="list-none m-0 p-0">
+    <ul className="list-none m-0 p-0 flex flex-col gap-6">
       {items.map((item, idx) => (
         <AccordionItems
           key={idx}
