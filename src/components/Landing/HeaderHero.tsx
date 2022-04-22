@@ -24,7 +24,7 @@ export default function HeaderHero() {
         </nav>
       </header>
 
-      <section className="container flex flex-col-reverse lg:flex-row items-center py-28">
+      <section className="container flex flex-col-reverse lg:flex-row items-center py-16">
         <div className="flex-1 lg:w-1/2 items-start">
           <h1 className="text-white text-[24px] lg:text-[36px] leading-normal font-[800] text-left mb-8 lg:mb-16 self-stretch">
             Take control of your career goals with
@@ -53,20 +53,13 @@ export default function HeaderHero() {
             </div>
           </div>
         </div>
-        <div className="relative lg:w-1/2">
-          <div className="relative h-full w-full z-20">
-            <img src="images/hero_01.png" alt="" />
+        <div className="w-[40rem] h-[40rem]">
+          <div className="w-full h-full relative">
+            <div className="absolute w-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+              <img src="images/hero_01.png" alt="" className="object-cover" />
+            </div>
             <div className="absolute w-[65%] md:w-1/2 lg:w-1/2 inset-y-[30%] -left-6 md:top-10 md:left-0 lg:-top-10 lg:-left-6 z-30">
               <img src="images/grab 01.svg" alt="" className="" />
-              <div className="relative -z-10">
-                <div className="md:rotate-[24deg] absolute top-0 -left-8 md:-top-8 md:bottom-0 md:left-4">
-                  <img
-                    src="images/hex.png"
-                    alt=""
-                    className="object-contain w-[10rem] md:w-[25rem]"
-                  />
-                </div>
-              </div>
             </div>
             <div className="absolute w-[50%] md:w-[40%] lg:w-[40%] inset-y-[60%] -right-5 md:top-24 md:right-0 lg:top-24 lg:right-0 z-30">
               <img src="images/grab 02.svg" alt="" className="" />
@@ -74,14 +67,12 @@ export default function HeaderHero() {
             <div className="hidden md:flex lg:flex absolute w-[45%] md:bottom-16 right-0 bottom-0 md:right-10 lg:bottom-10 lg:right-10 z-30">
               <img src="images/grab 03.svg" alt="" className="" />
             </div>
-          </div>
-
-          <div className="absolute z-10 top-[5%] bottom-[5%] -right-24 md:top-[14rem] md:bottom-0 md:-right-16">
-            <img
-              src="images/hex.png"
-              alt=""
-              className="object-contain w-[50%] md:w-[20rem] opacity-50"
-            />
+            <div className="absolute w-1/2 md:w-2/3 md:rotate-[24deg] top-0 -left-8 md:top-0 md:left-8 z-10">
+              <img src="images/hex.png" alt="" />
+            </div>
+            <div className="absolute w-1/2 top-[5%] bottom-[5%] -right-24 md:top-[14rem] md:bottom-0 md:-right-16 z-10">
+              <img src="images/hex.png" alt="" />
+            </div>
           </div>
         </div>
       </section>
