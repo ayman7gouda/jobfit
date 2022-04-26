@@ -2,40 +2,10 @@ import Accordion from "components/Accordion";
 import React from "react";
 import LineChart from "components/LineChart";
 import { Data } from "components/Data";
+import { Data1 } from "components/Data1";
+import Accord from "components/Accord";
 
 export default function CareerData() {
-  const accordionItems = [
-    {
-      title: "Software Developer",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-    {
-      title: "Game Developer",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-    {
-      title: "Database Administrator or Programmer",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-    {
-      title: "Information Systems Manager",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-    {
-      title: "Web Systems Developer",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-    {
-      title: "Network Administrator or Engineer",
-      content:
-        "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
-    },
-  ];
   return (
     <section className=" bg-backgrounds-dark-blue">
       <div className="container flex flex-col py-12 lg:py-24  gap-14 text-white">
@@ -44,12 +14,15 @@ export default function CareerData() {
             Setup yourself up to thrive in an area of growth
           </h2>
         </div>
-        <div className="flex flex-col lg:flex-row gap-6 ">
+        <div className="flex flex-none flex-col lg:flex-row gap-6">
           <div className="w-1/3">
-            <Accordion items={accordionItems} />
+            <Accord />
           </div>
-          <div className="flex w-full items-center">
-          <LineChart info={Data} />
+          <div className="flex flex-col w-2/3 items-center justify-center border border-med-blue rounded-2xl bg-pine-green-61 p-4 gap-10">
+            <div>TITLE</div>
+            <div className="w-full m-2">
+              <LineChart info={Data} />
+            </div>
           </div>
         </div>
         <h2 className="text-xl lg:text-2xl font-[600]">

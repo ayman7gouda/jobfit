@@ -1,9 +1,11 @@
+import Accord from "components/Accord";
 import React from "react";
 
 export default function playSpace() {
   return (
     <div className="container bg-backgrounds-dark-blue">
       <div className="p-6">
+      <Accord />
       <li
         className="w-[23rem] border border-[#f9f1f2] rounded-tr-2xl rounded-bl-2xl rounded-br-md rounded-tl-md p-4 text-white flex flex-col gap-2 items-start bg-pine-green-54 mb-4"
       >

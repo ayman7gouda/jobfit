@@ -30,23 +30,20 @@ const options = {
     scales: {
       yAxes: {
         ticks: {
-          color: "rgba(255, 255, 255, 1)",
-        },
-        grid: {
-          display: false,
-          drawBorder: false,
-        },
+          display: false
+      }
+        // ticks: {
+        //   color: "rgba(255, 255, 255, 1)",
+        // },
       },
 
       xAxes: {
-        ticks: {
-          color: "rgba(255, 255, 255, 1)",
-        },
+        // ticks: {
+        //   color: "rgba(255, 255, 255, 1)",
+        // },
         grid: {
-          circular: true,
-          borderColor: "rgba(255, 255, 255, .2)",
-          color: "rgba(255, 255, 255, .2)",
-          borderDash: [5, 5],
+          display: false,
+          drawBorder: false,
         },
       },
     },
@@ -58,12 +55,15 @@ const options = {
   },
 };
 
+
+
 const buildData= ({ chartData}) => ({
   labels: chartData.labels,
   datasets:[
     {
       label: '',
       data: chartData.data,
+      
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
             borderColor: 'rgba(255, 255, 255, 1)',
             pointBackgroundColor: 'rgba(255, 255, 255, 1)',
