@@ -4,7 +4,6 @@ import CareerData from "../components/Landing/CareerData";
 import StudyWSU from "../components/Landing/StudyWSU";
 import Footer from "components/Footer";
 import ReadyApply from "../components/Landing/ReadyApply";
-import Footer0 from "components/Footer0";
 
 export default function Landing() {
   return (
@@ -14,7 +13,6 @@ export default function Landing() {
       <CareerData />
       <StudyWSU />
       <ReadyApply />
-      
       <Footer />
     </div>
   );

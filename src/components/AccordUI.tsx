@@ -6,30 +6,34 @@ const AccordUI = ({ title, children, Id, Index, setIndex }) => {
   return (
     <>
       <div onClick={() => handleSetIndex(Id)}>
-        <div className="">
+
           {Index !== Id ? (
-            <div className="w-[23rem] border border-med-blue rounded-tr-2xl rounded-bl-2xl rounded-br-md rounded-tl-md p-4 text-white flex flex-col items-center bg-backgrounds-dark-blue mb-4">
-              <div className="flex group cursor-pointer">
-                <div className="text-white font-semibold group-hover:text-white">
+            <div className="w-full flex flex-col items-center justify-center bg-backgrounds-dark-blue
+                            border border-med-blue rounded-tr-2xl rounded-bl-2xl rounded-br-md rounded-tl-md 
+                            px-6 py-4 text-white">
+              <div className="flex items-center justify-center group cursor-pointer">
+                <div className="text-white text-base leading-wsu group-hover:text-white text-center">
                   {title}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="group cursor-pointer w-[23rem] border border-[#f9f1f2] rounded-tr-2xl rounded-bl-2xl rounded-br-md rounded-tl-md p-4 text-white flex flex-col gap-2 items-start bg-pine-green-54 mb-4">
-              <div className="flex group cursor-pointer">
-                <div className="text-white font-semibold pl-10 group-hover:text-white">
+            <div className="w-full flex flex-col gap-2 items-start bg-pine-green-54 group cursor-pointer 
+                            border border-[#f9f1f2] rounded-tr-2xl rounded-bl-2xl rounded-br-md rounded-tl-md 
+                            p-6 text-white">
+              <div className="flex items-center justify-center group cursor-pointer">
+                <div className="text-white text-2xl leading-wsu font-bold group-hover:text-white">
                   {title}
                 </div>
               </div>
               {Index === Id && (
-                <div className="pl-10  font-semibold text-white w-full h-auto p-4 mb-2 ">
+                <div className="w-full text-base text-white leading-wsu self-stretch">
                   {children}
                 </div>
               )}
             </div>
           )}
-        </div>
+
       </div>
     </>
   );
