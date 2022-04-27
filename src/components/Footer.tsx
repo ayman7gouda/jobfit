@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="bg-wsu-black font-chronicle text-white">
       <div className="container">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-row-3 md:grid-cols-3 gap-4 mb-10">
           <div className="">
             <h3 className="mb-10 opacity-0">Footer Links</h3>
             <div className="">
@@ -73,19 +73,19 @@ export default function Footer() {
             </div>
           </div>
           <div className="">
-            <h3 className="mb-10">Contact Us</h3>
+            <h3 className="mb-10 text-2xl text-white">Contact Us</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid grid-rows-2">
                 <a href="tel:1300897669">1300 897 669</a>
                 <a href="#">Email Us</a>
               </div>
-              <address className="">
+              <span className="">
                 Locked Bag 1797 <br /> Penrith <br /> NSW 2751{" "}
-              </address>
+              </span>
             </div>
           </div>
           <div className="">
-            <h3 className="mb-10">Follow Us</h3>
+            <h3 className="mb-10 text-2xl text-white">Follow Us</h3>
             <div className="">
               <ul className="-mx-[4px] my-0 p-0 text-[0px] leading-[0px] ">
                 <li className="inline-block list-none m-0 p-[4px]">

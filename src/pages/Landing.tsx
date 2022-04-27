@@ -8,11 +8,11 @@ import ReadyApply from "../components/Landing/ReadyApply";
 export default function Landing() {
   return (
     <div className="overflow-hidden">
-      <HeaderHero />
+      {/* <HeaderHero />
       <MarketJobFit />
       <CareerData />
       <StudyWSU />
-      <ReadyApply />
+      <ReadyApply /> */}
       <Footer />
     </div>
   );
