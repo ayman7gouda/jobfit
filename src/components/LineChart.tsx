@@ -38,7 +38,7 @@ const options = {
         display: false,
       },
       grid: {
-        borderColor: 'rgba(19, 77, 120, 1)',
+        borderColor: "rgba(19, 77, 120, 1)",
         display: false,
       },
     },
@@ -49,17 +49,19 @@ const options = {
         padding: 10,
       },
       grid: {
-        borderColor: 'rgba(19, 77, 120, 1)',
-        tickColor: 'rgba(19, 77, 120, 1)',
+        borderColor: "rgba(19, 77, 120, 1)",
+        tickColor: "rgba(19, 77, 120, 1)",
         display: true,
-        color: 'rgba(0, 0, 0, 0)',
+        color: "rgba(0, 0, 0, 0)",
       },
     },
   },
   layout: {
     padding: {
-      left: 50,
-      right: 50,
+      left: 20,
+      right: 20,
+      top: 20,
+      bottom: 20,
     },
   },
 };
@@ -101,8 +103,8 @@ function LineChart({ info }) {
         {
           label: "",
           data: chartData.data,
-          backgroundColor: createGradient(chart.ctx, chart.chartArea), 
-          borderColor: "rgba(241, 20, 61, 1)", 
+          backgroundColor: createGradient(chart.ctx, chart.chartArea),
+          borderColor: "rgba(241, 20, 61, 1)",
           borderWidth: 5,
           pointRadius: 0.2,
           fill: "start",
