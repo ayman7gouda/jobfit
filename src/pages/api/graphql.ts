@@ -5,6 +5,7 @@ import { Session } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
 
 import { getSession } from 'next-auth/react';
+// import { getSession } from 'next-auth/react';
 import { NextRequest, NextResponse } from 'next/server';
 import { resolvers } from 'server/resolvers';
 import { typeDefs } from 'server/schema';
@@ -45,7 +46,7 @@ export default cors(async (req, res) => {
     return false;
   }
 
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
 
   await startServer;
   await apolloServer.createHandler({ path: "/api/graphql" })(req, res);

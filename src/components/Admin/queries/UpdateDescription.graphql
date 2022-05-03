@@ -1,0 +1,8 @@
+mutation UpdateDescription($description: SkillClusterDescriptionInput!) {
+  updateDescription(description: $description) {
+    id
+    source
+    name
+    description
+  }
+}

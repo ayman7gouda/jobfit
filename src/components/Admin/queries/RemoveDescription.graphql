@@ -1,0 +1,5 @@
+mutation RemoveDescription($clusterId: Int!, $descriptionId: Int!) {
+  deleteDescription(clusterId: $clusterId, descriptionId: $descriptionId) {
+    ...SkillCluster
+  }
+}

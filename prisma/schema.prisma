@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id               Int                 @id @default(autoincrement())
+  city             String?
+  country          String?
+  state            String?
+  title            String?             @db.VarChar(512)
+  dateText         String?
+  date             DateTime?
+  domain           String?             @db.VarChar(512)
+  domainId         String?
+  text             String?             @db.Text
+  url              String?             @db.VarChar(1024)
+  region           String?
+  employer         String?             @db.VarChar(512)
+  intermediary     String?             @db.VarChar(512)
+  email            String?             @db.VarChar(512)
+  jobReferenceId   String?
+  source           String?             @db.VarChar(512)
+  telephone        String?             @db.VarChar(1024)
+  duplicateId      String?
+  maximumDegree    String?             @db.VarChar(512)
+  minimumDegree    String?             @db.VarChar(512)
+  otherDegrees     String?             @db.VarChar(512)
+  preferredDegrees String?             @db.VarChar(512)
+  requiredDegrees  String?             @db.VarChar(512)
+  standardMajor    String?             @db.VarChar(512)
+  minExperience    Float?
+  maxExperience    Float?
+  ANZSCOCode       Int?
+  ANZSCO           ANZSCO?             @relation(fields: [ANZSCOCode], references: [id])
+  ANZSICCode       String?
+  maxAnnualSalary  Float?
+  maxHourlySalary  Float?
+  minAnnualSalary  Float?
+  minHourlySalary  Float?
+  jobType          String?             @db.VarChar(512)
+  BGTOcc           String?
+  BGTOccName       String?
+  SA4Code          String?
+  jobId            Int?
+  certifications   JobCertifications[]
+  skills           JobSkills[]
+}
+
+model ANZSCO {
+  id    Int     @id
+  name  String? @db.VarChar(512)
+  level Int?
+  jobs  Job[]
+}
+
+model Certification {
+  id   Int                 @id @default(autoincrement())
+  type String
+  name String
+  jobs JobCertifications[]
+}
+
+model JobCertifications {
+  jobId           Int
+  certificationId Int
+  certification   Certification @relation(fields: [certificationId], references: [id])
+  job             Job           @relation(fields: [jobId], references: [id])
+
+  @@id([jobId, certificationId])
+  @@index([certificationId], map: "JobCertifications_certificationId_fkey")
+}
+
+model Skill {
+  name        String
+  clusterName String
+  id          Int             @id @default(autoincrement())
+  jobs        JobSkills[]
+  clusters    SkillClusters[]
+}
+
+model JobSkills {
+  jobId   Int
+  skillId Int
+  job     Job   @relation(fields: [jobId], references: [id])
+  skill   Skill @relation(fields: [skillId], references: [id])
+
+  @@id([jobId, skillId])
+  @@index([skillId], map: "JobSkills_skillId_fkey")
+}
+
+model SkillCluster {
+  name         String
+  category     String
+  id           Int                       @id @default(autoincrement())
+  descriptions SkillClusterDescription[]
+  skills       SkillClusters[]
+}
+
+model SkillClusterDescription {
+  id           Int          @id @default(autoincrement())
+  source       String
+  description  String
+  clusterId    Int
+  name         String
+  skillCluster SkillCluster @relation(fields: [clusterId], references: [id])
+
+  @@index([clusterId], map: "SkillClusterDescription_clusterId_fkey")
+}
+
+model SkillClusters {
+  clusterId Int
+  skillId   Int
+  cluster   SkillCluster @relation(fields: [clusterId], references: [id])
+  skill     Skill        @relation(fields: [skillId], references: [id])
+
+  @@id([clusterId, skillId])
+  @@index([skillId], map: "SkillClusters_skillId_fkey")
+}

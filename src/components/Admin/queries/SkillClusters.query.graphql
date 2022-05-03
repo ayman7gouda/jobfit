@@ -1,0 +1,10 @@
+query SkillClusters {
+  skillClusters {
+    id
+    name
+    category
+    descriptions {
+      id
+    }
+  }
+}

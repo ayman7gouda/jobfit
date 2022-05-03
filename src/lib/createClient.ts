@@ -21,8 +21,8 @@ export function getApolloClient(req: NextRequest, forceNew?: boolean) {
       return {
         headers: {
           ...headers,
-          Cookie: (req.headers as any).cookie
-            ? (req.headers as any).cookie
+          Cookie: (req?.headers as any)?.cookie
+            ? (req?.headers as any)?.cookie
             : "",
         },
       };
