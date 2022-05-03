@@ -1,12 +1,16 @@
 module.exports = {
   mode: "jit",
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './node_modules/tw-elements/dist/js/**/*.js'],
   //darkMode: class, // or 'media' or 'class'
   theme: {
     boxShadow:{
       sm: '0 4px 32px 0 rgba(0, 0, 0, 0.16)',
     },
     extend: {
+      bgGradientDeg: {
+        54: '54 deg',
+        61: '61 deg',
+      },
       colors:{
         'safe-orange': '#ab4d00',
         'med-blue': '#134d78',
@@ -76,6 +80,16 @@ module.exports = {
         'deep-grey': '#272727',
         'cherry-red': '#ed0033',
       },
+      backgroundImage:{
+        'split-black-orange': "linear-gradient(to left, #ff5c5e 50%, #262223 50%);",
+        'split-black-grey': "linear-gradient(to left, #eaebea 50%, #262223 50%);",
+        'split-grey-orange': "linear-gradient(to left, #eaebea 50%, #ff5c5e 50%);",
+        'pine-green-54':"linear-gradient(54deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
+        'pine-green-61':"linear-gradient(61deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
+      },
+      backgroundSize:{
+        'size-200': "200% 100%;",
+      },
       fontFamily: {
         OpenSans: ["Open Sans", "sans-serif"],
         chronicle: ["Chronicle Text G1"],
@@ -89,12 +103,12 @@ module.exports = {
     },
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
-        md: "1280px",
-        lg: "1280px",
-        xl: "1280px",
-        '2xl': "1280px",
+        md: "1140px",
+        lg: "1140px",
+        xl: "1140px",
+        '2xl': "1140px",
       }
     },
   },

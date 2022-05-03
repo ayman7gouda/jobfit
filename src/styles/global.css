@@ -12,9 +12,25 @@
 }
 
 .btn-red {
-  @apply hover:bg-gradient-to-r hover:from-[#b80541] hover:to-hilight-orange rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange;
+  @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange
+  hover:bg-gradient-to-r hover:from-[#b80541] hover:to-hilight-orange active:bg-gradient-to-l active:from-[#a80125] active:to-[#03111b] transition ease-out duration-500;
+}
+.btn-brd{
+  @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-gradient-to-r from-crimson via-cherry-red to-hilight-orange;
 }
 
 .btn-white {
-    @apply rounded-tr-3xl rounded-bl-3xl rounded-tl-lg rounded-br-lg bg-white;
+    @apply rounded-tr-[1rem] rounded-bl-[1rem] rounded-tl-[0.2rem] rounded-br-[0.2rem] bg-white
+    hover:bg-[#fff5f7] active:bg-[#ffdbe2] transition ease-out duration-500;
+  }
+
+  .btn-wsu-orange{
+    @apply bg-split-black-orange bg-size-200 bg-right-bottom transition-all ease-out duration-300 hover:bg-left-bottom hover:text-hilight-orange active:bg-wsu-black;
+  }
+  .btn-wsu-grey{
+    @apply  bg-split-black-grey bg-size-200 bg-right-bottom transition-all ease-out duration-300 hover:bg-left-bottom hover:bg-black text-black hover:text-white active:bg-wsu-black ;
+  }
+
+  .btn-wsu-footer{
+    @apply bg-split-grey-orange bg-size-200 bg-right-bottom transition-all ease-out duration-300 hover:bg-left-bottom active:bg-hilight-orange
   }
