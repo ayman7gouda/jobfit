@@ -7,12 +7,13 @@ import ReadyApply from "../components/Landing/ReadyApply";
 
 export default function Landing() {
   return (
-    <div>
+    <div className="overflow-hidden">
       <HeaderHero />
       <MarketJobFit />
       <CareerData />
       <StudyWSU />
       <ReadyApply />
+      <Footer />
     </div>
   );
 }

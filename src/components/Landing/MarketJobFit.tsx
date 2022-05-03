@@ -1,31 +1,33 @@
 import JobFitFrame from "components/JobFitFrame";
+import PlayBtn from "components/PlayBtn";
 
 export default function MarketJobFit() {
   return (
     <section className="bg-backgrounds-light-grey">
       <div className="container flex flex-col-reverse gap-4 lg:flex-row pt-12 pb-12 lg:pt-24 lg:pb-24">
-        <div className="flex-none w-1/2 h-[38rem] relative ">
-          <div className="w-84 h-84 absolute top-0 left-0 z-10">
+        <div className="flex-none w-full lg:w-1/2 lg:h-[38rem] lg:relative ">
+          <div className="hidden lg:flex lg:w-84 lg:h-84 lg:absolute lg:top-0 lg:left-0 lg:z-10">
             <img src="images/image.png" alt="" className="" />
           </div>
-          <div className="w-84 h-84 absolute bottom-0 right-0 z-20">
+          <div className="hidden lg:flex lg:w-84 lg:h-84 lg:absolute lg:bottom-0 lg:right-0 lg:z-20">
             <img src="images/dude.png" alt="" className="" />
           </div>
-          <div className="content-center absolute -bottom-[12rem] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
-          <button type="button" className="w-[24rem] h-[10rem] lg:h-[10rem] btn-red">
-              <div className="text-xs lg:text-2xl text-bold text-white">Tryout JobFit Now</div>
-            </button>
+          <div className="md:flex h-[168px] md:content-center md:justify-center lg:absolute lg:-bottom-[8rem] lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:-translate-y-0 lg:z-30">
+            <PlayBtn
+              icon="images/PlayCircle.svg"
+              content="Watch how JobFit Works"
+            />
           </div>
         </div>
-        <div className="flex flex-col items-start lg:items-start gap-12">
-          <h2 className="flex-1 text-3xl font-extrabold">How JobFit Works</h2>
-          <p className="flex-1 leading-wsu">
+        <div className="flex flex-none lg:w-1/2 flex-col items-center lg:items-start gap-12">
+          <h2 className="text-3xl font-extrabold">How JobFit Works</h2>
+          <p className="leading-wsu">
             When you enter the JobFit system, it intelligently monitors your
             study progress and proactively offers alternative pathways to
             maximise your acquisition of skills related to your goals.
           </p>
-          <div className="grid sm:grid-cols-2 sm:gap-x-6">
-            <div className="sm:mr-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-x-6 lg:gap-y-0">
+            <div className="">
               <JobFitFrame
                 title="Informed"
                 icon="images/ChatDots.png"
@@ -33,14 +35,14 @@ export default function MarketJobFit() {
               />
             </div>
 
-            <div className="sm:mt-6">
+            <div className="lg:mt-6">
               <JobFitFrame
                 title="Meaningful"
                 icon="images/ChatDots.png"
                 content="See your skills profile  represented visibly and how it matches against your career goal"
               />
             </div>
-            <div className="sm:mr-6">
+            <div className="">
               <JobFitFrame
                 title="Recognised"
                 icon="images/CheckCircle.png"
@@ -48,7 +50,7 @@ export default function MarketJobFit() {
               />
             </div>
 
-            <div className="sm:mt-6">
+            <div className="lg:mt-6">
               <JobFitFrame
                 title="Control"
                 icon="images/Gauge.png"
