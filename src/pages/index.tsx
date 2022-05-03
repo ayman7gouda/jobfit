@@ -1,13 +1,8 @@
-import { NextPageContext } from "next";
+import { NextPageContext } from 'next';
 
-import { Login } from "components/Auth/Login";
-import { UserInfo } from "components/Auth/UserInfo";
-import { SkillsList } from "components/SkillsList/SkillsList";
-import { getSession, useSession } from "next-auth/react";
-import Head from "next/head";
-import Landing from "pages/Landing";
-import Footer from "components/Footer";
-import JobFitFrame from "components/JobFitFrame";
+import Landing from 'components/Landing/Landing';
+import { getSession, useSession } from 'next-auth/react';
+import Head from 'next/head';
 
 export default function Home({ csrfToken }) {
   const session = useSession();

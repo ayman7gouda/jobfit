@@ -1,0 +1,11 @@
+fragment SkillCluster on SkillCluster {
+  name
+  category
+  id
+  descriptions {
+    id
+    source
+    name
+    description
+  }
+}

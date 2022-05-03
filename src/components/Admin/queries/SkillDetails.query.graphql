@@ -1,0 +1,11 @@
+query SkillDetails($id: Int) {
+  skillCluster(id: $id) {
+    ...SkillCluster
+    skills {
+      skill {
+        id
+        name
+      }
+    }
+  }
+}

@@ -9,7 +9,8 @@ generates:
       - typescript
       - typescript-resolvers
   src/generated/clientTypes.ts:
-    - typescript
+    plugins:
+      - typescript
   src/:
     preset: near-operation-file
     presetConfig:

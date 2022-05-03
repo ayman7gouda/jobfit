@@ -1,7 +1,0 @@
-query SkillsList {
-  skills {
-    id
-    name
-    description
-  }
-}

@@ -1,27 +1,51 @@
-enum SkillFramework {
-  Sfia
-  Cbok
-  Generic
-  BurningGlass
-}
-
 type Skill {
-  id: String!
   name: String!
-  description: String!
-  framework: SkillFramework!
+  clusterName: String!
+  id: Int!
+  clusters: [SkillClusters!]
 }
 
-input SkillInput {
+type SkillCluster {
   name: String!
-  description: String!
-  framework: SkillFramework!
+  category: String!
+  id: Int!
+  skills: [SkillClusters!]
+  descriptions: [SkillClusterDescription!]!
 }
 
-extend type Query {
+type SkillClusterDescription {
+  id: Int!
+  source: String!
+  name: String!
+  description: String!
+  skillCluster: SkillCluster
+  clusterId: Int!
+}
+
+input SkillClusterDescriptionInput {
+  id: Int!
+  source: String!
+  name: String!
+  description: String!
+}
+
+type SkillClusters {
+  cluster: SkillCluster
+  clusterId: Int!
+  skill: Skill
+  skillId: Int!
+}
+
+type Query {
   skills: [Skill!]!
+  skillClusters: [SkillCluster!]!
+  skillCluster(id: Int): SkillCluster
 }
 
-extend type Mutation {
-  insertSkill(skill: SkillInput): Skill
+type Mutation {
+  addDescription(clusterId: Int!): SkillCluster!
+  deleteDescription(clusterId: Int!, descriptionId: Int!): SkillCluster!
+  updateDescription(
+    description: SkillClusterDescriptionInput!
+  ): SkillClusterDescription!
 }

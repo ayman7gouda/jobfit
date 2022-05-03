@@ -1,4 +1,3 @@
-import { SkillsList } from 'components/SkillsList/SkillsList';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
@@ -14,7 +13,7 @@ export default function Month() {
       </Head>
 
       <section className="bg-gray-400 h-screen overflow-auto p-4">
-        <SkillsList />
+        {/* <SkillsList /> */}
       </section>
       <section className="flex-1 bg-red-400">Content</section>
     </div>

@@ -1,0 +1,5 @@
+mutation AddDescription($clusterId: Int!) {
+  addDescription(clusterId: $clusterId) {
+    ...SkillCluster
+  }
+}

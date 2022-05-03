@@ -21,39 +21,80 @@ export type Job = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  insertSkill?: Maybe<Skill>;
+  addDescription: SkillCluster;
+  deleteDescription: SkillCluster;
   status?: Maybe<Scalars['String']>;
+  updateDescription: SkillClusterDescription;
 };
 
 
-export type MutationInsertSkillArgs = {
-  skill?: InputMaybe<SkillInput>;
+export type MutationAddDescriptionArgs = {
+  clusterId: Scalars['Int'];
+};
+
+
+export type MutationDeleteDescriptionArgs = {
+  clusterId: Scalars['Int'];
+  descriptionId: Scalars['Int'];
+};
+
+
+export type MutationUpdateDescriptionArgs = {
+  description: SkillClusterDescriptionInput;
 };
 
 export type Query = {
   __typename?: 'Query';
   jobs: Array<Job>;
+  skillCluster?: Maybe<SkillCluster>;
+  skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
 };
 
+
+export type QuerySkillClusterArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+};
+
 export type Skill = {
   __typename?: 'Skill';
-  description: Scalars['String'];
-  framework: Scalars['String'];
-  id: Scalars['String'];
+  clusterName: Scalars['String'];
+  clusters?: Maybe<Array<SkillClusters>>;
+  id: Scalars['Int'];
   name: Scalars['String'];
 };
 
-export enum SkillFramework {
-  BurningGlass = 'BurningGlass',
-  Cbok = 'Cbok',
-  Generic = 'Generic',
-  Sfia = 'Sfia'
-}
-
-export type SkillInput = {
-  description: Scalars['String'];
-  framework: SkillFramework;
+export type SkillCluster = {
+  __typename?: 'SkillCluster';
+  category: Scalars['String'];
+  descriptions: Array<SkillClusterDescription>;
+  id: Scalars['Int'];
   name: Scalars['String'];
+  skills?: Maybe<Array<SkillClusters>>;
+};
+
+export type SkillClusterDescription = {
+  __typename?: 'SkillClusterDescription';
+  clusterId: Scalars['Int'];
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  skillCluster?: Maybe<SkillCluster>;
+  source: Scalars['String'];
+};
+
+export type SkillClusterDescriptionInput = {
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  source: Scalars['String'];
+};
+
+export type SkillClusters = {
+  __typename?: 'SkillClusters';
+  cluster?: Maybe<SkillCluster>;
+  clusterId: Scalars['Int'];
+  skill?: Maybe<Skill>;
+  skillId: Scalars['Int'];
 };
