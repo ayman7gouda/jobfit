@@ -17,9 +17,63 @@ export type Scalars = {
 
 export type Job = {
   __typename?: 'Job';
-  description: Scalars['String'];
-  id: Scalars['String'];
+  ANZSCO?: Maybe<Scalars['String']>;
+  ANZSCOCode?: Maybe<Scalars['Int']>;
+  ANZSICCode?: Maybe<Scalars['String']>;
+  BGTOcc?: Maybe<Scalars['String']>;
+  BGTOccName?: Maybe<Scalars['String']>;
+  SA4Code?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  dateText?: Maybe<Scalars['String']>;
+  domain?: Maybe<Scalars['String']>;
+  domainId?: Maybe<Scalars['String']>;
+  duplicateId?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  employer?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  intermediary?: Maybe<Scalars['String']>;
+  jobId?: Maybe<Scalars['Int']>;
+  jobReferenceId?: Maybe<Scalars['String']>;
+  jobType?: Maybe<Scalars['String']>;
+  maxAnnualSalary?: Maybe<Scalars['Float']>;
+  maxExperience?: Maybe<Scalars['Float']>;
+  maxHourlySalary?: Maybe<Scalars['Float']>;
+  maximumDegree?: Maybe<Scalars['String']>;
+  minAnnualSalary?: Maybe<Scalars['Float']>;
+  minExperience?: Maybe<Scalars['Float']>;
+  minHourlySalary?: Maybe<Scalars['Float']>;
+  minimumDegree?: Maybe<Scalars['String']>;
+  otherDegrees?: Maybe<Scalars['String']>;
+  preferredDegrees?: Maybe<Scalars['String']>;
+  region?: Maybe<Scalars['String']>;
+  requiredDegrees?: Maybe<Scalars['String']>;
+  skills: Array<JobSkills>;
+  source?: Maybe<Scalars['String']>;
+  standardMajor?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  telephone?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
+export type JobCategory = {
+  __typename?: 'JobCategory';
+  avg: Scalars['Float'];
+  count: Scalars['Int'];
+  id: Scalars['Int'];
+  max: Scalars['Float'];
+  min: Scalars['Float'];
   name: Scalars['String'];
+};
+
+export type JobSkills = {
+  __typename?: 'JobSkills';
+  job?: Maybe<Job>;
+  jobId?: Maybe<Scalars['Int']>;
+  skill?: Maybe<Skill>;
+  skillId?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -48,11 +102,17 @@ export type MutationUpdateDescriptionArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  jobs: Array<Job>;
+  jobCategories: Array<JobCategory>;
+  jobs?: Maybe<Array<Job>>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryJobsArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -79,11 +139,11 @@ export type SkillCluster = {
 
 export type SkillClusterDescription = {
   __typename?: 'SkillClusterDescription';
+  cluster?: Maybe<SkillCluster>;
   clusterId: Scalars['Int'];
   description: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  skillCluster?: Maybe<SkillCluster>;
   source: Scalars['String'];
 };
 
@@ -172,8 +232,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Job: ResolverTypeWrapper<Job>;
+  JobCategory: ResolverTypeWrapper<JobCategory>;
+  JobSkills: ResolverTypeWrapper<JobSkills>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Skill: ResolverTypeWrapper<Skill>;
@@ -187,8 +250,11 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  Float: Scalars['Float'];
   Int: Scalars['Int'];
   Job: Job;
+  JobCategory: JobCategory;
+  JobSkills: JobSkills;
   Mutation: {};
   Query: {};
   Skill: Skill;
@@ -200,9 +266,63 @@ export type ResolversParentTypes = {
 };
 
 export type JobResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Job'] = ResolversParentTypes['Job']> = {
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ANZSCO?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ANZSCOCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  ANZSICCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  BGTOcc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  BGTOccName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  SA4Code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dateText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  domain?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  domainId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  duplicateId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  employer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  intermediary?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jobId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  jobReferenceId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jobType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  maxAnnualSalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maxExperience?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maxHourlySalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maximumDegree?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  minAnnualSalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  minExperience?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  minHourlySalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  minimumDegree?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  otherDegrees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  preferredDegrees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  region?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  requiredDegrees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  skills?: Resolver<Array<ResolversTypes['JobSkills']>, ParentType, ContextType>;
+  source?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  standardMajor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  telephone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type JobCategoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobCategory'] = ResolversParentTypes['JobCategory']> = {
+  avg?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  max?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  min?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type JobSkillsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobSkills'] = ResolversParentTypes['JobSkills']> = {
+  job?: Resolver<Maybe<ResolversTypes['Job']>, ParentType, ContextType>;
+  jobId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  skill?: Resolver<Maybe<ResolversTypes['Skill']>, ParentType, ContextType>;
+  skillId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -214,7 +334,8 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  jobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
+  jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
   skillCluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType, Partial<QuerySkillClusterArgs>>;
   skillClusters?: Resolver<Array<ResolversTypes['SkillCluster']>, ParentType, ContextType>;
   skills?: Resolver<Array<ResolversTypes['Skill']>, ParentType, ContextType>;
@@ -239,11 +360,11 @@ export type SkillClusterResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type SkillClusterDescriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SkillClusterDescription'] = ResolversParentTypes['SkillClusterDescription']> = {
+  cluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType>;
   clusterId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  skillCluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType>;
   source?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -258,6 +379,8 @@ export type SkillClustersResolvers<ContextType = Context, ParentType extends Res
 
 export type Resolvers<ContextType = Context> = {
   Job?: JobResolvers<ContextType>;
+  JobCategory?: JobCategoryResolvers<ContextType>;
+  JobSkills?: JobSkillsResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Skill?: SkillResolvers<ContextType>;

@@ -1,0 +1,10 @@
+query JobCategories {
+  jobCategories {
+    name
+    id
+    count
+    avg
+    min
+    max
+  }
+}

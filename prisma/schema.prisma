@@ -7,6 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model ANZSCO {
+  id       Int     @id
+  major    Int?
+  subMajor Int?
+  minor    Int?
+  unit     Int?
+  name     String? @db.VarChar(512)
+  level    Int?
+  jobs     Job[]
+
+  @@index([major])
+  @@index([subMajor])
+  @@index([minor])
+  @@index([unit])
+}
+
+model Certification {
+  id                Int                 @id @default(autoincrement())
+  type              String
+  name              String
+  JobCertifications JobCertifications[]
+}
+
 model Job {
   id               Int                 @id @default(autoincrement())
   city             String?
@@ -36,7 +59,6 @@ model Job {
   minExperience    Float?
   maxExperience    Float?
   ANZSCOCode       Int?
-  ANZSCO           ANZSCO?             @relation(fields: [ANZSCOCode], references: [id])
   ANZSICCode       String?
   maxAnnualSalary  Float?
   maxHourlySalary  Float?
@@ -47,22 +69,11 @@ model Job {
   BGTOccName       String?
   SA4Code          String?
   jobId            Int?
+  ANZSCO           ANZSCO?             @relation(fields: [ANZSCOCode], references: [id])
   certifications   JobCertifications[]
   skills           JobSkills[]
-}
 
-model ANZSCO {
-  id    Int     @id
-  name  String? @db.VarChar(512)
-  level Int?
-  jobs  Job[]
-}
-
-model Certification {
-  id   Int                 @id @default(autoincrement())
-  type String
-  name String
-  jobs JobCertifications[]
+  @@index([ANZSCOCode], map: "Job_ANZSCOCode_fkey")
 }
 
 model JobCertifications {
@@ -75,14 +86,6 @@ model JobCertifications {
   @@index([certificationId], map: "JobCertifications_certificationId_fkey")
 }
 
-model Skill {
-  name        String
-  clusterName String
-  id          Int             @id @default(autoincrement())
-  jobs        JobSkills[]
-  clusters    SkillClusters[]
-}
-
 model JobSkills {
   jobId   Int
   skillId Int
@@ -91,6 +94,14 @@ model JobSkills {
 
   @@id([jobId, skillId])
   @@index([skillId], map: "JobSkills_skillId_fkey")
+}
+
+model Skill {
+  name        String
+  clusterName String
+  id          Int             @id @default(autoincrement())
+  skills      JobSkills[]
+  clusters    SkillClusters[]
 }
 
 model SkillCluster {
@@ -102,12 +113,12 @@ model SkillCluster {
 }
 
 model SkillClusterDescription {
-  id           Int          @id @default(autoincrement())
-  source       String
-  description  String
-  clusterId    Int
-  name         String
-  skillCluster SkillCluster @relation(fields: [clusterId], references: [id])
+  id          Int          @id @default(autoincrement())
+  source      String
+  description String
+  clusterId   Int
+  name        String
+  cluster     SkillCluster @relation(fields: [clusterId], references: [id])
 
   @@index([clusterId], map: "SkillClusterDescription_clusterId_fkey")
 }

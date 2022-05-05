@@ -14,9 +14,63 @@ export type Scalars = {
 
 export type Job = {
   __typename?: 'Job';
-  description: Scalars['String'];
-  id: Scalars['String'];
+  ANZSCO?: Maybe<Scalars['String']>;
+  ANZSCOCode?: Maybe<Scalars['Int']>;
+  ANZSICCode?: Maybe<Scalars['String']>;
+  BGTOcc?: Maybe<Scalars['String']>;
+  BGTOccName?: Maybe<Scalars['String']>;
+  SA4Code?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  dateText?: Maybe<Scalars['String']>;
+  domain?: Maybe<Scalars['String']>;
+  domainId?: Maybe<Scalars['String']>;
+  duplicateId?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  employer?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  intermediary?: Maybe<Scalars['String']>;
+  jobId?: Maybe<Scalars['Int']>;
+  jobReferenceId?: Maybe<Scalars['String']>;
+  jobType?: Maybe<Scalars['String']>;
+  maxAnnualSalary?: Maybe<Scalars['Float']>;
+  maxExperience?: Maybe<Scalars['Float']>;
+  maxHourlySalary?: Maybe<Scalars['Float']>;
+  maximumDegree?: Maybe<Scalars['String']>;
+  minAnnualSalary?: Maybe<Scalars['Float']>;
+  minExperience?: Maybe<Scalars['Float']>;
+  minHourlySalary?: Maybe<Scalars['Float']>;
+  minimumDegree?: Maybe<Scalars['String']>;
+  otherDegrees?: Maybe<Scalars['String']>;
+  preferredDegrees?: Maybe<Scalars['String']>;
+  region?: Maybe<Scalars['String']>;
+  requiredDegrees?: Maybe<Scalars['String']>;
+  skills: Array<JobSkills>;
+  source?: Maybe<Scalars['String']>;
+  standardMajor?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  telephone?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
+export type JobCategory = {
+  __typename?: 'JobCategory';
+  avg: Scalars['Float'];
+  count: Scalars['Int'];
+  id: Scalars['Int'];
+  max: Scalars['Float'];
+  min: Scalars['Float'];
   name: Scalars['String'];
+};
+
+export type JobSkills = {
+  __typename?: 'JobSkills';
+  job?: Maybe<Job>;
+  jobId?: Maybe<Scalars['Int']>;
+  skill?: Maybe<Skill>;
+  skillId?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -45,11 +99,17 @@ export type MutationUpdateDescriptionArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  jobs: Array<Job>;
+  jobCategories: Array<JobCategory>;
+  jobs?: Maybe<Array<Job>>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryJobsArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -76,11 +136,11 @@ export type SkillCluster = {
 
 export type SkillClusterDescription = {
   __typename?: 'SkillClusterDescription';
+  cluster?: Maybe<SkillCluster>;
   clusterId: Scalars['Int'];
   description: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
-  skillCluster?: Maybe<SkillCluster>;
   source: Scalars['String'];
 };
 

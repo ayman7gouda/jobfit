@@ -19,6 +19,31 @@ export function parseQuery(queryString: string) {
   }
   return query;
 }
+
+export interface Group<T> {
+  key: string;
+  values: T[];
+}
+
+export function groupByArray<T>(
+  xs: T[],
+  key: keyof T | ((e: T) => string)
+): Array<Group<T>> {
+  return xs.reduce(function (previous, current) {
+    let v = key instanceof Function ? key(current) : (current as Any)[key];
+    let el = previous.find((r) => r && r.key === v);
+    if (el) {
+      el.values.push(current);
+    } else {
+      previous.push({
+        key: v,
+        values: [current],
+      });
+    }
+    return previous;
+  }, [] as Group<T>[]);
+}
+
 export type NoUndefinedField<T> = {
   [P in keyof T]-?: Exclude<T[P], null | undefined>;
 };

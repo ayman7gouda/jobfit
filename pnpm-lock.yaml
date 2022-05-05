@@ -8,7 +8,7 @@ specifiers:
   '@graphql-codegen/typescript-operations': ^2.3.5
   '@graphql-codegen/typescript-react-apollo': ^3.2.11
   '@graphql-codegen/typescript-resolvers': ^2.6.1
-  '@prisma/client': ^3.10.0
+  '@prisma/client': ^3.13.0
   '@tailwindcss/aspect-ratio': ^0.4.0
   '@types/chart.js': ^2.9.36
   '@types/react': 17.0.2
@@ -16,6 +16,7 @@ specifiers:
   apollo-server-micro: ^3.5.0
   autoprefixer: ^10.4.4
   chart.js: ^3.7.1
+  classnames: ^2.3.1
   dotenv: ^10.0.0
   graphql: ^16.2.0
   lodash: ^4.17.21
@@ -43,6 +44,7 @@ dependencies:
   apollo-link-context: 1.0.20_graphql@16.4.0
   apollo-server-micro: 3.6.7_graphql@16.4.0+micro@9.3.4
   chart.js: 3.7.1
+  classnames: 2.3.1
   dotenv: 10.0.0
   graphql: 16.4.0
   lodash: 4.17.21
@@ -50,6 +52,7 @@ dependencies:
   micro-cors: 0.1.1
   next: 12.1.4_react-dom@17.0.2+react@17.0.2
   next-auth: 4.3.4_react-dom@17.0.2+react@17.0.2
+  prisma: 3.13.0
   react: 17.0.2
   react-chartjs-2: 4.1.0_chart.js@3.7.1+react@17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -70,7 +73,6 @@ devDependencies:
   '@types/react': 17.0.2
   autoprefixer: 10.4.7_postcss@8.4.13
   postcss: 8.4.13
-  prisma: 3.13.0
   tailwindcss: 3.0.24
   typescript: 4.6.4
 
@@ -1459,7 +1461,7 @@ packages:
   /@prisma/engines/3.13.0-17.efdf9b1183dddfd4258cd181a72125755215ab7b:
     resolution: {integrity: sha512-Ip9CcCeUocH61eXu4BUGpvl5KleQyhcUVLpWCv+0ZmDv44bFaDpREqjGHHdRupvPN/ugB6gTlD9b9ewdj02yVA==}
     requiresBuild: true
-    dev: true
+    dev: false
 
   /@protobufjs/aspromise/1.1.2:
     resolution: {integrity: sha1-m4sMxmPWaafY9vXQiToU00jzD78=}
@@ -2214,6 +2216,10 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
+
+  /classnames/2.3.1:
+    resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}
+    dev: false
 
   /cli-cursor/2.1.0:
     resolution: {integrity: sha1-s12sN2R5+sw+lHR9QdDQ9SOP/LU=}
@@ -4045,7 +4051,7 @@ packages:
     dependencies:
       '@prisma/engines': 3.13.0-17.efdf9b1183dddfd4258cd181a72125755215ab7b
       ts-pattern: 4.0.2
-    dev: true
+    dev: false
 
   /promise/7.3.1:
     resolution: {integrity: sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==}
@@ -4686,7 +4692,7 @@ packages:
 
   /ts-pattern/4.0.2:
     resolution: {integrity: sha512-eHqR/7A6fcw05vCOfnL6RwgGJbVi9G/YHTdYdjYmElhDdJ1SMn7pWs+6+YuxygaFwQS/g+cIDlu+UD8IVpur1A==}
-    dev: true
+    dev: false
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}

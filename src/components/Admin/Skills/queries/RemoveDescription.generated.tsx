@@ -1,4 +1,4 @@
-import * as Types from '../../../generated/clientTypes';
+import * as Types from '../../../../generated/clientTypes';
 
 import { gql } from '@apollo/client';
 import { SkillClusterFragmentDoc } from './SkillCluster.fragment.generated';
