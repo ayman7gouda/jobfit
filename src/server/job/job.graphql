@@ -1,9 +1,63 @@
-type Job {
-  id: String!
+type JobCategory {
+  id: Int!
   name: String!
-  description: String!
+  count: Int!
+  avg: Float!
+  min: Float!
+  max: Float!
+}
+
+type Job {
+  id: Int!
+  city: String
+  country: String
+  state: String
+  title: String
+  dateText: String
+  domain: String
+  domainId: String
+  text: String
+  url: String
+  region: String
+  employer: String
+  intermediary: String
+  email: String
+  jobReferenceId: String
+  source: String
+  telephone: String
+  duplicateId: String
+  maximumDegree: String
+  minimumDegree: String
+  otherDegrees: String
+  preferredDegrees: String
+  requiredDegrees: String
+  standardMajor: String
+  minExperience: Float
+  maxExperience: Float
+  ANZSCOCode: Int
+  ANZSCO: String
+  ANZSICCode: String
+  maxAnnualSalary: Float
+  maxHourlySalary: Float
+  minAnnualSalary: Float
+  minHourlySalary: Float
+  jobType: String
+  BGTOcc: String
+  BGTOccName: String
+  SA4Code: String
+  jobId: Int
+  # certifications:   [JobCertifications]
+  skills: [JobSkills!]!
+}
+
+type JobSkills {
+  jobId: Int
+  skillId: Int
+  skill: Skill
+  job: Job
 }
 
 extend type Query {
-  jobs: [Job!]!
+  jobCategories: [JobCategory!]!
+  jobs(id: Int!): [Job!]
 }

@@ -1,0 +1,23 @@
+query Jobs($id: Int!) {
+  jobs(id: $id) {
+    id
+    title
+    minAnnualSalary
+    dateText
+    city
+    state
+    country
+    skills {
+      skill {
+        name
+        id
+        clusters {
+          cluster {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

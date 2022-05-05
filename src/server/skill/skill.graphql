@@ -18,7 +18,7 @@ type SkillClusterDescription {
   source: String!
   name: String!
   description: String!
-  skillCluster: SkillCluster
+  cluster: SkillCluster
   clusterId: Int!
 }
 
