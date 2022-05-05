@@ -1,7 +1,7 @@
 import * as Types from '../../../../generated/clientTypes';
 
 import { gql } from '@apollo/client';
-import { SkillClusterFragmentDoc } from './SkillCluster.fragment.generated';
+import { SkillClusteredFragmentDoc } from './SkillCluster.fragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type RemoveDescriptionMutationVariables = Types.Exact<{
@@ -16,10 +16,10 @@ export type RemoveDescriptionMutation = { __typename?: 'Mutation', deleteDescrip
 export const RemoveDescriptionDocument = gql`
     mutation RemoveDescription($clusterId: Int!, $descriptionId: Int!) {
   deleteDescription(clusterId: $clusterId, descriptionId: $descriptionId) {
-    ...SkillCluster
+    ...SkillClustered
   }
 }
-    ${SkillClusterFragmentDoc}`;
+    ${SkillClusteredFragmentDoc}`;
 export type RemoveDescriptionMutationFn = Apollo.MutationFunction<RemoveDescriptionMutation, RemoveDescriptionMutationVariables>;
 
 /**

@@ -85,7 +85,7 @@ const options = {
   },
   parsing: {
     xAxisKey: "titleShort",
-    yAxisKey: "minAnnualSalary",
+    yAxisKey: "maxAnnualSalary",
   },
 };
 

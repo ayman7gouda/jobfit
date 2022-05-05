@@ -1,7 +1,7 @@
 import * as Types from '../../../../generated/clientTypes';
 
 import { gql } from '@apollo/client';
-import { SkillClusterFragmentDoc } from './SkillCluster.fragment.generated';
+import { SkillClusteredFragmentDoc } from './SkillCluster.fragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type SkillDetailsQueryVariables = Types.Exact<{
@@ -15,7 +15,7 @@ export type SkillDetailsQuery = { __typename?: 'Query', skillCluster?: { __typen
 export const SkillDetailsDocument = gql`
     query SkillDetails($id: Int) {
   skillCluster(id: $id) {
-    ...SkillCluster
+    ...SkillClustered
     skills {
       skill {
         id
@@ -24,7 +24,7 @@ export const SkillDetailsDocument = gql`
     }
   }
 }
-    ${SkillClusterFragmentDoc}`;
+    ${SkillClusteredFragmentDoc}`;
 
 /**
  * __useSkillDetailsQuery__

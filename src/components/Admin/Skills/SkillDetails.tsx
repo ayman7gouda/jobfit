@@ -79,7 +79,11 @@ export function SkillDetails() {
       </section>
       {did && description && skillCluster && (
         <section className="flex-1 p-4">
-          <SkillForm description={description} skillCluster={skillCluster} />
+          <SkillForm
+            key={did}
+            description={description}
+            skillCluster={skillCluster}
+          />
         </section>
       )}
     </div>

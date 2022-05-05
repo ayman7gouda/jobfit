@@ -19,13 +19,13 @@ export const jobResolvers: Resolvers = {
       const result = await db.job.findMany({
         where: { minAnnualSalary: { gte: 0 }, ANZSCO: filter },
         include: {
-          JobSkills: {
+          skills: {
             include: {
-              Skill: {
+              skill: {
                 include: {
-                  SkillClusters: {
+                  clusters: {
                     include: {
-                      SkillCluster: true,
+                      cluster: true,
                     },
                   },
                 },

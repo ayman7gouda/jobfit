@@ -8,7 +8,7 @@ export type JobsQueryVariables = Types.Exact<{
 }>;
 
 
-export type JobsQuery = { __typename?: 'Query', jobs?: Array<{ __typename?: 'Job', id: number, title?: string | null, minAnnualSalary?: number | null, dateText?: string | null, city?: string | null, state?: string | null, country?: string | null, skills: Array<{ __typename?: 'JobSkills', skill?: { __typename?: 'Skill', name: string, id: number, clusters?: Array<{ __typename?: 'SkillClusters', cluster?: { __typename?: 'SkillCluster', id: number, name: string } | null }> | null } | null }> }> | null };
+export type JobsQuery = { __typename?: 'Query', jobs?: Array<{ __typename?: 'Job', id: number, title?: string | null, minAnnualSalary?: number | null, maxAnnualSalary?: number | null, dateText?: string | null, city?: string | null, state?: string | null, country?: string | null, skills: Array<{ __typename?: 'JobSkills', skill?: { __typename?: 'Skill', id: number, name: string, clusters?: Array<{ __typename?: 'SkillClusters', cluster?: { __typename?: 'SkillCluster', id: number, name: string } | null }> | null } | null }> }> | null };
 
 
 export const JobsDocument = gql`
@@ -17,14 +17,15 @@ export const JobsDocument = gql`
     id
     title
     minAnnualSalary
+    maxAnnualSalary
     dateText
     city
     state
     country
     skills {
       skill {
-        name
         id
+        name
         clusters {
           cluster {
             id
