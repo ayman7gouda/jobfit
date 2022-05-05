@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SkillCategories } from 'components/Admin/SkillCategories';
+import { SkillCategories } from 'components/Admin/Skills/SkillCategories';
 import Head from 'next/head';
 
 export const Layout = ({ children }: React.PropsWithChildren<{}>) => {

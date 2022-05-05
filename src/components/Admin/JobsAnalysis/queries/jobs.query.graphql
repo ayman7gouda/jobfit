@@ -3,14 +3,15 @@ query Jobs($id: Int!) {
     id
     title
     minAnnualSalary
+    maxAnnualSalary
     dateText
     city
     state
     country
     skills {
       skill {
-        name
         id
+        name
         clusters {
           cluster {
             id

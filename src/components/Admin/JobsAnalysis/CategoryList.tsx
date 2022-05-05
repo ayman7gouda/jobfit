@@ -7,7 +7,7 @@ import { HiChevronDown, HiChevronRight, HiChevronUp, HiFilter } from 'react-icon
 
 import { JobLineChart } from './JobChart';
 import { useJobCategoriesQuery } from './queries/jobCategories.query.generated';
-import { useJobsQuery } from './queries/jobs.query.generated';
+import { JobsQuery, useJobsQuery } from './queries/jobs.query.generated';
 
 const Table = styled.table`
   th {
@@ -23,13 +23,21 @@ const Table = styled.table`
     }
   }
 
+  td {
+    vertical-align: top;
+    padding: 4px;
+  }
+
   tr:nth-child(odd) {
     background-color: aliceblue;
     color: black;
   }
 `;
 
-function Badge({ children, className }) {
+function Badge({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
   return (
     <span
       className={
@@ -202,7 +210,7 @@ function JobListContainer({ id }, { id: number }) {
     if (data == null) {
       return null;
     }
-    let processed = JSON.parse(JSON.stringify(data.jobs));
+    let processed: JobsQuery["jobs"] = JSON.parse(JSON.stringify(data.jobs));
 
     // processed =  processed.filter(
     //   (s, i) =>
@@ -216,15 +224,74 @@ function JobListContainer({ id }, { id: number }) {
     return processed;
   }, [data, loading]);
 
-  if (loading) {
-    return <div>Loading ...</div>;
+  let filtered = processed;
+
+  if (filtered) {
+    for (let key of Object.keys(filters)) {
+      if (filters[key]) {
+        filtered = filtered.filter(filters[key].filter);
+      }
+    }
   }
 
-  let filtered = processed;
-  for (let key of Object.keys(filters)) {
-    if (filters[key]) {
-      filtered = filtered.filter(filters[key].filter);
+  // do the skills breakdown
+  const skillBreakdown = useMemo(() => {
+    let clusters: Array<{
+      id: number;
+      name: string;
+      count: number;
+      skills: Array<{ id: number; name: string; count: number }>;
+    }> = [];
+
+    if (filtered == null) {
+      return clusters;
     }
+
+    for (let job of filtered) {
+      for (let skill of job.skills) {
+        for (let cluster of skill.skill.clusters) {
+          let existingCluster = clusters.find(
+            (f) => f.id === cluster.cluster.id
+          );
+          if (existingCluster == null) {
+            existingCluster = {
+              id: cluster.cluster.id,
+              name: cluster.cluster.name,
+              count: 1,
+              skills: [],
+            };
+            clusters.push(existingCluster);
+          } else {
+            existingCluster.count++;
+          }
+          let existingSkill = existingCluster.skills.find(
+            (f) => f.id === skill.skill.id
+          );
+          if (existingSkill == null) {
+            existingSkill = {
+              id: skill.skill.id,
+              name: skill.skill.name,
+              count: 1,
+            };
+            existingCluster.skills.push(existingSkill);
+          } else {
+            existingSkill.count++;
+          }
+        }
+      }
+    }
+
+    // sort top to bottom
+    clusters = clusters.sort((a, b) => (a.count < b.count ? 1 : -1));
+    clusters.forEach(
+      (c) => (c.skills = c.skills.sort((a, b) => (a.count < b.count ? 1 : -1)))
+    );
+
+    return clusters;
+  }, [filtered]);
+
+  if (loading) {
+    return <div>Loading ...</div>;
   }
 
   let sorted = filtered.sort((a, b) => {
@@ -232,9 +299,9 @@ function JobListContainer({ id }, { id: number }) {
       sortBy.type === "name"
         ? a.title.localeCompare(b.title)
         : sortBy.type === "salary"
-        ? a.minAnnualSalary < b.minAnnualSalary
+        ? a.maxAnnualSalary < b.maxAnnualSalary
           ? -1
-          : a.minAnnualSalary > b.minAnnualSalary
+          : a.maxAnnualSalary > b.maxAnnualSalary
           ? 1
           : 0
         : sortBy.type === "country"
@@ -243,7 +310,7 @@ function JobListContainer({ id }, { id: number }) {
         ? (a.state || "").localeCompare(b.state || "")
         : (a.city || "").localeCompare(b.city || "");
     if (first == 0) {
-      first = a.minAnnualSalary < b.minAnnualSalary ? -1 : 1;
+      first = a.maxAnnualSalary < b.maxAnnualSalary ? -1 : 1;
     }
     if (!sortBy.ascending) {
       first = first * -1;
@@ -273,8 +340,8 @@ function JobListContainer({ id }, { id: number }) {
           max,
           filter: (a) => {
             return (
-              (!min || a.minAnnualSalary > min) &&
-              (!max || max > a.minAnnualSalary)
+              (!min || a.maxAnnualSalary > min) &&
+              (!max || max > a.maxAnnualSalary)
             );
           },
         },
@@ -288,142 +355,187 @@ function JobListContainer({ id }, { id: number }) {
         key={id}
         info={{
           id: 1,
-          career: "Software Developer",
-          description:
-            "Systems developers design, develop, test, maintain and document program code in accordance with user requirements, and system and technical specifications.",
+
           chartData: {
-            // labels: sorted.map(
-            //   (j) =>
-            //     j.title.substring(0, 30) + (j.title.length > 30 ? "..." : "")
-            // ),
             data: sorted,
           },
         }}
       />
-      <div className="flex">
-        <Table className="w-full">
-          <thead>
-            <tr>
-              <SortIndicator
-                name="name"
-                label="Name"
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-              />
-              <SortIndicator
-                name="salary"
-                label="Salary $"
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-                filters={filters}
-                filterVisible={filterVisible}
-                setFilterVisible={setFilterVisible}
-                Filter={() => (
-                  <>
-                    <label htmlFor="min">Min: </label>
-                    <input
-                      name="min"
-                      type="number"
-                      defaultValue={0}
-                      value={filters.salary?.min || 0}
-                      step={1000}
-                      placeholder="Minimum Salary $"
-                      onChange={(e) =>
-                        setSalary(parseInt(e.currentTarget.value), undefined)
-                      }
+      <div className="flex p-4">
+        <div>
+          <Table className="w-full">
+            <thead>
+              <tr>
+                <SortIndicator
+                  name="name"
+                  label="Name"
+                  setSortBy={setSortBy}
+                  sortBy={sortBy}
+                />
+                <SortIndicator
+                  name="salary"
+                  label="Salary $"
+                  setSortBy={setSortBy}
+                  sortBy={sortBy}
+                  filters={filters}
+                  filterVisible={filterVisible}
+                  setFilterVisible={setFilterVisible}
+                  Filter={() => (
+                    <>
+                      <label htmlFor="min">Min: </label>
+                      <input
+                        name="min"
+                        type="number"
+                        defaultValue={0}
+                        value={filters.salary?.min || 0}
+                        step={1000}
+                        placeholder="Minimum Salary $"
+                        onChange={(e) =>
+                          setSalary(parseInt(e.currentTarget.value), undefined)
+                        }
+                      />
+                      <label htmlFor="max">Max: </label>
+                      <input
+                        name="max"
+                        defaultValue={0}
+                        value={filters.salary?.max || 0}
+                        step={1000}
+                        type="number"
+                        placeholder="Maximum Salary $"
+                        onChange={(e) =>
+                          setSalary(undefined, parseInt(e.currentTarget.value))
+                        }
+                      />
+                    </>
+                  )}
+                />
+                <SortIndicator
+                  name="country"
+                  label="Country"
+                  setSortBy={setSortBy}
+                  sortBy={sortBy}
+                  filters={filters}
+                  filterVisible={filterVisible}
+                  setFilterVisible={setFilterVisible}
+                  Filter={() => (
+                    <SelectFilter
+                      filters={filters}
+                      options={groupByArray(sorted, "country").map((t) => ({
+                        value: t.key,
+                        text: t.key,
+                      }))}
+                      setFilterVisible={setFilterVisible}
+                      setFilters={setFilters}
+                      name="country"
                     />
-                    <label htmlFor="max">Max: </label>
-                    <input
-                      name="max"
-                      defaultValue={0}
-                      value={filters.salary?.max || 0}
-                      step={1000}
-                      type="number"
-                      placeholder="Maximum Salary $"
-                      onChange={(e) =>
-                        setSalary(undefined, parseInt(e.currentTarget.value))
-                      }
+                  )}
+                />
+                <SortIndicator
+                  name="state"
+                  label="State"
+                  setSortBy={setSortBy}
+                  sortBy={sortBy}
+                  filters={filters}
+                  filterVisible={filterVisible}
+                  setFilterVisible={setFilterVisible}
+                  Filter={() => (
+                    <SelectFilter
+                      filters={filters}
+                      options={groupByArray(sorted, "state").map((t) => ({
+                        value: t.key,
+                        text: t.key,
+                      }))}
+                      setFilterVisible={setFilterVisible}
+                      setFilters={setFilters}
+                      name="state"
                     />
-                  </>
-                )}
-              />
-              <SortIndicator
-                name="country"
-                label="Country"
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-                filters={filters}
-                filterVisible={filterVisible}
-                setFilterVisible={setFilterVisible}
-                Filter={() => (
-                  <SelectFilter
-                    filters={filters}
-                    options={groupByArray(sorted, "country").map((t) => ({
-                      value: t.key,
-                      text: t.key,
-                    }))}
-                    setFilterVisible={setFilterVisible}
-                    setFilters={setFilters}
-                    name="country"
-                  />
-                )}
-              />
-              <SortIndicator
-                name="state"
-                label="State"
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-                filters={filters}
-                filterVisible={filterVisible}
-                setFilterVisible={setFilterVisible}
-                Filter={() => (
-                  <SelectFilter
-                    filters={filters}
-                    options={groupByArray(sorted, "state").map((t) => ({
-                      value: t.key,
-                      text: t.key,
-                    }))}
-                    setFilterVisible={setFilterVisible}
-                    setFilters={setFilters}
-                    name="state"
-                  />
-                )}
-              />
-              <SortIndicator
-                name="city"
-                label="City"
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-                filters={filters}
-                filterVisible={filterVisible}
-                setFilterVisible={setFilterVisible}
-                Filter={() => (
-                  <SelectFilter
-                    filters={filters}
-                    options={groupByArray(sorted, "city").map((t) => ({
-                      value: t.key,
-                      text: t.key,
-                    }))}
-                    setFilterVisible={setFilterVisible}
-                    setFilters={setFilters}
-                    name="city"
-                  />
-                )}
-              />
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((j, i) => (
-              <tr key={j.id}>
-                <td>{j.title}</td>
-                <td>{j.minAnnualSalary}$</td>
-                <td>{j.country}</td>
-                <td>{j.state}</td>
-                <td>{j.city}</td>
+                  )}
+                />
+                <SortIndicator
+                  name="city"
+                  label="City"
+                  setSortBy={setSortBy}
+                  sortBy={sortBy}
+                  filters={filters}
+                  filterVisible={filterVisible}
+                  setFilterVisible={setFilterVisible}
+                  Filter={() => (
+                    <SelectFilter
+                      filters={filters}
+                      options={groupByArray(sorted, "city").map((t) => ({
+                        value: t.key,
+                        text: t.key,
+                      }))}
+                      setFilterVisible={setFilterVisible}
+                      setFilters={setFilters}
+                      name="city"
+                    />
+                  )}
+                />
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {sorted.map((j, i) => (
+                <tr key={j.id}>
+                  <td>
+                    <div
+                      role="button"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (filters.item && filters.item.id === j.id) {
+                          setFilters({ ...filters, item: null });
+                        } else {
+                          setFilters({
+                            ...filters,
+                            item: {
+                              id: j.id,
+                              filter: (b) => b.id === j.id,
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      {j.title}
+                    </div>
+                  </td>
+                  <td>{j.maxAnnualSalary} $</td>
+                  <td>{j.country}</td>
+                  <td>{j.state}</td>
+                  <td>{j.city}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+
+        <div>
+          <Table className="w-full ml-4">
+            <thead>
+              <tr>
+                <th>Cluster</th>
+                <th>Skill</th>
+              </tr>
+            </thead>
+            <tbody>
+              {skillBreakdown.map((s) => (
+                <React.Fragment key={s.id}>
+                  <tr>
+                    <td>
+                      <Badge>{s.count}</Badge> {s.name}
+                    </td>
+                    <td>
+                      {s.skills.map((sk) => (
+                        <div role="list-item" key={sk.id}>
+                          <Badge>{sk.count}</Badge> {sk.name}
+                        </div>
+                      ))}
+                    </td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </div>
     </div>
   );

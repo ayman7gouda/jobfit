@@ -115,7 +115,7 @@ model SkillCluster {
 model SkillClusterDescription {
   id          Int          @id @default(autoincrement())
   source      String
-  description String
+  description String       @db.Text
   clusterId   Int
   name        String
   cluster     SkillCluster @relation(fields: [clusterId], references: [id])

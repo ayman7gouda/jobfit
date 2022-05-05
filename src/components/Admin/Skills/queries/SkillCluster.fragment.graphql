@@ -1,4 +1,4 @@
-fragment SkillCluster on SkillCluster {
+fragment SkillClustered on SkillCluster {
   name
   category
   id

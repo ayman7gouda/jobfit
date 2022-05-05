@@ -1,7 +1,7 @@
 import * as Types from '../../../../generated/clientTypes';
 
 import { gql } from '@apollo/client';
-import { SkillClusterFragmentDoc } from './SkillCluster.fragment.generated';
+import { SkillClusteredFragmentDoc } from './SkillCluster.fragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type AddDescriptionMutationVariables = Types.Exact<{
@@ -15,10 +15,10 @@ export type AddDescriptionMutation = { __typename?: 'Mutation', addDescription: 
 export const AddDescriptionDocument = gql`
     mutation AddDescription($clusterId: Int!) {
   addDescription(clusterId: $clusterId) {
-    ...SkillCluster
+    ...SkillClustered
   }
 }
-    ${SkillClusterFragmentDoc}`;
+    ${SkillClusteredFragmentDoc}`;
 export type AddDescriptionMutationFn = Apollo.MutationFunction<AddDescriptionMutation, AddDescriptionMutationVariables>;
 
 /**

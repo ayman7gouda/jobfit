@@ -5,15 +5,14 @@
     "build": "next build",
     "start": "next start",
     "gql": "graphql-codegen --config codegen.yml",
-    "prisma": "prisma generate",
-    "migrate": "prisma migrate dev",
-    "reset": "prisma migrate reset && pnpm seed",
-    "seed": "ts-node ./src/server/seed.ts"
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset && pnpm seed",
+    "db:seed": "ts-node ./src/server/seed.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
     "@prisma/client": "^3.13.0",
-    "@types/chart.js": "^2.9.36",
     "apollo-link-context": "^1.0.20",
     "apollo-server-micro": "^3.5.0",
     "chart.js": "^3.7.1",
@@ -44,6 +43,7 @@
     "@graphql-codegen/typescript-resolvers": "^2.6.1",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@types/react": "17.0.2",
+    "@types/chart.js": "^2.9.36",
     "autoprefixer": "^10.4.4",
     "postcss": "^8.4.12",
     "tailwindcss": "^3.0.23",
