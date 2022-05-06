@@ -8,12 +8,14 @@ const isServer = typeof window === "undefined";
 const windowApolloState =
   !isServer && (window.__NEXT_DATA__ as any).apolloState;
 
+let ROOT_URL = process.env.ROOT_URL || "http://localhost:3000";
+let GRAPHQL_ENDPOINT = ROOT_URL + "/api/graphql";
 let CLIENT;
 
 export function getApolloClient(req?: NextRequest, forceNew?: boolean) {
   if (!CLIENT || forceNew) {
     const httpLink = createHttpLink({
-      uri: "http://localhost:3000/api/graphql",
+      uri: GRAPHQL_ENDPOINT,
       credentials: "include",
     });
 

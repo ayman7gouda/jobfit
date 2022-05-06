@@ -6,6 +6,7 @@ module.exports = {
       env: {
         PORT: "3014",
         DATABASE_URL: "*",
+        ROOT_URL: "http://jobfit.trescak.co",
       },
     },
   ],
