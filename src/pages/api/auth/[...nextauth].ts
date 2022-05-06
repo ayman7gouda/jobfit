@@ -21,6 +21,7 @@ export default NextAuth({
     // verifyRequest: '/auth/verify-request', // (used for check email message)
     newUser: "/auth/register", // New users will be directed here on first sign in (leave the property out if not of interest)
   },
+  secret: process.env.SECRET,
   providers: [
     /* EmailProvider({
          server: process.env.EMAIL_SERVER,
