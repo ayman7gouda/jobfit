@@ -8,7 +8,11 @@ const isServer = typeof window === "undefined";
 const windowApolloState =
   !isServer && (window.__NEXT_DATA__ as any).apolloState;
 
-let ROOT_URL = process.env.NEXT_PUBLIC_ROOT_URL || "http://localhost:3000";
+let ROOT_URL =
+  process.env.NEXT_PUBLIC_ROOT_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "http://jobfit.trescak.co"
+    : "http://localhost:3000");
 let GRAPHQL_ENDPOINT = ROOT_URL + "/api/graphql";
 let CLIENT;
 
