@@ -572,6 +572,10 @@ export function CategoryListContainer() {
     return <div>Loading ...</div>;
   }
 
+  if (data == null) {
+    return <div>No Data</div>;
+  }
+
   let levels = data.jobCategories
     .filter((c) => c.id <= 10)
     .map((i) => ({
