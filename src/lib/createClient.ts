@@ -10,7 +10,7 @@ const windowApolloState =
 
 let CLIENT;
 
-export function getApolloClient(req: NextRequest, forceNew?: boolean) {
+export function getApolloClient(req?: NextRequest, forceNew?: boolean) {
   if (!CLIENT || forceNew) {
     const httpLink = createHttpLink({
       uri: "http://localhost:3000/api/graphql",

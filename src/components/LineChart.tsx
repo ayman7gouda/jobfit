@@ -114,7 +114,9 @@ function LineChart({ info }) {
     return null;
   }
 
-  return <Line ref={chartRef} options={options} data={chartData} />;
+  return (
+    <Line ref={chartRef as any} options={options} data={chartData as any} />
+  );
 }
 
 export default LineChart;
