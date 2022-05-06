@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
-@import url('//db.onlinewebfonts.com/c/189f4145fdcc733b786c5689b01500da?family=Chronicle+Text+G1');
+/* @import url('https://db.onlinewebfonts.com/c/189f4145fdcc733b786c5689b01500da?family=Chronicle+Text+G1'); */
+
+@font-face {font-family: "Chronicle Text G1";
+  src: url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.eot"); /* IE9*/
+  src: url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+  url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.woff2") format("woff2"), /* chrome firefox */
+  url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.woff") format("woff"), /* chrome firefox */
+  url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.ttf") format("truetype"), /* chrome firefox opera Safari, Android, iOS 4.2+*/
+  url("https://db.onlinewebfonts.com/t/189f4145fdcc733b786c5689b01500da.svg#Chronicle Text G1") format("svg"); /* iOS 4.1- */
+}
 
 @tailwind base;
 @tailwind components;
