@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
-    "@prisma/client": "^3.13.0",
+    "@prisma/client": "^3.14.0",
+    "@tailwindcss/forms": "^0.5.1",
     "apollo-link-context": "^1.0.20",
     "apollo-server-micro": "^3.5.0",
     "chart.js": "^3.7.1",
@@ -25,13 +26,12 @@
     "micro-cors": "^0.1.1",
     "next": "12.1.4",
     "next-auth": "^4.2.1",
-    "prisma": "^3.13.0",
+    "prisma": "^3.14.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.1.0",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.30.0",
     "react-icons": "^4.3.1",
-    "styled-components": "^5.3.3",
     "tailwindcss-gradient": "^1.0.1",
     "tw-elements": "^1.0.0-alpha12"
   },
@@ -43,10 +43,11 @@
     "@graphql-codegen/typescript-react-apollo": "^3.2.11",
     "@graphql-codegen/typescript-resolvers": "^2.6.1",
     "@tailwindcss/aspect-ratio": "^0.4.0",
-    "@types/react": "17.0.2",
     "@types/chart.js": "^2.9.36",
+    "@types/react": "17.0.2",
     "autoprefixer": "^10.4.4",
     "postcss": "^8.4.12",
+    "sass": "^1.51.0",
     "tailwindcss": "^3.0.23",
     "typescript": "latest"
   }

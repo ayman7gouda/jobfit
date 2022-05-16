@@ -99,9 +99,10 @@ model JobSkills {
 model Skill {
   name        String
   clusterName String
-  id          Int             @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   skills      JobSkills[]
   clusters    SkillClusters[]
+  subjects    SubjectBgSkill[]
 }
 
 model SkillCluster {
@@ -110,6 +111,7 @@ model SkillCluster {
   id           Int                       @id @default(autoincrement())
   descriptions SkillClusterDescription[]
   skills       SkillClusters[]
+  subjects     SubjectBgCluster[]
 }
 
 model SkillClusterDescription {
@@ -129,6 +131,105 @@ model SkillClusters {
   cluster   SkillCluster @relation(fields: [clusterId], references: [id])
   skill     Skill        @relation(fields: [skillId], references: [id])
 
+
   @@id([clusterId, skillId])
   @@index([skillId], map: "SkillClusters_skillId_fkey")
+}
+
+// Skills
+
+model Subject {
+  id            Int                @id @default(autoincrement())
+  code          String
+  name          String             @db.VarChar(1024)
+  sfia          SubjectSfiaSkill[]
+  skills        SubjectBgCluster[]
+  sfiaEstimates SfiaEstimate[]
+  handbook      String             @db.Text
+  los           String             @db.Text
+  losIntro      String             @db.Text
+  readingList   String             @db.Text
+
+  @@index([code])
+}
+
+model SfiaSkill {
+  id               Int                @id @default(autoincrement())
+  code             String
+  description      String             @db.Text
+  guidance         String             @db.Text
+  version          Int
+  levels           SfiaLevel[]
+  subjects         SubjectSfiaSkill[]
+  subjectEstimates SfiaEstimate[]
+
+  @@index([code])
+}
+
+model SfiaLevel {
+  id          Int       @id @default(autoincrement())
+  level       Int
+  description String    @db.Text
+  skillId     Int
+  skill       SfiaSkill @relation(fields: [skillId], references: [id])
+}
+
+model SfiaEstimate {
+  id        Int       @id @default(autoincrement())
+  subjectId Int
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  sfiaId    Int
+  sfia      SfiaSkill @relation(fields: [sfiaId], references: [id])
+  overall   Float
+  l1        Float?
+  l2        Float?
+  l3        Float?
+  l4        Float?
+  l5        Float?
+  l6        Float?
+  l7        Float?
+  rank      Float?
+}
+
+// model BgEstimate {
+//   id        Int       @id @default(autoincrement())
+//   subjectId Int
+//   subject   Subject   @relation(fields: [subjectId], references: [id])
+//   clusterId    Int
+//   cluster      SkillCluster @relation(fields: [clusterId], references: [id])
+//   overall   Float
+//   skills        BgEstimateSkill[]
+// }
+
+// model BgEstimateSkill {
+//   bgEstimateId Int
+//   bgEstimate
+// }
+
+model SubjectSfiaSkill {
+  id          Int       @id @default(autoincrement())
+  subjectId   Int
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  sfiaId      String
+  sfia        SfiaSkill @relation(fields: [sfiaSkillId], references: [code])
+  level       Int
+  sfiaSkillId String
+}
+
+model SubjectBgCluster {
+  id        Int              @id @default(autoincrement())
+  subjectId Int
+  subject   Subject          @relation(fields: [subjectId], references: [id])
+  clusterId Int
+  cluster   SkillCluster     @relation(fields: [clusterId], references: [id])
+  skills    SubjectBgSkill[]
+}
+
+model SubjectBgSkill {
+  clusterId Int
+  skillId   Int
+  cluster   SubjectBgCluster @relation(fields: [clusterId], references: [id])
+  skill     Skill            @relation(fields: [skillId], references: [id])
+
+  @@id([clusterId, skillId])
 }

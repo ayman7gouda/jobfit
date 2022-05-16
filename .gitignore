@@ -12,6 +12,8 @@
 /.next/
 /out/
 
+/imports
+
 # production
 /build
 

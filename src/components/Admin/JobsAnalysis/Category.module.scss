@@ -1,0 +1,25 @@
+.table {
+  width: 100%;
+  th {
+    text-align: left;
+    background-color: orange;
+    padding: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    svg {
+      display: inline-block;
+      margin-left: 5px;
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: 4px;
+  }
+
+  tr:nth-child(odd) {
+    background-color: aliceblue;
+    color: black;
+  }
+}
