@@ -1,0 +1,84 @@
+type Subject {
+  id: Int!
+  code: String!
+  name: String!
+  sfia: [SubjectSfiaSkill!]
+  skills: [SubjectBgCluster!]
+  sfiaEstimates: [SfiaEstimate!]
+  handbook: String!
+  los: String!
+  losIntro: String!
+  readingList: String!
+}
+
+type SfiaSkill {
+  id: Int!
+  code: String!
+  description: String!
+  guidance: String!
+  version: Int!
+  levels: [SfiaLevel!]
+  subjects: [SubjectSfiaSkill!]
+  subjectEstimates: [SfiaEstimate!]
+}
+
+type SfiaLevel {
+  id: Int
+  level: Int
+  description: String
+  skillId: Int
+  skill: SfiaSkill
+}
+
+type SfiaEstimate {
+  id: Int!
+  subjectId: Int!
+  subject: Subject
+  sfiaId: Int!
+  sfia: SfiaSkill
+  overall: Float!
+  l1: Float
+  l2: Float
+  l3: Float
+  l4: Float
+  l5: Float
+  l6: Float
+  l7: Float
+  rank: Float
+}
+
+type SubjectSfiaSkill {
+  id: Int!
+  subjectId: Int!
+  subject: Subject
+  sfiaId: Int!
+  sfia: SfiaSkill
+  level: Int!
+}
+
+type SubjectBgCluster {
+  id: Int!
+  subjectId: Int!
+  subject: Subject!
+  clusterId: Int!
+  cluster: SkillCluster!
+  skills: [SubjectBgSkill!]
+}
+
+type SubjectBgSkill {
+  clusterId: Int!
+  skillId: Int!
+  cluster: SubjectBgCluster
+  skill: Skill
+}
+
+type Query {
+  sfia(id: Int!): SfiaSkill
+  findSubject(query: String!): [Subject!]!
+  subjectEstimates(id: Int!): [SfiaEstimate!]!
+  subjectSfia(id: Int!): [SubjectSfiaSkill!]!
+}
+
+type Mutation {
+  saveSubjectSfia(subjectId: Int!, sfiaId: Int!, level: Int!): SubjectSfiaSkill
+}

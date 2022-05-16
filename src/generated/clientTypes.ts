@@ -77,6 +77,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDescription: SkillCluster;
   deleteDescription: SkillCluster;
+  saveSubjectSfia?: Maybe<SubjectSfiaSkill>;
   status?: Maybe<Scalars['String']>;
   updateDescription: SkillClusterDescription;
 };
@@ -93,18 +94,34 @@ export type MutationDeleteDescriptionArgs = {
 };
 
 
+export type MutationSaveSubjectSfiaArgs = {
+  level: Scalars['Int'];
+  sfiaId: Scalars['Int'];
+  subjectId: Scalars['Int'];
+};
+
+
 export type MutationUpdateDescriptionArgs = {
   description: SkillClusterDescriptionInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  findSubject: Array<Subject>;
   jobCategories: Array<JobCategory>;
   jobs?: Maybe<Array<Job>>;
+  sfia?: Maybe<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
+  subjectEstimates: Array<SfiaEstimate>;
+  subjectSfia: Array<SubjectSfiaSkill>;
+};
+
+
+export type QueryFindSubjectArgs = {
+  query: Scalars['String'];
 };
 
 
@@ -113,8 +130,62 @@ export type QueryJobsArgs = {
 };
 
 
+export type QuerySfiaArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QuerySkillClusterArgs = {
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySubjectEstimatesArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QuerySubjectSfiaArgs = {
+  id: Scalars['Int'];
+};
+
+export type SfiaEstimate = {
+  __typename?: 'SfiaEstimate';
+  id: Scalars['Int'];
+  l1?: Maybe<Scalars['Float']>;
+  l2?: Maybe<Scalars['Float']>;
+  l3?: Maybe<Scalars['Float']>;
+  l4?: Maybe<Scalars['Float']>;
+  l5?: Maybe<Scalars['Float']>;
+  l6?: Maybe<Scalars['Float']>;
+  l7?: Maybe<Scalars['Float']>;
+  overall: Scalars['Float'];
+  rank?: Maybe<Scalars['Float']>;
+  sfia?: Maybe<SfiaSkill>;
+  sfiaId: Scalars['Int'];
+  subject?: Maybe<Subject>;
+  subjectId: Scalars['Int'];
+};
+
+export type SfiaLevel = {
+  __typename?: 'SfiaLevel';
+  description?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  level?: Maybe<Scalars['Int']>;
+  skill?: Maybe<SfiaSkill>;
+  skillId?: Maybe<Scalars['Int']>;
+};
+
+export type SfiaSkill = {
+  __typename?: 'SfiaSkill';
+  code: Scalars['String'];
+  description: Scalars['String'];
+  guidance: Scalars['String'];
+  id: Scalars['Int'];
+  levels?: Maybe<Array<SfiaLevel>>;
+  subjectEstimates?: Maybe<Array<SfiaEstimate>>;
+  subjects?: Maybe<Array<SubjectSfiaSkill>>;
+  version: Scalars['Int'];
 };
 
 export type Skill = {
@@ -157,4 +228,46 @@ export type SkillClusters = {
   clusterId: Scalars['Int'];
   skill?: Maybe<Skill>;
   skillId: Scalars['Int'];
+};
+
+export type Subject = {
+  __typename?: 'Subject';
+  code: Scalars['String'];
+  handbook: Scalars['String'];
+  id: Scalars['Int'];
+  los: Scalars['String'];
+  losIntro: Scalars['String'];
+  name: Scalars['String'];
+  readingList: Scalars['String'];
+  sfia?: Maybe<Array<SubjectSfiaSkill>>;
+  sfiaEstimates?: Maybe<Array<SfiaEstimate>>;
+  skills?: Maybe<Array<SubjectBgCluster>>;
+};
+
+export type SubjectBgCluster = {
+  __typename?: 'SubjectBgCluster';
+  cluster: SkillCluster;
+  clusterId: Scalars['Int'];
+  id: Scalars['Int'];
+  skills?: Maybe<Array<SubjectBgSkill>>;
+  subject: Subject;
+  subjectId: Scalars['Int'];
+};
+
+export type SubjectBgSkill = {
+  __typename?: 'SubjectBgSkill';
+  cluster?: Maybe<SubjectBgCluster>;
+  clusterId: Scalars['Int'];
+  skill?: Maybe<Skill>;
+  skillId: Scalars['Int'];
+};
+
+export type SubjectSfiaSkill = {
+  __typename?: 'SubjectSfiaSkill';
+  id: Scalars['Int'];
+  level: Scalars['Int'];
+  sfia?: Maybe<SfiaSkill>;
+  sfiaId: Scalars['Int'];
+  subject?: Maybe<Subject>;
+  subjectId: Scalars['Int'];
 };
