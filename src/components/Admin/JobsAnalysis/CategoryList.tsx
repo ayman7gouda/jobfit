@@ -1,38 +1,19 @@
-import React, { useMemo, useState } from 'react';
-import styled from 'styled-components';
+import classNames from "classnames";
+import React, { useMemo, useState } from "react";
 
-import { JobCategory } from 'generated/serverTypes';
-import { groupByArray } from 'lib/utils';
-import { HiChevronDown, HiChevronRight, HiChevronUp, HiFilter } from 'react-icons/hi';
+import { JobCategory } from "generated/serverTypes";
+import { groupByArray } from "lib/utils";
+import {
+  HiChevronDown,
+  HiChevronRight,
+  HiChevronUp,
+  HiFilter,
+} from "react-icons/hi";
 
-import { JobLineChart } from './JobChart';
-import { useJobCategoriesQuery } from './queries/jobCategories.query.generated';
-import { JobsQuery, useJobsQuery } from './queries/jobs.query.generated';
-
-const Table = styled.table`
-  th {
-    text-align: left;
-    background-color: orange;
-    padding: 4px;
-    white-space: nowrap;
-    cursor: pointer;
-
-    svg {
-      display: inline-block;
-      margin-left: 5px;
-    }
-  }
-
-  td {
-    vertical-align: top;
-    padding: 4px;
-  }
-
-  tr:nth-child(odd) {
-    background-color: aliceblue;
-    color: black;
-  }
-`;
+import styles from "./Category.module.scss";
+import { JobLineChart } from "./JobChart";
+import { useJobCategoriesQuery } from "./queries/jobCategories.query.generated";
+import { JobsQuery, useJobsQuery } from "./queries/jobs.query.generated";
 
 function Badge({
   children,
@@ -363,7 +344,7 @@ function JobListContainer({ id }, { id: number }) {
       />
       <div className="flex p-4">
         <div>
-          <Table className="w-full">
+          <table className={styles.table}>
             <thead>
               <tr>
                 <SortIndicator
@@ -505,11 +486,11 @@ function JobListContainer({ id }, { id: number }) {
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </table>
         </div>
 
         <div>
-          <Table className="w-full ml-4">
+          <table className={classNames(styles.table, "ml-4")}>
             <thead>
               <tr>
                 <th>Cluster</th>
@@ -534,7 +515,7 @@ function JobListContainer({ id }, { id: number }) {
                 </React.Fragment>
               ))}
             </tbody>
-          </Table>
+          </table>
         </div>
       </div>
     </div>
