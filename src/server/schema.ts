@@ -13,4 +13,5 @@ export const typeDefs = [
   readGql("./shared/schema.graphql"),
   readGql("./job/job.graphql"),
   readGql("./skill/skill.graphql"),
+  readGql("./subject/subject.graphql"),
 ];

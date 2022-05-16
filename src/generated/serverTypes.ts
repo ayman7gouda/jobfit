@@ -80,6 +80,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDescription: SkillCluster;
   deleteDescription: SkillCluster;
+  saveSubjectSfia?: Maybe<SubjectSfiaSkill>;
   status?: Maybe<Scalars['String']>;
   updateDescription: SkillClusterDescription;
 };
@@ -96,18 +97,34 @@ export type MutationDeleteDescriptionArgs = {
 };
 
 
+export type MutationSaveSubjectSfiaArgs = {
+  level: Scalars['Int'];
+  sfiaId: Scalars['Int'];
+  subjectId: Scalars['Int'];
+};
+
+
 export type MutationUpdateDescriptionArgs = {
   description: SkillClusterDescriptionInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  findSubject: Array<Subject>;
   jobCategories: Array<JobCategory>;
   jobs?: Maybe<Array<Job>>;
+  sfia?: Maybe<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
+  subjectEstimates: Array<SfiaEstimate>;
+  subjectSfia: Array<SubjectSfiaSkill>;
+};
+
+
+export type QueryFindSubjectArgs = {
+  query: Scalars['String'];
 };
 
 
@@ -116,8 +133,62 @@ export type QueryJobsArgs = {
 };
 
 
+export type QuerySfiaArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QuerySkillClusterArgs = {
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySubjectEstimatesArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QuerySubjectSfiaArgs = {
+  id: Scalars['Int'];
+};
+
+export type SfiaEstimate = {
+  __typename?: 'SfiaEstimate';
+  id: Scalars['Int'];
+  l1?: Maybe<Scalars['Float']>;
+  l2?: Maybe<Scalars['Float']>;
+  l3?: Maybe<Scalars['Float']>;
+  l4?: Maybe<Scalars['Float']>;
+  l5?: Maybe<Scalars['Float']>;
+  l6?: Maybe<Scalars['Float']>;
+  l7?: Maybe<Scalars['Float']>;
+  overall: Scalars['Float'];
+  rank?: Maybe<Scalars['Float']>;
+  sfia?: Maybe<SfiaSkill>;
+  sfiaId: Scalars['Int'];
+  subject?: Maybe<Subject>;
+  subjectId: Scalars['Int'];
+};
+
+export type SfiaLevel = {
+  __typename?: 'SfiaLevel';
+  description?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  level?: Maybe<Scalars['Int']>;
+  skill?: Maybe<SfiaSkill>;
+  skillId?: Maybe<Scalars['Int']>;
+};
+
+export type SfiaSkill = {
+  __typename?: 'SfiaSkill';
+  code: Scalars['String'];
+  description: Scalars['String'];
+  guidance: Scalars['String'];
+  id: Scalars['Int'];
+  levels?: Maybe<Array<SfiaLevel>>;
+  subjectEstimates?: Maybe<Array<SfiaEstimate>>;
+  subjects?: Maybe<Array<SubjectSfiaSkill>>;
+  version: Scalars['Int'];
 };
 
 export type Skill = {
@@ -160,6 +231,48 @@ export type SkillClusters = {
   clusterId: Scalars['Int'];
   skill?: Maybe<Skill>;
   skillId: Scalars['Int'];
+};
+
+export type Subject = {
+  __typename?: 'Subject';
+  code: Scalars['String'];
+  handbook: Scalars['String'];
+  id: Scalars['Int'];
+  los: Scalars['String'];
+  losIntro: Scalars['String'];
+  name: Scalars['String'];
+  readingList: Scalars['String'];
+  sfia?: Maybe<Array<SubjectSfiaSkill>>;
+  sfiaEstimates?: Maybe<Array<SfiaEstimate>>;
+  skills?: Maybe<Array<SubjectBgCluster>>;
+};
+
+export type SubjectBgCluster = {
+  __typename?: 'SubjectBgCluster';
+  cluster: SkillCluster;
+  clusterId: Scalars['Int'];
+  id: Scalars['Int'];
+  skills?: Maybe<Array<SubjectBgSkill>>;
+  subject: Subject;
+  subjectId: Scalars['Int'];
+};
+
+export type SubjectBgSkill = {
+  __typename?: 'SubjectBgSkill';
+  cluster?: Maybe<SubjectBgCluster>;
+  clusterId: Scalars['Int'];
+  skill?: Maybe<Skill>;
+  skillId: Scalars['Int'];
+};
+
+export type SubjectSfiaSkill = {
+  __typename?: 'SubjectSfiaSkill';
+  id: Scalars['Int'];
+  level: Scalars['Int'];
+  sfia?: Maybe<SfiaSkill>;
+  sfiaId: Scalars['Int'];
+  subject?: Maybe<Subject>;
+  subjectId: Scalars['Int'];
 };
 
 
@@ -239,12 +352,19 @@ export type ResolversTypes = {
   JobSkills: ResolverTypeWrapper<JobSkills>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  SfiaEstimate: ResolverTypeWrapper<SfiaEstimate>;
+  SfiaLevel: ResolverTypeWrapper<SfiaLevel>;
+  SfiaSkill: ResolverTypeWrapper<SfiaSkill>;
   Skill: ResolverTypeWrapper<Skill>;
   SkillCluster: ResolverTypeWrapper<SkillCluster>;
   SkillClusterDescription: ResolverTypeWrapper<SkillClusterDescription>;
   SkillClusterDescriptionInput: SkillClusterDescriptionInput;
   SkillClusters: ResolverTypeWrapper<SkillClusters>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subject: ResolverTypeWrapper<Subject>;
+  SubjectBgCluster: ResolverTypeWrapper<SubjectBgCluster>;
+  SubjectBgSkill: ResolverTypeWrapper<SubjectBgSkill>;
+  SubjectSfiaSkill: ResolverTypeWrapper<SubjectSfiaSkill>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -257,12 +377,19 @@ export type ResolversParentTypes = {
   JobSkills: JobSkills;
   Mutation: {};
   Query: {};
+  SfiaEstimate: SfiaEstimate;
+  SfiaLevel: SfiaLevel;
+  SfiaSkill: SfiaSkill;
   Skill: Skill;
   SkillCluster: SkillCluster;
   SkillClusterDescription: SkillClusterDescription;
   SkillClusterDescriptionInput: SkillClusterDescriptionInput;
   SkillClusters: SkillClusters;
   String: Scalars['String'];
+  Subject: Subject;
+  SubjectBgCluster: SubjectBgCluster;
+  SubjectBgSkill: SubjectBgSkill;
+  SubjectSfiaSkill: SubjectSfiaSkill;
 };
 
 export type JobResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Job'] = ResolversParentTypes['Job']> = {
@@ -329,17 +456,61 @@ export type JobSkillsResolvers<ContextType = Context, ParentType extends Resolve
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addDescription?: Resolver<ResolversTypes['SkillCluster'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'clusterId'>>;
   deleteDescription?: Resolver<ResolversTypes['SkillCluster'], ParentType, ContextType, RequireFields<MutationDeleteDescriptionArgs, 'clusterId' | 'descriptionId'>>;
+  saveSubjectSfia?: Resolver<Maybe<ResolversTypes['SubjectSfiaSkill']>, ParentType, ContextType, RequireFields<MutationSaveSubjectSfiaArgs, 'level' | 'sfiaId' | 'subjectId'>>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updateDescription?: Resolver<ResolversTypes['SkillClusterDescription'], ParentType, ContextType, RequireFields<MutationUpdateDescriptionArgs, 'description'>>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  findSubject?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectArgs, 'query'>>;
   jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
+  sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType, RequireFields<QuerySfiaArgs, 'id'>>;
   skillCluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType, Partial<QuerySkillClusterArgs>>;
   skillClusters?: Resolver<Array<ResolversTypes['SkillCluster']>, ParentType, ContextType>;
   skills?: Resolver<Array<ResolversTypes['Skill']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subjectEstimates?: Resolver<Array<ResolversTypes['SfiaEstimate']>, ParentType, ContextType, RequireFields<QuerySubjectEstimatesArgs, 'id'>>;
+  subjectSfia?: Resolver<Array<ResolversTypes['SubjectSfiaSkill']>, ParentType, ContextType, RequireFields<QuerySubjectSfiaArgs, 'id'>>;
+};
+
+export type SfiaEstimateResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaEstimate'] = ResolversParentTypes['SfiaEstimate']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  l1?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l3?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l4?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l5?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l6?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  l7?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  overall?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  rank?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
+  sfiaId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
+  subjectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SfiaLevelResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaLevel'] = ResolversParentTypes['SfiaLevel']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  level?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  skill?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
+  skillId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SfiaSkillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaSkill'] = ResolversParentTypes['SfiaSkill']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  guidance?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  levels?: Resolver<Maybe<Array<ResolversTypes['SfiaLevel']>>, ParentType, ContextType>;
+  subjectEstimates?: Resolver<Maybe<Array<ResolversTypes['SfiaEstimate']>>, ParentType, ContextType>;
+  subjects?: Resolver<Maybe<Array<ResolversTypes['SubjectSfiaSkill']>>, ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SkillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Skill'] = ResolversParentTypes['Skill']> = {
@@ -377,15 +548,64 @@ export type SkillClustersResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  handbook?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  los?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  losIntro?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readingList?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sfia?: Resolver<Maybe<Array<ResolversTypes['SubjectSfiaSkill']>>, ParentType, ContextType>;
+  sfiaEstimates?: Resolver<Maybe<Array<ResolversTypes['SfiaEstimate']>>, ParentType, ContextType>;
+  skills?: Resolver<Maybe<Array<ResolversTypes['SubjectBgCluster']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubjectBgClusterResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectBgCluster'] = ResolversParentTypes['SubjectBgCluster']> = {
+  cluster?: Resolver<ResolversTypes['SkillCluster'], ParentType, ContextType>;
+  clusterId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  skills?: Resolver<Maybe<Array<ResolversTypes['SubjectBgSkill']>>, ParentType, ContextType>;
+  subject?: Resolver<ResolversTypes['Subject'], ParentType, ContextType>;
+  subjectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubjectBgSkillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectBgSkill'] = ResolversParentTypes['SubjectBgSkill']> = {
+  cluster?: Resolver<Maybe<ResolversTypes['SubjectBgCluster']>, ParentType, ContextType>;
+  clusterId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  skill?: Resolver<Maybe<ResolversTypes['Skill']>, ParentType, ContextType>;
+  skillId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubjectSfiaSkillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectSfiaSkill'] = ResolversParentTypes['SubjectSfiaSkill']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  level?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
+  sfiaId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
+  subjectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = Context> = {
   Job?: JobResolvers<ContextType>;
   JobCategory?: JobCategoryResolvers<ContextType>;
   JobSkills?: JobSkillsResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  SfiaEstimate?: SfiaEstimateResolvers<ContextType>;
+  SfiaLevel?: SfiaLevelResolvers<ContextType>;
+  SfiaSkill?: SfiaSkillResolvers<ContextType>;
   Skill?: SkillResolvers<ContextType>;
   SkillCluster?: SkillClusterResolvers<ContextType>;
   SkillClusterDescription?: SkillClusterDescriptionResolvers<ContextType>;
   SkillClusters?: SkillClustersResolvers<ContextType>;
+  Subject?: SubjectResolvers<ContextType>;
+  SubjectBgCluster?: SubjectBgClusterResolvers<ContextType>;
+  SubjectBgSkill?: SubjectBgSkillResolvers<ContextType>;
+  SubjectSfiaSkill?: SubjectSfiaSkillResolvers<ContextType>;
 };
 

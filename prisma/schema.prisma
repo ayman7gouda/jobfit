@@ -207,13 +207,12 @@ model SfiaEstimate {
 // }
 
 model SubjectSfiaSkill {
-  id          Int       @id @default(autoincrement())
-  subjectId   Int
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  sfiaId      String
-  sfia        SfiaSkill @relation(fields: [sfiaSkillId], references: [code])
-  level       Int
-  sfiaSkillId String
+  id        Int       @id @default(autoincrement())
+  subjectId Int
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  sfiaId    Int
+  sfia      SfiaSkill @relation(fields: [sfiaId], references: [id])
+  level     Int
 }
 
 model SubjectBgCluster {
