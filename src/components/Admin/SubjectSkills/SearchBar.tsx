@@ -1,13 +1,21 @@
-import { HiChevronRight, HiOutlineSearch } from "react-icons/hi";
+import { useState } from 'react';
 
-export function SearchBar() {
+import { HiChevronRight, HiOutlineSearch } from 'react-icons/hi';
+
+export function SearchBar({
+  setSearchQuery,
+}: {
+  setSearchQuery(value: string): void;
+}) {
+  const [inputValue, setInputValue] = useState("");
+
   return (
-    <div className="flex justify-center items-center flex-col h-full">
+    <>
       <label
         htmlFor="search-subject"
         className="hidden text-sm font-medium text-gray-700"
       >
-        Account number
+        Search Query
       </label>
       <div className="font-OpenSans flex items-center text-xl">
         <img src="/images/jobfit.svg" className="w-16 h-16 mr-2" alt=""></img>
@@ -23,6 +31,11 @@ export function SearchBar() {
           id="search-subject"
           className="focus:ring-crimson focus:border-crimson block w-full pl-6 py-4 pr-12 sm:text-sm border-gray-300 rounded-md"
           placeholder="Subject code or name ..."
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.currentTarget.value);
+            setSearchQuery(e.currentTarget.value);
+          }}
         />
         <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
           <HiOutlineSearch
@@ -51,6 +64,6 @@ export function SearchBar() {
           </div>
         </div>
       </div> */}
-    </div>
+    </>
   );
 }

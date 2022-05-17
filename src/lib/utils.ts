@@ -1,3 +1,5 @@
+import { NextRouter } from 'next/router';
+
 export function toUrlName(name: string) {
   let result = name.replace(/\:/g, "");
   result = result.replace(/ - /g, "-");
@@ -8,13 +10,17 @@ export function toUrlName(name: string) {
   return result.toLowerCase();
 }
 
-export function parseQuery(queryString: string) {
-  var query: any = {};
-  var pairs = (
+export function parseQuery(router: NextRouter) {
+  if (router.query) {
+    return router.query;
+  }
+  let queryString = router.asPath;
+  let query: any = {};
+  let pairs = (
     queryString[0] === "?" ? queryString.substring(1) : queryString
   ).split("&");
-  for (var i = 0; i < pairs.length; i++) {
-    var pair = pairs[i].split("=");
+  for (let i = 0; i < pairs.length; i++) {
+    let pair = pairs[i].split("=");
     query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
   }
   return query;

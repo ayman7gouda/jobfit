@@ -1,0 +1,8 @@
+query FindSubjects($query: String!) {
+  findSubjects(query: $query) {
+    id
+    code
+    name
+    handbook
+  }
+}

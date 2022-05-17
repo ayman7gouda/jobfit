@@ -1,0 +1,8 @@
+mutation SaveSubjectSfia($subjectId: Int!, $sfiaId: Int!, $level: Int!) {
+  saveSubjectSfia(subjectId: $subjectId, sfiaId: $sfiaId, level: $level) {
+    id
+    subjectId
+    sfiaId
+    level
+  }
+}

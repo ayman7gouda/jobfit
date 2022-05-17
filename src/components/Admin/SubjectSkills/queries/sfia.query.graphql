@@ -1,0 +1,14 @@
+query Sfia($id: Int!) {
+  sfia(id: $id) {
+    id
+    code
+    name
+    description
+    guidance
+    version
+    levels {
+      level
+      description
+    }
+  }
+}

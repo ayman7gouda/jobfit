@@ -3,26 +3,43 @@ import { Resolvers } from 'generated/serverTypes';
 export const subjectResolvers: Resolvers = {
   Query: {
     sfia(_, { id }, { db }) {
-      return db.sfiaSkill.findFirst({ where: { id } });
+      return db.sfiaSkill.findFirst({
+        where: { id },
+        include: { levels: true },
+      });
     },
-    findSubject(_, { query }, { db }) {
+    sfias(_, _params, { db }) {
+      return db.sfiaSkill.findMany();
+    },
+    findSubjects(_, { query }, { db }) {
       return db.subject.findMany({
         where: {
           OR: [{ code: { contains: query } }, { name: { contains: query } }],
         },
-        take: 20,
+        take: 10,
       });
     },
-    subjectEstimates(_, { id }, { db }) {
-      return db.sfiaEstimate.findMany({
-        where: { subjectId: id },
+    findSubjectSkills(_, { id }, { db }) {
+      return db.subject.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          sfiaEstimates: true,
+          sfia: true,
+        },
       });
     },
-    subjectSfia(_, { id }, { db }) {
-      return db.subjectSfiaSkill.findMany({
-        where: { subjectId: id },
-      });
-    },
+    // subjectEstimates(_, { id }, { db }) {
+    //   return db.sfiaEstimate.findMany({
+    //     where: { subjectId: id },
+    //   });
+    // },
+    // subjectSfia(_, { id }, { db }) {
+    //   return db.subjectSfiaSkill.findMany({
+    //     where: { subjectId: id },
+    //   });
+    // },
   },
   Mutation: {
     async saveSubjectSfia(_, { subjectId, sfiaId, level }, { db }) {
