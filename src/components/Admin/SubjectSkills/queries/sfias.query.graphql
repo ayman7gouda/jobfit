@@ -1,0 +1,7 @@
+query AllSfia {
+  sfias {
+    id
+    code
+    name
+  }
+}

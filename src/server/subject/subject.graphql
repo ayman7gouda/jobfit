@@ -14,6 +14,7 @@ type Subject {
 type SfiaSkill {
   id: Int!
   code: String!
+  name: String!
   description: String!
   guidance: String!
   version: Int!
@@ -73,10 +74,12 @@ type SubjectBgSkill {
 }
 
 type Query {
+  sfias: [SfiaSkill!]!
   sfia(id: Int!): SfiaSkill
-  findSubject(query: String!): [Subject!]!
-  subjectEstimates(id: Int!): [SfiaEstimate!]!
-  subjectSfia(id: Int!): [SubjectSfiaSkill!]!
+  findSubjects(query: String!): [Subject!]!
+  findSubjectSkills(id: Int!): Subject
+  # subjectEstimates(id: Int!): [SfiaEstimate!]!
+  # subjectSfia(id: Int!): [SubjectSfiaSkill!]!
 }
 
 type Mutation {

@@ -15,7 +15,7 @@ type Data = SkillCluster & {
 
 export function SkillDetails() {
   const router = useRouter();
-  const { id, name, did } = router.query || parseQuery(router.asPath);
+  const { id, name, did } = parseQuery(router);
 
   const { loading, error, data } = useSkillDetailsQuery({
     variables: {

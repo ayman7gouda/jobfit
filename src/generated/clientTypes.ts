@@ -107,20 +107,25 @@ export type MutationUpdateDescriptionArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  findSubject: Array<Subject>;
+  findSubjectSkills?: Maybe<Subject>;
+  findSubjects: Array<Subject>;
   jobCategories: Array<JobCategory>;
   jobs?: Maybe<Array<Job>>;
   sfia?: Maybe<SfiaSkill>;
+  sfias: Array<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
-  subjectEstimates: Array<SfiaEstimate>;
-  subjectSfia: Array<SubjectSfiaSkill>;
 };
 
 
-export type QueryFindSubjectArgs = {
+export type QueryFindSubjectSkillsArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryFindSubjectsArgs = {
   query: Scalars['String'];
 };
 
@@ -137,16 +142,6 @@ export type QuerySfiaArgs = {
 
 export type QuerySkillClusterArgs = {
   id?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QuerySubjectEstimatesArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QuerySubjectSfiaArgs = {
-  id: Scalars['Int'];
 };
 
 export type SfiaEstimate = {
@@ -183,6 +178,7 @@ export type SfiaSkill = {
   guidance: Scalars['String'];
   id: Scalars['Int'];
   levels?: Maybe<Array<SfiaLevel>>;
+  name: Scalars['String'];
   subjectEstimates?: Maybe<Array<SfiaEstimate>>;
   subjects?: Maybe<Array<SubjectSfiaSkill>>;
   version: Scalars['Int'];

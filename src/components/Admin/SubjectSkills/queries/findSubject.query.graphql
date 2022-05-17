@@ -1,0 +1,29 @@
+query FindSubjectSkills($id: Int!) {
+  findSubjectSkills(id: $id) {
+    id
+    code
+    name
+    handbook
+    los
+    losIntro
+    readingList
+    sfiaEstimates {
+      id
+      l1
+      l2
+      l3
+      l4
+      l5
+      l6
+      l7
+      rank
+      sfiaId
+      overall
+    }
+    sfia {
+      id
+      sfiaId
+      level
+    }
+  }
+}

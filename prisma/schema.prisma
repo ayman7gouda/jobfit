@@ -156,6 +156,7 @@ model Subject {
 model SfiaSkill {
   id               Int                @id @default(autoincrement())
   code             String
+  name             String
   description      String             @db.Text
   guidance         String             @db.Text
   version          Int

@@ -110,20 +110,25 @@ export type MutationUpdateDescriptionArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  findSubject: Array<Subject>;
+  findSubjectSkills?: Maybe<Subject>;
+  findSubjects: Array<Subject>;
   jobCategories: Array<JobCategory>;
   jobs?: Maybe<Array<Job>>;
   sfia?: Maybe<SfiaSkill>;
+  sfias: Array<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
   status?: Maybe<Scalars['String']>;
-  subjectEstimates: Array<SfiaEstimate>;
-  subjectSfia: Array<SubjectSfiaSkill>;
 };
 
 
-export type QueryFindSubjectArgs = {
+export type QueryFindSubjectSkillsArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryFindSubjectsArgs = {
   query: Scalars['String'];
 };
 
@@ -140,16 +145,6 @@ export type QuerySfiaArgs = {
 
 export type QuerySkillClusterArgs = {
   id?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QuerySubjectEstimatesArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QuerySubjectSfiaArgs = {
-  id: Scalars['Int'];
 };
 
 export type SfiaEstimate = {
@@ -186,6 +181,7 @@ export type SfiaSkill = {
   guidance: Scalars['String'];
   id: Scalars['Int'];
   levels?: Maybe<Array<SfiaLevel>>;
+  name: Scalars['String'];
   subjectEstimates?: Maybe<Array<SfiaEstimate>>;
   subjects?: Maybe<Array<SubjectSfiaSkill>>;
   version: Scalars['Int'];
@@ -462,16 +458,16 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  findSubject?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectArgs, 'query'>>;
+  findSubjectSkills?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectSkillsArgs, 'id'>>;
+  findSubjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectsArgs, 'query'>>;
   jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
   sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType, RequireFields<QuerySfiaArgs, 'id'>>;
+  sfias?: Resolver<Array<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
   skillCluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType, Partial<QuerySkillClusterArgs>>;
   skillClusters?: Resolver<Array<ResolversTypes['SkillCluster']>, ParentType, ContextType>;
   skills?: Resolver<Array<ResolversTypes['Skill']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subjectEstimates?: Resolver<Array<ResolversTypes['SfiaEstimate']>, ParentType, ContextType, RequireFields<QuerySubjectEstimatesArgs, 'id'>>;
-  subjectSfia?: Resolver<Array<ResolversTypes['SubjectSfiaSkill']>, ParentType, ContextType, RequireFields<QuerySubjectSfiaArgs, 'id'>>;
 };
 
 export type SfiaEstimateResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaEstimate'] = ResolversParentTypes['SfiaEstimate']> = {
@@ -507,6 +503,7 @@ export type SfiaSkillResolvers<ContextType = Context, ParentType extends Resolve
   guidance?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   levels?: Resolver<Maybe<Array<ResolversTypes['SfiaLevel']>>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subjectEstimates?: Resolver<Maybe<Array<ResolversTypes['SfiaEstimate']>>, ParentType, ContextType>;
   subjects?: Resolver<Maybe<Array<ResolversTypes['SubjectSfiaSkill']>>, ParentType, ContextType>;
   version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
