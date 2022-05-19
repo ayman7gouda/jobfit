@@ -2,7 +2,8 @@
   "decisions": [
     {
       "id": 0,
-      "text": "Root",
+      "text": "I have previous work experience",
+      "false": [21, 22, 231, 232, 233, 234, 24, 25, 26, 27],
       "true": [1, 21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
     },
     {
@@ -77,7 +78,8 @@
     },
     {
       "id": 222,
-      "text": "I am interested in financial investments, shares and markets"
+      "text": "I am interested in financial investments, shares and markets",
+      "true": [0]
     },
     {
       "id": 223,
@@ -112,10 +114,11 @@
     {
       "id": 232,
       "text": "I like to design things or draw maps or blueprints",
-      "true": [2321, 2322, 2323, 2324, 2325, 2326]
+      "true": [2321, 2322, 2323, 2324]
     },
     {
-      "id": [2321, 2325, 2326],
+      "id": 2321,
+      "others": [2325, 2326],
       "text": "I like architecture and building design",
       "true": [0]
     },
@@ -131,35 +134,7 @@
     },
     {
       "id": 2324,
-      "text": "I want to explore graphic design or web design"
-    },
-    {
-      "id": 23
-    },
-    {
-      "id": 24,
-      "text": "I want to help others to learn"
-    },
-    {
-      "id": 25,
-      "text": "I want to cure diseases or help people to feel better"
-    },
-    {
-      "id": 26,
-      "text": "I like to work with technology"
-    },
-    {
-      "id": 27,
-      "text": "I want to assure legal or social justice"
-    },
-    {
-      "id": 211,
-      "text": "I am interested in arts",
-      "true": [0]
-    },
-    {
-      "id": 212,
-      "text": "I am interested in media industry",
+      "text": "I want to explore graphic design or web design",
       "true": [0]
     },
     {
@@ -205,7 +180,7 @@
     {
       "id": 234,
       "text": "Science is my thing!",
-      "true": [2341, 2342, 2343, 2344, 2345, 2346, 2347, 2349]
+      "true": [2341, 2342, 2343, 2344, 2345, 2346, 2347]
     },
     {
       "id": 2341,
@@ -223,7 +198,7 @@
       "true": [0]
     },
     {
-      "id": 2343,
+      "id": 2344,
       "text": "Stones, pebbles, geodes and rocks!",
       "true": [0]
     },
@@ -233,7 +208,8 @@
       "true": [0]
     },
     {
-      "id": [2346, 2349],
+      "id": 2346,
+      "others": [2349],
       "text": "I want to explore the inner and outer space",
       "true": [0]
     },
@@ -335,7 +311,7 @@
     {
       "id": 272,
       "text": "I want to explore social sciences, social justice and mental health",
-      "true": [2721, 2722, 2723, 2724, 2725, 2726]
+      "true": [2721, 2722, 2723, 2724, 2725]
     },
     {
       "id": 2721,
@@ -358,7 +334,8 @@
       "true": [0]
     },
     {
-      "id": [2725, 2726],
+      "id": 2725,
+      "others": [2726],
       "text": "We need to support human welfare across the world",
       "true": [0]
     }

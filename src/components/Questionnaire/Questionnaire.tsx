@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import classNames from 'classnames';
+import { action, makeObservable, observable } from 'mobx';
+import { Observer, useLocalObservable } from 'mobx-react';
+import React from 'react';
 
-import { BsEmojiDizzy, BsEmojiFrown } from 'react-icons/bs';
+import {
+  BsEmojiDizzy, BsEmojiDizzyFill, BsEmojiFrown, BsEmojiFrownFill, BsEmojiHeartEyes,
+  BsEmojiHeartEyesFill, BsEmojiNeutral, BsEmojiNeutralFill, BsEmojiSmile, BsEmojiSmileFill
+} from 'react-icons/bs';
 
-import { decisions } from './questions.json';
+import styles from './questionnaire.module.scss';
+import questions from './questions.json';
+
+const { decisions } = questions;
 
 const RatingWrapper = ({ children }) => (
   <svg
@@ -20,59 +29,264 @@ const RatingWrapper = ({ children }) => (
   </svg>
 );
 
-const Rating = () => (
-  <ul className="flex justify-center">
-    <li>
-      <BsEmojiDizzy className="w-5 h-5 text-gray-400" />
-    </li>
-    <li>
-      <BsEmojiFrown className="w-5 h-5 text-gray-400" />
-    </li>
-    <li>
-      <RatingWrapper>
-        <path
-          fill="currentColor"
-          d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm-80 128c-40.2 0-78 17.7-103.8 48.6-8.5 10.2-7.1 25.3 3.1 33.8 10.2 8.4 25.3 7.1 33.8-3.1 16.6-19.9 41-31.4 66.9-31.4s50.3 11.4 66.9 31.4c8.1 9.7 23.1 11.9 33.8 3.1 10.2-8.5 11.5-23.6 3.1-33.8C326 321.7 288.2 304 248 304z"
-        ></path>
-      </RatingWrapper>
-    </li>
-    <li>
-      <RatingWrapper>
-        <path
-          fill="currentColor"
-          d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm8 144H160c-13.2 0-24 10.8-24 24s10.8 24 24 24h176c13.2 0 24-10.8 24-24s-10.8-24-24-24z"
-        ></path>
-      </RatingWrapper>
-    </li>
-    <li>
-      <RatingWrapper>
-        <path
-          fill="currentColor"
-          d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm4 72.6c-20.8 25-51.5 39.4-84 39.4s-63.2-14.3-84-39.4c-8.5-10.2-23.7-11.5-33.8-3.1-10.2 8.5-11.5 23.6-3.1 33.8 30 36 74.1 56.6 120.9 56.6s90.9-20.6 120.9-56.6c8.5-10.2 7.1-25.3-3.1-33.8-10.1-8.4-25.3-7.1-33.8 3.1z"
-        ></path>
-      </RatingWrapper>
-    </li>
-    <li>
-      <RatingWrapper>
-        <path
-          fill="currentColor"
-          d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm105.6-151.4c-25.9 8.3-64.4 13.1-105.6 13.1s-79.6-4.8-105.6-13.1c-9.8-3.1-19.4 5.3-17.7 15.3 7.9 47.2 71.3 80 123.3 80s115.3-32.9 123.3-80c1.6-9.8-7.7-18.4-17.7-15.3zm-227.9-57.5c-1 6.2 5.4 11 11 7.9l31.3-16.3 31.3 16.3c5.6 3.1 12-1.7 11-7.9l-6-34.9 25.4-24.6c4.5-4.5 1.9-12.2-4.3-13.2l-34.9-5-15.5-31.6c-2.9-5.8-11-5.8-13.9 0l-15.5 31.6-34.9 5c-6.2.9-8.9 8.6-4.3 13.2l25.4 24.6-6.1 34.9zm259.7-72.7l-34.9-5-15.5-31.6c-2.9-5.8-11-5.8-13.9 0l-15.5 31.6-34.9 5c-6.2.9-8.9 8.6-4.3 13.2l25.4 24.6-6 34.9c-1 6.2 5.4 11 11 7.9l31.3-16.3 31.3 16.3c5.6 3.1 12-1.7 11-7.9l-6-34.9 25.4-24.6c4.5-4.6 1.8-12.2-4.4-13.2z"
-        ></path>
-      </RatingWrapper>
-    </li>
-  </ul>
-);
+const Rating = ({ rating }: { rating: { value: number } }) => {
+  return (
+    <Observer>
+      {() => (
+        <ul className={styles.options + " mr-2 my-1"}>
+          <li>
+            {rating.value == 1 ? (
+              <BsEmojiDizzyFill className={styles.selected} title="No way!" />
+            ) : (
+              <BsEmojiDizzy
+                title="No way!"
+                onClick={() => (rating.value = 1)}
+                className="w-5 h-5 text-gray-400 hover:text-crimson cursor-pointer"
+              />
+            )}
+          </li>
+          <li>
+            {rating.value == 2 ? (
+              <BsEmojiFrownFill
+                className={styles.selected}
+                title="I prefer not"
+              />
+            ) : (
+              <BsEmojiFrown
+                onClick={() => (rating.value = 2)}
+                title="I prefer not"
+              />
+            )}
+          </li>
+          <li>
+            {rating.value == 3 ? (
+              <BsEmojiNeutralFill
+                className={styles.selected}
+                title="Just, maybe!"
+              />
+            ) : (
+              <BsEmojiNeutral
+                onClick={() => (rating.value = 3)}
+                title="Just, maybe!"
+              />
+            )}
+          </li>
+          <li>
+            {rating.value == 4 ? (
+              <BsEmojiSmileFill
+                className={styles.selected}
+                title="That is interesting!"
+              />
+            ) : (
+              <BsEmojiSmile
+                onClick={() => (rating.value = 4)}
+                title="That is interesting!"
+              />
+            )}
+          </li>
+          <li>
+            {rating.value == 5 ? (
+              <BsEmojiHeartEyesFill
+                className={styles.selected}
+                title="Absolutely! Let's do this!"
+              />
+            ) : (
+              <BsEmojiHeartEyes
+                onClick={() => (rating.value = 5)}
+                title="Absolutely! Let's do this!"
+              />
+            )}
+          </li>
+        </ul>
+      )}
+    </Observer>
+  );
+};
+
+type WithParent = {
+  parent: WithParent | null;
+  value: number;
+};
+
+function calculateRating(item: WithParent) {
+  let result = 0;
+  while (item != null) {
+    result += item.value;
+    item = item.parent;
+  }
+  return result;
+}
+
+function Panel(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className={classNames(
+        props.className,
+        "p-4 rounded-lg bg-slate-50 border-blue-500 border-2 divide-slate-200"
+      )}
+    >
+      {props.children}
+    </div>
+  );
+}
+
+class JobState {
+  items: WithParent[];
+  steps: WithParent[][];
+  assigned: WithParent[];
+  queue: WithParent[];
+  jobs: number[];
+  selectedJobs: number[];
+
+  constructor() {
+    makeObservable(this, {
+      items: observable,
+      jobs: observable,
+      selectedJobs: observable,
+    });
+
+    this.items = this.buildItems(decisions.find((s) => s.id === 0).true, null);
+    this.steps = [];
+    this.assigned = [];
+    this.queue = [];
+    this.jobs = [];
+    this.selectedJobs = [];
+  }
+
+  buildItems(ids: number[], parent: WithParent | null) {
+    return ids.map((d) => ({
+      id: d,
+      value: -1,
+      parent: null,
+    }));
+  }
+}
 
 export function Questionnaire() {
-  const [items, setItems] = useState(decisions.find((s) => s.id === 0).true);
+  const state = useLocalObservable(() => ({
+    items: decisions
+      .find((s) => s.id === 0)
+      .true.map((d) => ({
+        id: d,
+        value: -1,
+        parent: null,
+      })),
+    steps: [],
+    assigned: [],
+    queue: [],
+    jobs: [],
+    selectedJobs: [],
+  }));
 
   return (
-    <div className="p-2">
-      {items.map((item, i) => (
-        <div className="flex" key={i}>
-          <Rating /> {decisions.find((d) => d.id === item).text}
+    <Observer>
+      {() => (
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="flex gap-4">
+            <Panel className="ml-4 flex-[2] divide-y divide-slate-200">
+              <h2 className="font-bold">Selected Jobs</h2>
+
+              {state.items.map((item, i) => (
+                <div className="flex items-center py-1" key={i}>
+                  <Rating rating={item} />{" "}
+                  {decisions.find((d) => d.id === item.id).text} [
+                  {calculateRating(item)}]
+                </div>
+              ))}
+
+              <div className="pt-4">
+                <button
+                  className="bg-slate-500 px-4 py-2 text-gray-100 mr-1"
+                  onClick={() => {
+                    state.items = state.steps.pop();
+                  }}
+                >
+                  Previous
+                </button>
+                <button
+                  className="bg-slate-500 px-4 py-2 text-gray-100"
+                  onClick={action(() => {
+                    // remember history
+                    state.steps.push([...state.items]);
+
+                    let newItems = state.queue;
+                    for (let decision of state.items) {
+                      // add to assigned we need to remember this if we go back and forth in history
+                      let index = state.assigned.findIndex(
+                        (a) => a.id === decision.id
+                      );
+                      if (index == -1) {
+                        state.assigned.push(decision);
+                      } else {
+                        state.assigned[index] = decision;
+                      }
+
+                      if (decision.value != -1) {
+                        let question = decisions.find(
+                          (d) => d.id === decision.id
+                        );
+
+                        // it is either a final node "[0]" or has some questions"
+                        if (question.true && question.true[0] === 0) {
+                          state.jobs.push(
+                            question.text +
+                              " Rating: " +
+                              calculateRating(decision)
+                          );
+                        } else {
+                          // remove existing
+                          newItems = newItems.filter((i) =>
+                            question.true.every((q) => q != i.id)
+                          );
+
+                          // remember parents
+                          newItems.push(
+                            ...question.true.map((d) => {
+                              let existingDecision = state.assigned.find(
+                                (s) => s.id === d
+                              );
+                              return {
+                                id: d,
+                                value: existingDecision
+                                  ? existingDecision.value
+                                  : -1,
+                                parent: decision,
+                              };
+                            })
+                          );
+                        }
+                      }
+                    }
+
+                    // we are done processing, first ten become questions, rest remains in the queue
+                    newItems = newItems.sort((a, b) =>
+                      calculateRating(a) < calculateRating(b) ? 1 : -1
+                    );
+
+                    state.queue = state.queue.slice(10);
+                    state.items = newItems.slice(0, 10);
+                  })}
+                >
+                  Next
+                </button>
+              </div>
+            </Panel>
+
+            <div className="flex flex-col gap-4 flex-1">
+              <Panel>
+                <h2 className="font-bold">Selected Jobs</h2>
+                {state.jobs.map((j) => (
+                  <div key={j}>{}</div>
+                ))}
+              </Panel>
+              <Panel>
+                <h2 className="font-bold">Available Jobs</h2>
+              </Panel>
+            </div>
+          </div>
         </div>
-      ))}
-    </div>
+      )}
+    </Observer>
   );
 }

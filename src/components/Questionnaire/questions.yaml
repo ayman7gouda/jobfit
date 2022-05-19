@@ -48,6 +48,7 @@ decisions:
     yes: [0]
   - id: 222
     text: I am interested in financial investments, shares and markets
+    yes: [0]
   - id: 223
     text: I want to find or train the best people for the job
     yes: [0]
@@ -68,8 +69,9 @@ decisions:
     yes: [0]
   - id: 232
     text: I like to design things or draw maps or blueprints
-    yes: [2321, 2322, 2323, 2324, 2325, 2326]
-  - id: [2321, 2325, 2326]
+    yes: [2321, 2322, 2323, 2324]
+  - id: 2321
+    others: [2325, 2326]
     text: I like architecture and building design
     yes: [0]
   - id: 2322
@@ -80,27 +82,13 @@ decisions:
     yes: [0]
   - id: 2324
     text: I want to explore graphic design or web design
-  - id: 23
-  - id: 24
-    text: I want to help others to learn
-  - id: 25
-    text: I want to cure diseases or help people to feel better
-  - id: 26
-    text: I like to work with technology
-  - id: 27
-    text: I want to assure legal or social justice
-  - id: 211
-    text: I am interested in arts
-    yes: [0]
-  - id: 212
-    text: I am interested in media industry
     yes: [0]
   - id: 233
     text: I want to be an engineer
     yes: [2331, 2332, 2333, 2334, 2335, 2336, 2339]
   - id: 2331
     text: I am interested with chemistry and materials
-    tes: [0]
+    yes: [0]
   - id: 2332
     text: I want to support building contructions
     yes: [0]
@@ -121,7 +109,7 @@ decisions:
     yes: [0]
   - id: 234
     text: Science is my thing!
-    yes: [2341, 2342, 2343, 2344, 2345, 2346, 2347, 2349]
+    yes: [2341, 2342, 2343, 2344, 2345, 2346, 2347]
   - id: 2341
     text: Woods, fields lakes and oceans
     yes: [0]
@@ -131,13 +119,14 @@ decisions:
   - id: 2343
     text: I want to take care for our environment
     yes: [0]
-  - id: 2343
+  - id: 2344
     text: Stones, pebbles, geodes and rocks!
     yes: [0]
   - id: 2345
     text: Life is a science! All people, humans and bugs
     yes: [0]
-  - id: [2346, 2349]
+  - id: 2346
+    others: [2349]
     text: I want to explore the inner and outer space
     yes: [0]
   - id: 2347
@@ -199,7 +188,7 @@ decisions:
     yes: [0]
   - id: 272
     text: I want to explore social sciences, social justice and mental health
-    yes: [2721, 2722, 2723, 2724, 2725, 2726]
+    yes: [2721, 2722, 2723, 2724, 2725]
   - id: 2721
     text: I want to help people with their inner daemons
     yes: [0]
@@ -212,6 +201,7 @@ decisions:
   - id: 2724
     text: History, Archaelogy or Languages are at the top of my interests
     yes: [0]
-  - id: [2725, 2726]
+  - id: 2725
+    others: [2726]
     text: We need to support human welfare across the world
     yes: [0]
