@@ -1,0 +1,217 @@
+# yaml-language-server: $schema=./schema.json
+decisions:
+  - id: 0
+    text: I have previous work experience
+    no: [21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
+    yes: [1, 21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
+  - id: 1,
+    text: I like to lead people or projects
+    yes: [12, 131, 132, 133, 134, 135, 141, 142]
+  - id: 12,
+    text: I like to work with farm animals
+    yes: [0]
+  - id: 131
+    text: I like to communicate
+    yes: [0]
+  - id: 132
+    text: I am interested in business, human resources or marketing
+    yes: [0]
+  - id: 133
+    text: I build things and I am interested in construction
+    yes: [0]
+  - id: 134
+    text: I want to help others to learn
+    yes: [0]
+  - id: 135
+    text: I like to work with technology
+    yes: [0]
+  - id: 141
+    text: I like to travel
+    yes: [0]
+  - id: 142
+    text: I am interested in retail
+    yes: [0]
+  - id: 21
+    text: I am a creative and artistic person
+    yes: [211, 212]
+  - id: 22
+    text: I am interested in supporting businesses to succeed
+    yes: [221, 222, 223, 224, 225]
+  - id: 211
+    text: I am an aspiring artist
+    yes: [0]
+  - id: 212
+    text: I am intrigued by working in media
+    yes: [0]
+  - id: 221
+    text: I want to support business success with financial services
+    yes: [0]
+  - id: 222
+    text: I am interested in financial investments, shares and markets
+  - id: 223
+    text: I want to find or train the best people for the job
+    yes: [0]
+  - id: 224
+    text: I like to keep statistics or I store things and catalogue them
+    yes: [0]
+  - id: 225
+    text: I can convince other people about my opinion
+    yes: [0]
+  - id: 231
+    text: I am interested in world of boats or airplanes
+    yes: [2311, 2312]
+  - id: 2311
+    text: "More planes, please!"
+    yes: [0]
+  - id: 2312
+    text: "More boats, please!"
+    yes: [0]
+  - id: 232
+    text: I like to design things or draw maps or blueprints
+    yes: [2321, 2322, 2323, 2324, 2325, 2326]
+  - id: [2321, 2325, 2326]
+    text: I like architecture and building design
+    yes: [0]
+  - id: 2322
+    text: I am into maps and geography
+    yes: [0]
+  - id: 2323
+    text: I dig Fashion! Yes!
+    yes: [0]
+  - id: 2324
+    text: I want to explore graphic design or web design
+  - id: 23
+  - id: 24
+    text: I want to help others to learn
+  - id: 25
+    text: I want to cure diseases or help people to feel better
+  - id: 26
+    text: I like to work with technology
+  - id: 27
+    text: I want to assure legal or social justice
+  - id: 211
+    text: I am interested in arts
+    yes: [0]
+  - id: 212
+    text: I am interested in media industry
+    yes: [0]
+  - id: 233
+    text: I want to be an engineer
+    yes: [2331, 2332, 2333, 2334, 2335, 2336, 2339]
+  - id: 2331
+    text: I am interested with chemistry and materials
+    tes: [0]
+  - id: 2332
+    text: I want to support building contructions
+    yes: [0]
+  - id: 2333
+    text: Electricity fascinates me
+    yes: [0]
+  - id: 2334
+    text: I take electronics apart to see how they work
+    yes: [0]
+  - id: 2335
+    text: Big structures fascinate me
+    yes: [0]
+  - id: 2336
+    text: I am interested in mining
+    yes: [0]
+  - id: 2339
+    text: I can build anything you ask media
+    yes: [0]
+  - id: 234
+    text: Science is my thing!
+    yes: [2341, 2342, 2343, 2344, 2345, 2346, 2347, 2349]
+  - id: 2341
+    text: Woods, fields lakes and oceans
+    yes: [0]
+  - id: 2342
+    text: Chemistry, food, wine and other goodies
+    yes: [0]
+  - id: 2343
+    text: I want to take care for our environment
+    yes: [0]
+  - id: 2343
+    text: Stones, pebbles, geodes and rocks!
+    yes: [0]
+  - id: 2345
+    text: Life is a science! All people, humans and bugs
+    yes: [0]
+  - id: [2346, 2349]
+    text: I want to explore the inner and outer space
+    yes: [0]
+  - id: 2347
+    text: I want to cure animals
+    yes: [0]
+  - id: 24
+    text: I want to teach others to be the best version of themselves
+    yes: [241, 242, 249]
+  - id: 241
+    text: I like to work with kids and teenagers
+    yes: [0]
+  - id: 242
+    text: I prefer to teach adults
+    yes: [0]
+  - id: 249
+    text: I can teach drama, music, art or languages
+    yes: [0]
+  - id: 25
+    text: I want to help people to stay healthy or address their problems
+    yes: [251, 252, 253, 253]
+  - id: 251
+    text: I want to support doctors in their journey to help us feel better
+    yes: [0]
+  - id: 252
+    text: I feel like I can help people feel better by talking to them
+    yes: [0]
+  - id: 253
+    text: Human anatomy, yes please, blood ... no issue!
+    yes: [0]
+  - id: 254
+    text: Human birth is a miracle, and I want to be a part of it!
+    yes: [0]
+  - id: 26
+    text: I want to use computers and technology in my work
+    yes: [261, 262, 263]
+  - id: 261
+    text: I would like to transform technology to work better and to be more helpful
+    yes: [2611, 2612, 2613]
+  - id: 2611
+    text: I want to design user experiences
+    yes: [0]
+  - id: 2612
+    text: I want to build video games and interactive media presentations
+    yes: [0]
+  - id: 2613
+    text: I am interested in programming, I want to build apps that will make a difference
+    yes: [0]
+  - id: 262
+    text: Cyber Security is one of the most critical issues of this generation
+    yes: [0]
+  - id: 263
+    text: I want to support technology development and build reliable and fast networks to connect everyone
+    yes: [0]
+  - id: 27
+    text: I am just person, and I want to ensure that everyone is treated equally, legally and with respect
+    yes: [271, 272]
+  - id: 271
+    text: I want to fight for legal justice
+    yes: [0]
+  - id: 272
+    text: I want to explore social sciences, social justice and mental health
+    yes: [2721, 2722, 2723, 2724, 2725, 2726]
+  - id: 2721
+    text: I want to help people with their inner daemons
+    yes: [0]
+  - id: 2722
+    text: I believe in god and I want to spread the gospel
+    yes: [0]
+  - id: 2723
+    text: Human psychology and psyche is a gateway to human soul and truly understanding people
+    yes: [0]
+  - id: 2724
+    text: History, Archaelogy or Languages are at the top of my interests
+    yes: [0]
+  - id: [2725, 2726]
+    text: We need to support human welfare across the world
+    yes: [0]

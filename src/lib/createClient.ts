@@ -13,6 +13,7 @@ let GRAPHQL_ENDPOINT = ROOT_URL + "/api/graphql";
 let CLIENT;
 
 export function getApolloClient(req?: NextRequest, forceNew?: boolean) {
+  console.log("Starting endpoint at: " + GRAPHQL_ENDPOINT);
   if (!CLIENT || forceNew) {
     const httpLink = createHttpLink({
       uri: GRAPHQL_ENDPOINT,

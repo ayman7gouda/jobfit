@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "decisions": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "yes": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "no": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "required": ["id", "text"]
+        }
+      ]
+    }
+  },
+  "required": ["decisions"]
+}

@@ -1,19 +1,14 @@
-import classNames from "classnames";
-import React, { useMemo, useState } from "react";
+import classNames from 'classnames';
+import React, { useMemo, useState } from 'react';
 
-import { JobCategory } from "generated/serverTypes";
-import { groupByArray } from "lib/utils";
-import {
-  HiChevronDown,
-  HiChevronRight,
-  HiChevronUp,
-  HiFilter,
-} from "react-icons/hi";
+import { JobCategory } from 'generated/serverTypes';
+import { groupByArray } from 'lib/utils';
+import { HiChevronDown, HiChevronRight, HiChevronUp, HiFilter } from 'react-icons/hi';
 
-import styles from "./Category.module.scss";
-import { JobLineChart } from "./JobChart";
-import { useJobCategoriesQuery } from "./queries/jobCategories.query.generated";
-import { JobsQuery, useJobsQuery } from "./queries/jobs.query.generated";
+import styles from './Category.module.scss';
+import { JobLineChart } from './JobChart';
+import { useJobCategoriesQuery } from './queries/jobCategories.query.generated';
+import { JobsQuery, useJobsQuery } from './queries/jobs.query.generated';
 
 function Badge({
   children,
@@ -60,7 +55,7 @@ function Line({
           type="button"
           onClick={() => setId(line.id)}
         >
-          {line.name}{" "}
+          {line.name}
           <span className="w-10 ml-1 text-xs text-gray-500">{line.id}</span>
         </button>
         <div className="w-20 overflow-hidden">{Math.round(line.avg)}</div>
