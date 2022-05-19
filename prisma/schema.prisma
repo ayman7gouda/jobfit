@@ -8,14 +8,15 @@ datasource db {
 }
 
 model ANZSCO {
-  id       Int     @id
-  major    Int?
-  subMajor Int?
-  minor    Int?
-  unit     Int?
-  name     String? @db.VarChar(512)
-  level    Int?
-  jobs     Job[]
+  id          Int     @id
+  major       Int?
+  subMajor    Int?
+  minor       Int?
+  unit        Int?
+  name        String? @db.VarChar(512)
+  level       Int?
+  jobs        Job[]
+  description String? @db.Text
 
   @@index([major])
   @@index([subMajor])
