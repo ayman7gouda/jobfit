@@ -203,8 +203,25 @@ class JobState {
     }
   }
 
+  shouldSkip(decision: LikertAnswer) {
+    while (decision != null) {
+      if (decision.value == 1) {
+        return true;
+      }
+      decision = decision.parent;
+    }
+    return false;
+  }
+
   retrieveJobs() {
+    this.jobs = [];
+
     for (let decision of this.assigned.filter((a) => a.leaf)) {
+      // if we voted one of the parents out in the process, then skip it!
+      if (this.shouldSkip(decision)) {
+        continue;
+      }
+
       let subMajorId =
         decision.id >= 10 ? parseInt(decision.id.toString().slice(0, 2)) : 0;
 
@@ -334,15 +351,11 @@ class JobState {
 
     // we are done processing, first ten become questions, rest remains in the queue
     // we sort the queue by the best fit
-    // this.queue = this.queue.sort((a, b) =>
-    //   a.value == 0 && b.value !== -1
-    //     ? -1
-    //     : a.value != -1 && b.value == -1
-    //     ? 1
-    //     : calculateRating(a) < calculateRating(b)
-    //     ? 1
-    //     : -1
-    // );
+    if (this.steps.length > 1) {
+      this.queue = this.queue.sort((a, b) =>
+        calculateRating(a) < calculateRating(b) ? 1 : -1
+      );
+    }
 
     // first ten items are our new items
     this.items = this.queue.slice(0, 5);
@@ -416,8 +429,7 @@ export function Questionnaire() {
                 {state.items.map((item, i) => (
                   <div className="flex items-center py-1" key={i}>
                     <Rating rating={item} />{" "}
-                    {decisions.find((d) => d.id === item.id).text} [
-                    {calculateRating(item)}]
+                    {decisions.find((d) => d.id === item.id).text}
                   </div>
                 ))}
               </div>
@@ -447,13 +459,17 @@ export function Questionnaire() {
               </div>
             </Panel>
 
-            <div className="flex flex-col gap-4 flex-1">
+            <div className="flex flex-col gap-4 flex-1 max-w-[50%]">
               <Panel className="bg-green-300">
                 <h2 className="font-bold mb-2">
                   Selected Jobs ({state.selectedJobs.length} / 3)
                 </h2>
                 {state.selectedJobs.length == 0 && (
-                  <div>Please select a job category from the list below.</div>
+                  <div>
+                    Please select a job category from the list below. You can
+                    either select a whole category, sub-category or an
+                    individual job role.
+                  </div>
                 )}
                 {state.selectedJobs.map((s, i) => (
                   <div key={s.id}>
@@ -475,6 +491,13 @@ export function Questionnaire() {
                 </div>
 
                 <JobList state={state} />
+
+                {state.jobs.length == 0 && (
+                  <div className="mt-2">
+                    0 job roles. Please keep answering the questions and soon we
+                    will find some great matches!
+                  </div>
+                )}
               </Panel>
             </div>
           </div>
@@ -560,6 +583,12 @@ function UnitList({
         </div>
         <Checkbox state={state} job={unit} />
         <div className="flex-1 ml-2 pr-4 truncate">{unit.name}</div>
+        <div
+          className="px-2 text-slate-500 text-xs cursor-pointer"
+          onClick={() => show(!showing)}
+        >
+          {unit.children.length} job{unit.children.length == 1 ? "" : "s"}
+        </div>
         <div>${Math.round(unit.avg)}</div>
       </div>
 

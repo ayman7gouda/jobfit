@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=./schema.json
 decisions:
   - id: 0
-    text: I have previous work experience
-    no: [21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
-    yes: [1, 21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
-  - id: 1,
-    text: I like to lead people or projects
+    text: No next
+    yes: [21, 22, 231, 232, 233, 234, 24, 25, 26, 27, 1]
+  - id: 1
+    text: I have previous work experience and I want to manage people or projects
     yes: [12, 131, 132, 133, 134, 135, 141, 142]
-  - id: 12,
+  - id: 12
     text: I like to work with farm animals
     yes: [0]
   - id: 131
@@ -17,10 +16,10 @@ decisions:
     text: I am interested in business, human resources or marketing
     yes: [0]
   - id: 133
-    text: I build things and I am interested in construction
+    text: I am interested in construction
     yes: [0]
   - id: 134
-    text: I want to help others to learn
+    text: I want to lead educational initiatives
     yes: [0]
   - id: 135
     text: I like to work with technology
@@ -62,78 +61,78 @@ decisions:
     text: I am interested in world of boats or airplanes
     yes: [2311, 2312]
   - id: 2311
-    text: "More planes, please!"
+    text: "I like planes, air is my playground"
     yes: [0]
   - id: 2312
-    text: "More boats, please!"
+    text: "Water is my element, I prefer boats"
     yes: [0]
   - id: 232
-    text: I like to design things or draw maps or blueprints
+    text: I like to design things or draw maps and blueprints
     yes: [2321, 2322, 2323, 2324]
   - id: 2321
     others: [2325, 2326]
-    text: I like architecture and building design
+    text: I like architecture and the design of buildings
     yes: [0]
   - id: 2322
     text: I am into maps and geography
     yes: [0]
   - id: 2323
-    text: I dig Fashion! Yes!
+    text: I am interested in fashion industry
     yes: [0]
   - id: 2324
     text: I want to explore graphic design or web design
     yes: [0]
   - id: 233
-    text: I want to be an engineer
+    text: I like to tinker with things and see how they work
     yes: [2331, 2332, 2333, 2334, 2335, 2336, 2339]
   - id: 2331
     text: I am interested with chemistry and materials
     yes: [0]
   - id: 2332
-    text: I want to support building contructions
+    text: I want to support building construction
     yes: [0]
   - id: 2333
-    text: Electricity fascinates me
+    text: I am fascinated by electricity
     yes: [0]
   - id: 2334
     text: I take electronics apart to see how they work
     yes: [0]
   - id: 2335
-    text: Big structures fascinate me
+    text: I follow the design and realisation of big structures
     yes: [0]
   - id: 2336
     text: I am interested in mining
     yes: [0]
   - id: 2339
-    text: I can build anything you ask media
+    text: I can build anything you ask me to build
     yes: [0]
   - id: 234
     text: Science is my thing!
     yes: [2341, 2342, 2343, 2344, 2345, 2346, 2347]
   - id: 2341
-    text: Woods, fields lakes and oceans
+    text: I love nature, woods, fields, lakes and oceans
     yes: [0]
   - id: 2342
-    text: Chemistry, food, wine and other goodies
+    text: I want to explore chemistry, food, wine and other goodies
     yes: [0]
   - id: 2343
     text: I want to take care for our environment
     yes: [0]
   - id: 2344
-    text: Stones, pebbles, geodes and rocks!
+    text: I am a hard rocker. Stones, pebbles, and geodes rock!
     yes: [0]
   - id: 2345
-    text: Life is a science! All people, humans and bugs
+    text: Life is a science! I care about people, humans, animals and bugs.
     yes: [0]
   - id: 2346
     others: [2349]
-    text: I want to explore the inner and outer space
+    text: Anything about nature or physics always fascinated me
     yes: [0]
   - id: 2347
-    text: I want to cure animals
+    text: I always wanted to be a veterinarian
     yes: [0]
   - id: 24
-    text: I want to teach others to be the best version of themselves
+    text: I want to teach
     yes: [241, 242, 249]
   - id: 241
     text: I like to work with kids and teenagers
@@ -145,10 +144,10 @@ decisions:
     text: I can teach drama, music, art or languages
     yes: [0]
   - id: 25
-    text: I want to help people to stay healthy or address their problems
+    text: I want to help people to stay healthy or address their health issues
     yes: [251, 252, 253, 253]
   - id: 251
-    text: I want to support doctors in their journey to help us feel better
+    text: I want to support doctors
     yes: [0]
   - id: 252
     text: I feel like I can help people feel better by talking to them
@@ -160,10 +159,10 @@ decisions:
     text: Human birth is a miracle, and I want to be a part of it!
     yes: [0]
   - id: 26
-    text: I want to use computers and technology in my work
+    text: I want to work with computers and technology
     yes: [261, 262, 263]
   - id: 261
-    text: I would like to transform technology to work better and to be more helpful
+    text: I want to design or build great apps and websites
     yes: [2611, 2612, 2613]
   - id: 2611
     text: I want to design user experiences
@@ -181,7 +180,7 @@ decisions:
     text: I want to support technology development and build reliable and fast networks to connect everyone
     yes: [0]
   - id: 27
-    text: I am just person, and I want to ensure that everyone is treated equally, legally and with respect
+    text: I want to ensure that everyone is treated equally, legally and with respect
     yes: [271, 272]
   - id: 271
     text: I want to fight for legal justice
@@ -190,7 +189,7 @@ decisions:
     text: I want to explore social sciences, social justice and mental health
     yes: [2721, 2722, 2723, 2724, 2725]
   - id: 2721
-    text: I want to help people with their inner daemons
+    text: I want to help people with their mental health issues
     yes: [0]
   - id: 2722
     text: I believe in god and I want to spread the gospel
@@ -199,7 +198,7 @@ decisions:
     text: Human psychology and psyche is a gateway to human soul and truly understanding people
     yes: [0]
   - id: 2724
-    text: History, Archaelogy or Languages are at the top of my interests
+    text: History, Archaeology or Languages are at the top of my interests
     yes: [0]
   - id: 2725
     others: [2726]

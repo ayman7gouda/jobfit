@@ -2,13 +2,11 @@
   "decisions": [
     {
       "id": 0,
-      "text": "I have previous work experience",
-      "false": [21, 22, 231, 232, 233, 234, 24, 25, 26, 27],
-      "true": [1, 21, 22, 231, 232, 233, 234, 24, 25, 26, 27]
+      "true": [21, 22, 231, 232, 233, 234, 24, 25, 26, 27, 1]
     },
     {
       "id": 1,
-      "text": "I like to lead people or projects",
+      "text": "I have previous work experience and I want to manage people or projects",
       "true": [12, 131, 132, 133, 134, 135, 141, 142]
     },
     {
@@ -28,12 +26,12 @@
     },
     {
       "id": 133,
-      "text": "I build things and I am interested in construction",
+      "text": "I am interested in construction",
       "true": [0]
     },
     {
       "id": 134,
-      "text": "I want to help others to learn",
+      "text": "I want to lead educational initiatives",
       "true": [0]
     },
     {
@@ -58,7 +56,7 @@
     },
     {
       "id": 22,
-      "text": "I am interested in supporting businesses to succeed",
+      "text": "I am interested in economy and supporting businesses to succeed",
       "true": [221, 222, 223, 224, 225]
     },
     {
@@ -98,28 +96,28 @@
     },
     {
       "id": 231,
-      "text": "I am interested in world of boats or airplanes",
+      "text": "I am interested in boats or aeroplanes",
       "true": [2311, 2312]
     },
     {
       "id": 2311,
-      "text": "More planes, please!",
+      "text": "I like planes, air is my playground",
       "true": [0]
     },
     {
       "id": 2312,
-      "text": "More boats, please!",
+      "text": "Water is my element, I prefer boats",
       "true": [0]
     },
     {
       "id": 232,
-      "text": "I like to design things or draw maps or blueprints",
+      "text": "I like to design things or draw maps and blueprints",
       "true": [2321, 2322, 2323, 2324]
     },
     {
       "id": 2321,
       "others": [2325, 2326],
-      "text": "I like architecture and building design",
+      "text": "I like architecture and the design of buildings",
       "true": [0]
     },
     {
@@ -129,7 +127,7 @@
     },
     {
       "id": 2323,
-      "text": "I dig Fashion! Yes!",
+      "text": "I am interested in fashion industry",
       "true": [0]
     },
     {
@@ -139,7 +137,7 @@
     },
     {
       "id": 233,
-      "text": "I want to be an engineer",
+      "text": "I like to tinker with things and see how they work",
       "true": [2331, 2332, 2333, 2334, 2335, 2336, 2339]
     },
     {
@@ -149,12 +147,12 @@
     },
     {
       "id": 2332,
-      "text": "I want to support building contructions",
+      "text": "I want to support building construction",
       "true": [0]
     },
     {
       "id": 2333,
-      "text": "Electricity fascinates me",
+      "text": "I am fascinated by electricity",
       "true": [0]
     },
     {
@@ -164,7 +162,7 @@
     },
     {
       "id": 2335,
-      "text": "Big structures fascinate me",
+      "text": "I follow the design and realisation of big structures",
       "true": [0]
     },
     {
@@ -174,7 +172,7 @@
     },
     {
       "id": 2339,
-      "text": "I can build anything you ask media",
+      "text": "I can build anything you ask me to build",
       "true": [0]
     },
     {
@@ -184,12 +182,12 @@
     },
     {
       "id": 2341,
-      "text": "Woods, fields lakes and oceans",
+      "text": "I love nature, woods, fields, lakes and oceans",
       "true": [0]
     },
     {
       "id": 2342,
-      "text": "Chemistry, food, wine and other goodies",
+      "text": "I want to explore chemistry, food, wine and other goodies",
       "true": [0]
     },
     {
@@ -199,28 +197,28 @@
     },
     {
       "id": 2344,
-      "text": "Stones, pebbles, geodes and rocks!",
+      "text": "I am a hard rocker. Stones, pebbles, and geodes rock!",
       "true": [0]
     },
     {
       "id": 2345,
-      "text": "Life is a science! All people, humans and bugs",
+      "text": "Life is a science! I care about people, humans, animals and bugs.",
       "true": [0]
     },
     {
       "id": 2346,
       "others": [2349],
-      "text": "I want to explore the inner and outer space",
+      "text": "Anything about nature or physics always fascinated me",
       "true": [0]
     },
     {
       "id": 2347,
-      "text": "I want to cure animals",
+      "text": "I always wanted to be a veterinarian",
       "true": [0]
     },
     {
       "id": 24,
-      "text": "I want to teach others to be the best version of themselves",
+      "text": "I want to teach",
       "true": [241, 242, 249]
     },
     {
@@ -240,12 +238,12 @@
     },
     {
       "id": 25,
-      "text": "I want to help people to stay healthy or address their problems",
+      "text": "I want to help people to stay healthy or address their health issues",
       "true": [251, 252, 253, 253]
     },
     {
       "id": 251,
-      "text": "I want to support doctors in their journey to help us feel better",
+      "text": "I want to support doctors",
       "true": [0]
     },
     {
@@ -265,12 +263,12 @@
     },
     {
       "id": 26,
-      "text": "I want to use computers and technology in my work",
+      "text": "I want to work with computers and technology",
       "true": [261, 262, 263]
     },
     {
       "id": 261,
-      "text": "I would like to transform technology to work better and to be more helpful",
+      "text": "I want to design or build great apps and websites",
       "true": [2611, 2612, 2613]
     },
     {
@@ -300,7 +298,7 @@
     },
     {
       "id": 27,
-      "text": "I am just person, and I want to ensure that everyone is treated equally, legally and with respect",
+      "text": "I want to ensure that everyone is treated equally, legally and with respect",
       "true": [271, 272]
     },
     {
@@ -315,7 +313,7 @@
     },
     {
       "id": 2721,
-      "text": "I want to help people with their inner daemons",
+      "text": "I want to help people with their mental health issues",
       "true": [0]
     },
     {
@@ -330,7 +328,7 @@
     },
     {
       "id": 2724,
-      "text": "History, Archaelogy or Languages are at the top of my interests",
+      "text": "History, Archaeology or Languages are at the top of my interests",
       "true": [0]
     },
     {
