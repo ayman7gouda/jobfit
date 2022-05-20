@@ -334,9 +334,15 @@ class JobState {
 
     // we are done processing, first ten become questions, rest remains in the queue
     // we sort the queue by the best fit
-    this.queue = this.queue.sort((a, b) =>
-      calculateRating(a) < calculateRating(b) ? 1 : -1
-    );
+    // this.queue = this.queue.sort((a, b) =>
+    //   a.value == 0 && b.value !== -1
+    //     ? -1
+    //     : a.value != -1 && b.value == -1
+    //     ? 1
+    //     : calculateRating(a) < calculateRating(b)
+    //     ? 1
+    //     : -1
+    // );
 
     // first ten items are our new items
     this.items = this.queue.slice(0, 5);
@@ -389,9 +395,15 @@ export function Questionnaire() {
       {() => (
         <div className="flex items-center justify-center w-full h-full">
           <div className="flex gap-4  max-w-6xl">
-            <Panel className="ml-4 flex-1 divide-y divide-slate-200">
+            <Panel className="ml-4 flex-1 ">
               <h2 className="font-bold mb-4">Selected Jobs</h2>
-
+              <p className="text-slate-700 text-sm mb-4">
+                Please, tell us a little bit about yourself. You can vote on one
+                or more of the questions below. You do not have to vote on all
+                questions. The emoji on the left represents "No way!", the emoji
+                on the right represents "Yes please!". We will find job
+                categories matching for you, please choose three of them.
+              </p>
               {state.items.length == 0 && (
                 <div>
                   We have no more questions for you! Please see the job roles
@@ -400,13 +412,15 @@ export function Questionnaire() {
                 </div>
               )}
 
-              {state.items.map((item, i) => (
-                <div className="flex items-center py-1" key={i}>
-                  <Rating rating={item} />{" "}
-                  {decisions.find((d) => d.id === item.id).text} [
-                  {calculateRating(item)}]
-                </div>
-              ))}
+              <div className="divide-y divide-slate-200">
+                {state.items.map((item, i) => (
+                  <div className="flex items-center py-1" key={i}>
+                    <Rating rating={item} />{" "}
+                    {decisions.find((d) => d.id === item.id).text} [
+                    {calculateRating(item)}]
+                  </div>
+                ))}
+              </div>
 
               <div className="pt-4">
                 {state.steps.length > 0 && (
