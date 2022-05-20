@@ -285,67 +285,69 @@ function SkillList({
   return (
     <table className="w-full">
       <tbody>
-        {items.map((e) => {
-          const estimate = estimates.find((s) => e.sfiaId === s.sfiaId);
-          const level = e.level == null ? getLevel(estimate) : e.level;
-          return (
-            <React.Fragment key={e.id}>
-              <tr>
-                <td className="pr-2">
-                  <CircularProgressBar
-                    strokeWidth="4"
-                    sqSize={32}
-                    percentage={Math.floor(estimate.overall * 100)}
-                    color={
-                      estimate.overall > 0.4
-                        ? "green"
-                        : estimate.overall > 0.3
-                        ? "orange"
-                        : "red"
-                    }
-                  />
-                </td>
-                <td className="pr-2 w-full">
-                  <div
-                    title="Click to show SFIA details"
-                    className="flex cursor-pointer"
-                    onClick={() =>
-                      setSfiaDetail(e.sfiaId === sfiaDetail ? -1 : e.sfiaId)
-                    }
-                  >
-                    {sfiaData.sfias.find((s) => s.id === e.sfiaId)?.name}
-                  </div>
-                </td>
-                <td>
-                  {estimate.rank && (
-                    <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                      {estimate.rank}
-                    </span>
-                  )}
-                </td>
-                <td>
-                  <div className="flex items-center w-[265px]">
-                    <Voting
-                      estimate={{ ...estimate, level }}
-                      item={item}
-                      save={save}
-                      autoSave={autoSave}
-                    />
-                  </div>
-                </td>
-              </tr>
-              {sfiaDetail === e.sfiaId && (
+        {items
+          .filter((i) => estimates.some((e) => e.sfiaId === i.sfiaId))
+          .map((e) => {
+            const estimate = estimates.find((s) => e.sfiaId === s.sfiaId);
+            const level = e.level == null ? getLevel(estimate) : e.level;
+            return (
+              <React.Fragment key={e.id}>
                 <tr>
-                  <td colSpan={4}>
-                    <div className="relative z-0 inline-flex shadow-sm rounded-md mb-4 mt-4 p-4 bg-white">
-                      <SfiaDetail id={e.sfiaId} />
+                  <td className="pr-2">
+                    <CircularProgressBar
+                      strokeWidth="4"
+                      sqSize={32}
+                      percentage={Math.floor(estimate.overall * 100)}
+                      color={
+                        estimate.overall > 0.4
+                          ? "green"
+                          : estimate.overall > 0.3
+                          ? "orange"
+                          : "red"
+                      }
+                    />
+                  </td>
+                  <td className="pr-2 w-full">
+                    <div
+                      title="Click to show SFIA details"
+                      className="flex cursor-pointer"
+                      onClick={() =>
+                        setSfiaDetail(e.sfiaId === sfiaDetail ? -1 : e.sfiaId)
+                      }
+                    >
+                      {sfiaData.sfias.find((s) => s.id === e.sfiaId)?.name}
+                    </div>
+                  </td>
+                  <td>
+                    {estimate.rank && (
+                      <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        {estimate.rank}
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <div className="flex items-center w-[265px]">
+                      <Voting
+                        estimate={{ ...estimate, level }}
+                        item={item}
+                        save={save}
+                        autoSave={autoSave}
+                      />
                     </div>
                   </td>
                 </tr>
-              )}
-            </React.Fragment>
-          );
-        })}
+                {sfiaDetail === e.sfiaId && (
+                  <tr>
+                    <td colSpan={4}>
+                      <div className="relative z-0 inline-flex shadow-sm rounded-md mb-4 mt-4 p-4 bg-white">
+                        <SfiaDetail id={e.sfiaId} />
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
       </tbody>
     </table>
   );
