@@ -234,3 +234,16 @@ model SubjectBgSkill {
 
   @@id([clusterId, skillId])
 }
+
+// Views - Remove during push
+
+model AnzscoJob {
+  id       Int    @id
+  name     String
+  major    Int
+  unit     Int
+  minor    Int
+  subMajor Int
+  code     Int
+
+}
