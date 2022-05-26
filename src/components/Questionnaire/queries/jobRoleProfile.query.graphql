@@ -1,0 +1,25 @@
+query JobRoleProfile($unit: Int!) {
+  jobRoleProfile(unit: $unit) {
+    name
+    average
+    demand
+    description
+    employers {
+      count
+      name
+    }
+    jobCount
+    maxSalary
+    minSalary
+    skills {
+      clusterId
+      count
+      name
+      skills {
+        skillId
+        count
+        name
+      }
+    }
+  }
+}

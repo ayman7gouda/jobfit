@@ -15,6 +15,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type EmployerCount = {
+  __typename?: 'EmployerCount';
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type Job = {
   __typename?: 'Job';
   ANZSCO?: Maybe<Scalars['String']>;
@@ -68,6 +74,34 @@ export type JobCategory = {
   name: Scalars['String'];
 };
 
+export type JobProfileSkill = {
+  __typename?: 'JobProfileSkill';
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  skillId?: Maybe<Scalars['Int']>;
+};
+
+export type JobProfileSkillCategory = {
+  __typename?: 'JobProfileSkillCategory';
+  clusterId?: Maybe<Scalars['Int']>;
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  skills: Array<JobProfileSkill>;
+};
+
+export type JobRoleProfile = {
+  __typename?: 'JobRoleProfile';
+  average?: Maybe<Scalars['Float']>;
+  demand?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  employers: Array<EmployerCount>;
+  jobCount?: Maybe<Scalars['Int']>;
+  maxSalary?: Maybe<Scalars['Float']>;
+  minSalary?: Maybe<Scalars['Float']>;
+  name?: Maybe<Scalars['String']>;
+  skills: Array<JobProfileSkillCategory>;
+};
+
 export type JobSkills = {
   __typename?: 'JobSkills';
   job?: Maybe<Job>;
@@ -113,6 +147,7 @@ export type Query = {
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
   jobCategories: Array<JobCategory>;
+  jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
   sfia?: Maybe<SfiaSkill>;
   sfias: Array<SfiaSkill>;
@@ -130,6 +165,11 @@ export type QueryFindSubjectSkillsArgs = {
 
 export type QueryFindSubjectsArgs = {
   query: Scalars['String'];
+};
+
+
+export type QueryJobRoleProfileArgs = {
+  unit: Scalars['Int'];
 };
 
 
@@ -341,10 +381,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  EmployerCount: ResolverTypeWrapper<EmployerCount>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Job: ResolverTypeWrapper<Job>;
   JobCategory: ResolverTypeWrapper<JobCategory>;
+  JobProfileSkill: ResolverTypeWrapper<JobProfileSkill>;
+  JobProfileSkillCategory: ResolverTypeWrapper<JobProfileSkillCategory>;
+  JobRoleProfile: ResolverTypeWrapper<JobRoleProfile>;
   JobSkills: ResolverTypeWrapper<JobSkills>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -366,10 +410,14 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  EmployerCount: EmployerCount;
   Float: Scalars['Float'];
   Int: Scalars['Int'];
   Job: Job;
   JobCategory: JobCategory;
+  JobProfileSkill: JobProfileSkill;
+  JobProfileSkillCategory: JobProfileSkillCategory;
+  JobRoleProfile: JobRoleProfile;
   JobSkills: JobSkills;
   Mutation: {};
   Query: {};
@@ -386,6 +434,12 @@ export type ResolversParentTypes = {
   SubjectBgCluster: SubjectBgCluster;
   SubjectBgSkill: SubjectBgSkill;
   SubjectSfiaSkill: SubjectSfiaSkill;
+};
+
+export type EmployerCountResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EmployerCount'] = ResolversParentTypes['EmployerCount']> = {
+  count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type JobResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Job'] = ResolversParentTypes['Job']> = {
@@ -441,6 +495,34 @@ export type JobCategoryResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type JobProfileSkillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobProfileSkill'] = ResolversParentTypes['JobProfileSkill']> = {
+  count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  skillId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type JobProfileSkillCategoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobProfileSkillCategory'] = ResolversParentTypes['JobProfileSkillCategory']> = {
+  clusterId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  skills?: Resolver<Array<ResolversTypes['JobProfileSkill']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type JobRoleProfileResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobRoleProfile'] = ResolversParentTypes['JobRoleProfile']> = {
+  average?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  demand?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  employers?: Resolver<Array<ResolversTypes['EmployerCount']>, ParentType, ContextType>;
+  jobCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  maxSalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  minSalary?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  skills?: Resolver<Array<ResolversTypes['JobProfileSkillCategory']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type JobSkillsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobSkills'] = ResolversParentTypes['JobSkills']> = {
   job?: Resolver<Maybe<ResolversTypes['Job']>, ParentType, ContextType>;
   jobId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -461,6 +543,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   findSubjectSkills?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectSkillsArgs, 'id'>>;
   findSubjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectsArgs, 'query'>>;
   jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
+  jobRoleProfile?: Resolver<Maybe<ResolversTypes['JobRoleProfile']>, ParentType, ContextType, RequireFields<QueryJobRoleProfileArgs, 'unit'>>;
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
   sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType, RequireFields<QuerySfiaArgs, 'id'>>;
   sfias?: Resolver<Array<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
@@ -588,8 +671,12 @@ export type SubjectSfiaSkillResolvers<ContextType = Context, ParentType extends 
 };
 
 export type Resolvers<ContextType = Context> = {
+  EmployerCount?: EmployerCountResolvers<ContextType>;
   Job?: JobResolvers<ContextType>;
   JobCategory?: JobCategoryResolvers<ContextType>;
+  JobProfileSkill?: JobProfileSkillResolvers<ContextType>;
+  JobProfileSkillCategory?: JobProfileSkillCategoryResolvers<ContextType>;
+  JobRoleProfile?: JobRoleProfileResolvers<ContextType>;
   JobSkills?: JobSkillsResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

@@ -12,6 +12,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type EmployerCount = {
+  __typename?: 'EmployerCount';
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type Job = {
   __typename?: 'Job';
   ANZSCO?: Maybe<Scalars['String']>;
@@ -65,6 +71,34 @@ export type JobCategory = {
   name: Scalars['String'];
 };
 
+export type JobProfileSkill = {
+  __typename?: 'JobProfileSkill';
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  skillId?: Maybe<Scalars['Int']>;
+};
+
+export type JobProfileSkillCategory = {
+  __typename?: 'JobProfileSkillCategory';
+  clusterId?: Maybe<Scalars['Int']>;
+  count?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  skills: Array<JobProfileSkill>;
+};
+
+export type JobRoleProfile = {
+  __typename?: 'JobRoleProfile';
+  average?: Maybe<Scalars['Float']>;
+  demand?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  employers: Array<EmployerCount>;
+  jobCount?: Maybe<Scalars['Int']>;
+  maxSalary?: Maybe<Scalars['Float']>;
+  minSalary?: Maybe<Scalars['Float']>;
+  name?: Maybe<Scalars['String']>;
+  skills: Array<JobProfileSkillCategory>;
+};
+
 export type JobSkills = {
   __typename?: 'JobSkills';
   job?: Maybe<Job>;
@@ -110,6 +144,7 @@ export type Query = {
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
   jobCategories: Array<JobCategory>;
+  jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
   sfia?: Maybe<SfiaSkill>;
   sfias: Array<SfiaSkill>;
@@ -127,6 +162,11 @@ export type QueryFindSubjectSkillsArgs = {
 
 export type QueryFindSubjectsArgs = {
   query: Scalars['String'];
+};
+
+
+export type QueryJobRoleProfileArgs = {
+  unit: Scalars['Int'];
 };
 
 
