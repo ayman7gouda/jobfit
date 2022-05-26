@@ -57,7 +57,38 @@ type JobSkills {
   job: Job
 }
 
+type EmployerCount {
+  name: String
+  count: Int
+}
+
+type JobProfileSkill {
+  skillId: Int
+  name: String
+  count: Int
+}
+
+type JobProfileSkillCategory {
+  clusterId: Int
+  name: String
+  count: Int
+  skills: [JobProfileSkill!]!
+}
+
+type JobRoleProfile {
+  name: String
+  description: String
+  demand: String
+  jobCount: Int
+  average: Float
+  minSalary: Float
+  maxSalary: Float
+  employers: [EmployerCount!]!
+  skills: [JobProfileSkillCategory!]!
+}
+
 extend type Query {
   jobCategories: [JobCategory!]!
   jobs(id: Int!): [Job!]
+  jobRoleProfile(unit: Int!): JobRoleProfile
 }

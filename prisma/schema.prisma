@@ -8,20 +8,29 @@ datasource db {
 }
 
 model ANZSCO {
-  id          Int     @id
-  name        String? @db.VarChar(512)
-  level       Int?
-  major       Int?
-  minor       Int?
-  subMajor    Int?
-  unit        Int?
-  description String? @db.Text
-  jobs        Job[]
+  id             Int              @id
+  name           String?          @db.VarChar(512)
+  level          Int?
+  major          Int?
+  minor          Int?
+  subMajor       Int?
+  unit           Int?
+  description    String?          @db.Text
+  jobs           Job[]
+  jobProjections JobProjections[]
 
   @@index([major])
   @@index([subMajor])
   @@index([minor])
   @@index([unit])
+}
+
+model JobProjections {
+  id        Int    @id @default(autoincrement())
+  ANZSCO    ANZSCO @relation(fields: [id], references: [id])
+  level2021 Float
+  level2026 Float
+  growth    Float
 }
 
 model Certification {
@@ -38,7 +47,7 @@ model Job {
   state            String?
   title            String?             @db.VarChar(512)
   dateText         String?
-  date             DateTime?
+  date             Int?
   domain           String?             @db.VarChar(512)
   domainId         String?
   text             String?             @db.Text
@@ -75,6 +84,7 @@ model Job {
   skills           JobSkills[]
 
   @@index([ANZSCOCode], map: "Job_ANZSCOCode_fkey")
+  @@index([date])
 }
 
 model JobCertifications {
@@ -232,7 +242,7 @@ model SubjectBgSkill {
 // views
 
 // CREATE OR REPLACE VIEW AnzscoJob AS
-//     SELECT J.id, J.title, J.employer, J.maxAnnualSalary, J.maxHourlySalary, J.i A.major, A.subMajor, A.minor, A.unit, A.id as code
+//     SELECT J.id, J.title, J.employer, J.maxAnnualSalary, J.dateText, J.`date`, J.maxHourlySalary, A.major, A.subMajor, A.minor, A.unit, A.id as code
 //     FROM Job as J, ANZSCO as A
 //     WHERE J.ANZSCOCode = A.id;
 
@@ -247,5 +257,7 @@ model AnzscoJob {
   employer        String
   maxAnnualSalary Float
   maxHourlySalary Float
+  dateText        String
+  date            Int
 
 }
