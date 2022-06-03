@@ -83,6 +83,7 @@ type JobRoleProfile {
   average: Float
   minSalary: Float
   maxSalary: Float
+  projection: Float
   employers: [EmployerCount!]!
   skills: [JobProfileSkillCategory!]!
 }

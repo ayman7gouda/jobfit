@@ -1,11 +1,11 @@
-import { NextPageContext } from 'next';
+import { NextPageContext } from "next";
 
-import Landing from 'components/Landing/Landing';
-import { getSession, useSession } from 'next-auth/react';
-import Head from 'next/head';
+import Landing from "components/Landing/Landing";
+import { getSession } from "next-auth/react";
+import Head from "next/head";
 
 export default function Home({ csrfToken }) {
-  const session = useSession();
+  // const session = useSession();
 
   return (
     <div>

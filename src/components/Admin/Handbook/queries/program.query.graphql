@@ -1,0 +1,15 @@
+query Program($id: Int!) {
+  program(id: $id) {
+    id
+    name
+    code
+    url
+    description
+    structureSource
+    sequenceSource
+    handbook {
+      ...Handbook
+    }
+    updated
+  }
+}

@@ -1,0 +1,13 @@
+fragment Handbook on Handbook {
+  id
+  number
+  credits
+  level
+  flagged
+  nodeId
+  programId
+  parentId
+  text
+  folder
+  type
+}

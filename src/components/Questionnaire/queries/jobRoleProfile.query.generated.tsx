@@ -8,7 +8,7 @@ export type JobRoleProfileQueryVariables = Types.Exact<{
 }>;
 
 
-export type JobRoleProfileQuery = { __typename?: 'Query', jobRoleProfile?: { __typename?: 'JobRoleProfile', name?: string | null, average?: number | null, demand?: string | null, description?: string | null, jobCount?: number | null, maxSalary?: number | null, minSalary?: number | null, employers: Array<{ __typename?: 'EmployerCount', count?: number | null, name?: string | null }>, skills: Array<{ __typename?: 'JobProfileSkillCategory', clusterId?: number | null, count?: number | null, name?: string | null, skills: Array<{ __typename?: 'JobProfileSkill', skillId?: number | null, count?: number | null, name?: string | null }> }> } | null };
+export type JobRoleProfileQuery = { __typename?: 'Query', jobRoleProfile?: { __typename?: 'JobRoleProfile', name?: string | null, average?: number | null, demand?: string | null, description?: string | null, jobCount?: number | null, projection?: number | null, maxSalary?: number | null, minSalary?: number | null, employers: Array<{ __typename?: 'EmployerCount', count?: number | null, name?: string | null }>, skills: Array<{ __typename?: 'JobProfileSkillCategory', clusterId?: number | null, count?: number | null, name?: string | null, skills: Array<{ __typename?: 'JobProfileSkill', skillId?: number | null, count?: number | null, name?: string | null }> }> } | null };
 
 
 export const JobRoleProfileDocument = gql`
@@ -23,6 +23,7 @@ export const JobRoleProfileDocument = gql`
       name
     }
     jobCount
+    projection
     maxSalary
     minSalary
     skills {

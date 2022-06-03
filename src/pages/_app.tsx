@@ -1,10 +1,10 @@
-import { configure } from 'mobx';
+import { configure } from "mobx";
 
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from "@apollo/client";
 
-import { getApolloClient } from 'lib/createClient';
-import { SessionProvider } from 'next-auth/react';
-import 'styles/global.css';
+import { getApolloClient } from "lib/createClient";
+import { SessionProvider } from "next-auth/react";
+import "styles/global.css";
 
 configure({ enforceActions: "never" });
 

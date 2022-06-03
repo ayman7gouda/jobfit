@@ -1,0 +1,8 @@
+query Specialisations {
+  specialisations {
+    id
+    name
+    code
+    updated
+  }
+}

@@ -1,6 +1,6 @@
-import { gql } from 'apollo-server-micro';
-import fs from 'fs';
-import path from 'path';
+import { gql } from "apollo-server-micro";
+import fs from "fs";
+import path from "path";
 
 function readGql(source: string) {
   return gql(
@@ -14,4 +14,5 @@ export const typeDefs = [
   readGql("./job/job.graphql"),
   readGql("./skill/skill.graphql"),
   readGql("./subject/subject.graphql"),
+  readGql("./program/program.graphql"),
 ];

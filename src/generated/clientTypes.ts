@@ -18,6 +18,37 @@ export type EmployerCount = {
   name?: Maybe<Scalars['String']>;
 };
 
+export type Handbook = {
+  __typename?: 'Handbook';
+  credits?: Maybe<Scalars['Int']>;
+  flagged?: Maybe<Scalars['Boolean']>;
+  folder?: Maybe<Scalars['Boolean']>;
+  id: Scalars['Int'];
+  level?: Maybe<Scalars['Int']>;
+  nodeId: Scalars['Int'];
+  number?: Maybe<Scalars['Int']>;
+  parentId?: Maybe<Scalars['Int']>;
+  program?: Maybe<Program>;
+  programId?: Maybe<Scalars['Int']>;
+  specialisation?: Maybe<Specialisation>;
+  specialisationId?: Maybe<Scalars['Int']>;
+  text?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+export type HandbookInput = {
+  credits?: InputMaybe<Scalars['Int']>;
+  flagged?: InputMaybe<Scalars['Boolean']>;
+  folder?: InputMaybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['Int']>;
+  level?: InputMaybe<Scalars['Int']>;
+  nodeId: Scalars['Int'];
+  number?: InputMaybe<Scalars['Int']>;
+  parentId?: InputMaybe<Scalars['Int']>;
+  text?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
 export type Job = {
   __typename?: 'Job';
   ANZSCO?: Maybe<Scalars['String']>;
@@ -96,6 +127,7 @@ export type JobRoleProfile = {
   maxSalary?: Maybe<Scalars['Float']>;
   minSalary?: Maybe<Scalars['Float']>;
   name?: Maybe<Scalars['String']>;
+  projection?: Maybe<Scalars['Float']>;
   skills: Array<JobProfileSkillCategory>;
 };
 
@@ -111,6 +143,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDescription: SkillCluster;
   deleteDescription: SkillCluster;
+  saveProgramHandbook?: Maybe<Program>;
+  saveSpecialisationHandbook?: Maybe<Specialisation>;
   saveSubjectSfia?: Maybe<SubjectSfiaSkill>;
   status?: Maybe<Scalars['String']>;
   updateDescription: SkillClusterDescription;
@@ -128,6 +162,16 @@ export type MutationDeleteDescriptionArgs = {
 };
 
 
+export type MutationSaveProgramHandbookArgs = {
+  input: ProgramInput;
+};
+
+
+export type MutationSaveSpecialisationHandbookArgs = {
+  input: SpecialisationInput;
+};
+
+
 export type MutationSaveSubjectSfiaArgs = {
   level: Scalars['Int'];
   sfiaId: Scalars['Int'];
@@ -139,6 +183,25 @@ export type MutationUpdateDescriptionArgs = {
   description: SkillClusterDescriptionInput;
 };
 
+export type Program = {
+  __typename?: 'Program';
+  code: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  handbook?: Maybe<Array<Handbook>>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  sequenceSource?: Maybe<Scalars['String']>;
+  specialisations?: Maybe<Array<SpecialisationProgram>>;
+  structureSource?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
+};
+
+export type ProgramInput = {
+  handbook?: InputMaybe<Array<HandbookInput>>;
+  id: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   findSubjectSkills?: Maybe<Subject>;
@@ -146,11 +209,15 @@ export type Query = {
   jobCategories: Array<JobCategory>;
   jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
+  program?: Maybe<Program>;
+  programs: Array<Program>;
   sfia?: Maybe<SfiaSkill>;
   sfias: Array<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
   skillClusters: Array<SkillCluster>;
   skills: Array<Skill>;
+  specialisation?: Maybe<Specialisation>;
+  specialisations: Array<Specialisation>;
   status?: Maybe<Scalars['String']>;
 };
 
@@ -175,6 +242,11 @@ export type QueryJobsArgs = {
 };
 
 
+export type QueryProgramArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QuerySfiaArgs = {
   id: Scalars['Int'];
 };
@@ -182,6 +254,11 @@ export type QuerySfiaArgs = {
 
 export type QuerySkillClusterArgs = {
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySpecialisationArgs = {
+  id: Scalars['Int'];
 };
 
 export type SfiaEstimate = {
@@ -264,6 +341,35 @@ export type SkillClusters = {
   clusterId: Scalars['Int'];
   skill?: Maybe<Skill>;
   skillId: Scalars['Int'];
+};
+
+export type Specialisation = {
+  __typename?: 'Specialisation';
+  availability?: Maybe<Scalars['String']>;
+  code: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  handbook?: Maybe<Array<Handbook>>;
+  id: Scalars['Int'];
+  legacyCode?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  programs?: Maybe<Array<SpecialisationProgram>>;
+  sequenceSource?: Maybe<Scalars['String']>;
+  structureSource?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
+};
+
+export type SpecialisationInput = {
+  handbook?: InputMaybe<Array<HandbookInput>>;
+  id: Scalars['Int'];
+};
+
+export type SpecialisationProgram = {
+  __typename?: 'SpecialisationProgram';
+  program?: Maybe<Program>;
+  programId: Scalars['Int'];
+  specialisation?: Maybe<Specialisation>;
+  specialisationId: Scalars['Int'];
 };
 
 export type Subject = {

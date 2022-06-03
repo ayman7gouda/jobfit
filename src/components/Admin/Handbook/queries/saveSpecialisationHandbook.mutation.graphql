@@ -1,0 +1,9 @@
+mutation SaveSpecialisationHandbook($input: SpecialisationInput!) {
+  saveSpecialisationHandbook(input: $input) {
+    id
+    updated
+    handbook {
+      ...Handbook
+    }
+  }
+}
