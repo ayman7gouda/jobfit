@@ -1,11 +1,8 @@
 import React, { useMemo, useState } from "react";
 
 import {
-  DndProvider,
   DragLayerMonitorProps,
   DropOptions,
-  getBackendOptions,
-  MultiBackend,
   NodeModel,
   Tree,
 } from "@minoru/react-dnd-treeview";
@@ -26,9 +23,7 @@ import {
   SpecialisationsQuery,
   useSpecialisationsQuery,
 } from "./queries/specialisations.query.generated";
-import { FileProperties, getGuid } from "./types";
-
-type Option = { name: string; value: string };
+import { FileProperties, getGuid, Option } from "./types";
 
 type Model = {
   code: string;
@@ -75,9 +70,7 @@ function ProgramsView({
             }}
           >
             <Link
-              href={`/admin/handbook/specialisations/${toUrlName(p.name)}?id=${
-                p.id
-              }`}
+              href={`/admin/handbook/programs/${toUrlName(p.name)}?id=${p.id}`}
             >
               <a>
                 {p.updated && (
@@ -149,9 +142,12 @@ function SpecialisationsView({
 
 export function Layout(args: {
   part: string;
-  model?: Model;
   id?: number | null;
-  save?(tree: NodeModel<FileProperties>[]): void;
+  treeView(args: {
+    all: Option[];
+    programOptions: Option[];
+    majorOptions: Option[];
+  }): any;
 }) {
   const [part, setPart] = useState(args.part);
 
@@ -244,22 +240,13 @@ export function Layout(args: {
         )}
       </div>
       <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
-        {args.id && args.model && args.save && (
-          <TreeView
-            defaultTree={args.model.handbook}
-            model={args.model}
-            all={all}
-            programOptions={programOptions}
-            majorOptions={majorOptions}
-            save={args.save}
-          />
-        )}
+        {args.id && args.treeView({ programOptions, majorOptions, all })}
       </div>
     </div>
   );
 }
 
-const TreeView = ({
+export const TreeView = ({
   defaultTree,
   save,
   programOptions,
@@ -309,110 +296,104 @@ const TreeView = ({
   }
 
   return (
-    <DndProvider
-      backend={MultiBackend}
-      debugMode={true}
-      options={getBackendOptions()}
-    >
-      <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
-        <div
-          style={{
-            padding: 8,
-            display: "flex",
-            alignItems: "center",
-            position: "sticky",
-            top: 0,
-            background: "white",
-            width: "100%",
-            zIndex: 1,
+    <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
+      <div
+        style={{
+          padding: 8,
+          display: "flex",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
+          background: "white",
+          width: "100%",
+          zIndex: 1,
+        }}
+      >
+        <button
+          type="button"
+          className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
+          onClick={() => {
+            save(tree);
           }}
         >
-          <button
-            type="button"
-            className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
-            onClick={() => {
-              save(tree);
-            }}
-          >
-            Save
-          </button>
-          <a
-            href={`https://hbook.westernsydney.edu.au${model.url}`}
-            target="__blank"
-          >
-            {model.name}
-          </a>
-        </div>
-
-        <div style={{ paddingTop: 20 }}>
-          <Tree
-            tree={tree}
-            rootId={0}
-            render={(
-              node: NodeModel<FileProperties>,
-              { depth, isOpen, onToggle }
-            ) => (
-              <CustomNode
-                node={node}
-                depth={depth}
-                isOpen={isOpen}
-                onToggle={onToggle}
-                programs={programOptions}
-                majors={majorOptions}
-                all={all}
-                onTextChange={handleTextChange}
-                clone={clone}
-                tree={tree}
-                onAddNode={(node) => setTree(tree.concat(node))}
-                onDeleteNode={(id) => {
-                  setTree(tree.filter((n) => n.id !== id && n.parent !== id));
-                }}
-                onNodeChange={(id, value) => {
-                  const { text, ...rest } = value;
-                  const newTree = tree.map((node) => {
-                    if (node.id === id) {
-                      return {
-                        ...node,
-                        // text: text || node.text,
-                        data: {
-                          ...node.data,
-                          ...(rest as any),
-                        },
-                      };
-                    }
-
-                    return node;
-                  });
-
-                  setTree(newTree);
-                }}
-              />
-            )}
-            dragPreviewRender={(
-              monitorProps: DragLayerMonitorProps<FileProperties>
-            ) => <CustomDragPreview monitorProps={monitorProps} />}
-            onDrop={handleDrop}
-            classes={{
-              root: styles.treeRoot,
-              draggingSource: styles.draggingSource,
-              placeholder: styles.placeholderContainer,
-            }}
-            sort={false}
-            insertDroppableFirst={false}
-            canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
-              if (dragSource?.parent === dropTargetId) {
-                return true;
-              }
-            }}
-            dropTargetOffset={5}
-            placeholderRender={(node, { depth }) => (
-              <Placeholder node={node} depth={depth} />
-            )}
-            key={model.id}
-            initialOpen={true}
-          />
-        </div>
+          Save
+        </button>
+        <a
+          href={`https://hbook.westernsydney.edu.au${model.url}`}
+          target="__blank"
+        >
+          {model.name}
+        </a>
       </div>
-    </DndProvider>
+
+      <div style={{ paddingTop: 20 }}>
+        <Tree
+          tree={tree}
+          rootId={0}
+          render={(
+            node: NodeModel<FileProperties>,
+            { depth, isOpen, onToggle }
+          ) => (
+            <CustomNode
+              node={node}
+              depth={depth}
+              isOpen={isOpen}
+              onToggle={onToggle}
+              programs={programOptions}
+              majors={majorOptions}
+              all={all}
+              onTextChange={handleTextChange}
+              clone={clone}
+              tree={tree}
+              onAddNode={(node) => setTree(tree.concat(node))}
+              onDeleteNode={(id) => {
+                setTree(tree.filter((n) => n.id !== id && n.parent !== id));
+              }}
+              onNodeChange={(id, value) => {
+                const { text, ...rest } = value;
+                const newTree = tree.map((node) => {
+                  if (node.id === id) {
+                    return {
+                      ...node,
+                      // text: text || node.text,
+                      data: {
+                        ...node.data,
+                        ...(rest as any),
+                      },
+                    };
+                  }
+
+                  return node;
+                });
+
+                setTree(newTree);
+              }}
+            />
+          )}
+          dragPreviewRender={(
+            monitorProps: DragLayerMonitorProps<FileProperties>
+          ) => <CustomDragPreview monitorProps={monitorProps} />}
+          onDrop={handleDrop}
+          classes={{
+            root: styles.treeRoot,
+            draggingSource: styles.draggingSource,
+            placeholder: styles.placeholderContainer,
+          }}
+          sort={false}
+          insertDroppableFirst={false}
+          canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+            if (dragSource?.parent === dropTargetId) {
+              return true;
+            }
+          }}
+          dropTargetOffset={5}
+          placeholderRender={(node, { depth }) => (
+            <Placeholder node={node} depth={depth} />
+          )}
+          key={model.id}
+          initialOpen={true}
+        />
+      </div>
+    </div>
   );
 };

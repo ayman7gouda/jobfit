@@ -1,28 +1,40 @@
-import { useEffect, useState } from "react";
+import {
+  DndProvider,
+  getBackendOptions,
+  MultiBackend,
+} from "@minoru/react-dnd-treeview";
 
 import { daoInNode, daoOutNode } from "components/Admin/Handbook/helpers";
 import { useProgramQuery } from "components/Admin/Handbook/queries/program.query.generated";
 import { useSaveProgramHandbookMutation } from "components/Admin/Handbook/queries/saveProgramHandbook.mutation.generated";
-import { Layout } from "components/Admin/Handbook/TreeView";
-import { initGuid } from "components/Admin/Handbook/types";
+import { Layout, TreeView } from "components/Admin/Handbook/TreeView";
+import { initGuid, Option } from "components/Admin/Handbook/types";
 import { useRouter } from "next/router";
 
-const ClientOnly = ({ children }: any) => {
-  const [isClient, setClient] = useState(false);
+// const ClientOnly = ({ children }: any) => {
+//   const [isClient, setClient] = useState(false);
 
-  useEffect(() => setClient(true), []);
+//   useEffect(() => setClient(true), []);
 
-  if (!isClient) {
-    return null;
-  }
-  return children;
-};
+//   if (!isClient) {
+//     return null;
+//   }
+//   return children;
+// };
 
-export function SpecialisationContainer() {
-  const { id } = useRouter().query;
-  const numId = parseInt(id as string);
+export function SpecialisationContainer({
+  all,
+  programOptions,
+  majorOptions,
+  id,
+}: {
+  programOptions: Option[];
+  majorOptions: Option[];
+  all: Option[];
+  id: number;
+}) {
   const { data, loading } = useProgramQuery({
-    variables: { id: numId },
+    variables: { id },
   });
   const [save] = useSaveProgramHandbookMutation();
 
@@ -38,10 +50,13 @@ export function SpecialisationContainer() {
   initGuid(tree);
 
   return (
-    <Layout
+    <TreeView
+      key={id}
+      defaultTree={tree.handbook}
       model={tree}
-      id={numId}
-      part="programs"
+      all={all}
+      programOptions={programOptions}
+      majorOptions={majorOptions}
       save={(h) => {
         save({
           variables: {
@@ -56,15 +71,41 @@ export function SpecialisationContainer() {
   );
 }
 
+const Page = () => {
+  const { id } = useRouter().query;
+  const numId = parseInt(id as string);
+
+  return (
+    <>
+      <Layout
+        id={numId}
+        part="programs"
+        treeView={({ programOptions, majorOptions, all }) => (
+          <SpecialisationContainer
+            programOptions={programOptions}
+            majorOptions={majorOptions}
+            all={all}
+            id={numId}
+          />
+        )}
+      />
+      <style jsx global>{`
+        body,
+        html,
+        #__next {
+          height: 100%;
+        }
+      `}</style>
+    </>
+  );
+};
+
 export default () => (
-  <ClientOnly>
-    <SpecialisationContainer />
-    <style jsx global>{`
-      body,
-      html,
-      #__next {
-        height: 100%;
-      }
-    `}</style>
-  </ClientOnly>
+  <DndProvider
+    backend={MultiBackend}
+    debugMode={true}
+    options={getBackendOptions()}
+  >
+    <Page />
+  </DndProvider>
 );

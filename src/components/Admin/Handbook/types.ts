@@ -9,6 +9,8 @@ export type FileProperties = {
   dbId?: number;
 };
 
+export type Option = { name: string; value: string };
+
 let guid = 10;
 
 export function initGuid(program: any) {
