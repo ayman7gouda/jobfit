@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { PreviewTree } from "components/Admin/Handbook/TreePreview";
+import { Layout } from "components/Admin/Handbook/TreeView";
 
-const ClientOnly = ({ children }) => {
+const ClientOnly = ({ children }: any) => {
   const [isClient, setClient] = useState(false);
 
   useEffect(() => setClient(true), []);
@@ -15,7 +15,7 @@ const ClientOnly = ({ children }) => {
 
 export default () => (
   <ClientOnly>
-    <PreviewTree />
+    <Layout part="programs" />
     <style jsx global>{`
       body,
       html,
