@@ -1,13 +1,17 @@
 import React, { useMemo, useState } from "react";
 
 import {
+  DndProvider,
   DragLayerMonitorProps,
   DropOptions,
+  getBackendOptions,
+  MultiBackend,
   NodeModel,
   Tree,
 } from "@minoru/react-dnd-treeview";
 
-import { ProgramInput } from "generated/clientTypes";
+import { toUrlName } from "lib/utils";
+import Link from "next/link";
 import { HiCheck } from "react-icons/hi";
 
 import { CustomDragPreview } from "./CustomDragPreview";
@@ -15,206 +19,33 @@ import { CustomNode } from "./CustomNode";
 import styles from "./EditableNodes.module.css";
 import { Placeholder } from "./Placeholder";
 import {
-  ProgramQuery,
-  useProgramLazyQuery,
-} from "./queries/program.query.generated";
-import {
   ProgramsQuery,
   useProgramsQuery,
 } from "./queries/programs.query.generated";
-import { useSaveProgramHandbookMutation } from "./queries/saveProgramHandbook.mutation.generated";
-import { useSaveSpecialisationHandbookMutation } from "./queries/saveSpecialisationHandbook.mutation.generated";
-import {
-  SpecialisationQuery,
-  useSpecialisationLazyQuery,
-} from "./queries/specialisation.query.generated";
 import {
   SpecialisationsQuery,
   useSpecialisationsQuery,
 } from "./queries/specialisations.query.generated";
-import { FileProperties, getGuid, initGuid, TreeNode } from "./types";
+import { FileProperties, getGuid } from "./types";
 
-type ProgramNode = {
-  p: string;
-  content: Program;
-};
+type Option = { name: string; value: string };
 
-type Structure = Array<{
-  name: string;
-  subjects: Array<{ code: string; name: string }>;
-}>;
-
-type Sequence = Array<{
-  program: string;
-  sequences: Array<{
-    name: string;
-    sequence: Array<{ code: string; name: string }>;
-  }>;
-}>;
-
-type Program = {
-  url: string;
+type Model = {
   code: string;
   name: string;
-  structure: Structure;
-  sequence: Sequence;
-  clean: any;
+  url: string;
+  id: number;
+  handbook: NodeModel<FileProperties>[];
 };
 
-function buildNodes(
-  name: string,
-  value: { structure: Structure; sequence: Sequence }
-) {
-  const nodes = [];
-  let parent = getGuid();
-  nodes.push({
-    id: parent,
-    parent: 0,
-    droppable: true,
-    text: name,
-  });
-
-  if (value.structure) {
-    for (let structure of value.structure) {
-      if (structure.subjects.length) {
-        let child = getGuid();
-
-        nodes.push({
-          id: child,
-          parent: parent,
-          droppable: true,
-          text: "Structure: " + structure.name,
-        });
-
-        for (let subject of structure.subjects) {
-          nodes.push({
-            id: getGuid(),
-            parent: child,
-            text: subject.code + " " + subject.name,
-          });
-        }
-      }
-    }
-  }
-
-  if (value.sequence && value.sequence.length) {
-    for (let parentSequence of value.sequence) {
-      let parentSequenceId = getGuid();
-      nodes.push({
-        id: parentSequenceId,
-        parent: parent,
-        droppable: true,
-        text: parentSequence.program,
-        data: {
-          type: "and",
-        },
-      });
-
-      for (let sequence of parentSequence.sequences) {
-        let sequenceId = getGuid();
-        nodes.push({
-          id: sequenceId,
-          parent: parentSequenceId,
-          droppable: true,
-          text: sequence.name || "Sequence",
-          data: {
-            type: "and",
-          },
-        });
-
-        for (let subject of sequence.sequence) {
-          nodes.push({
-            id: getGuid(),
-            parent: sequenceId,
-            text: subject.code + " " + subject.name,
-          });
-        }
-      }
-    }
-  }
-
-  return nodes;
-}
-
-function daoInNode(selected: TreeNode): ProgramInput {
-  return {
-    id: selected.id,
-    handbook: selected.handbook.map((h) => ({
-      id: h.data?.dbId,
-      nodeId: parseInt(h.id as string),
-      credits:
-        h.data?.credits != null && h.data?.credits != ""
-          ? parseInt(h.data.credits)
-          : undefined,
-      flagged: h.data?.flagged,
-      folder: h.droppable,
-      level:
-        h.data?.level != null && h.data?.level != ""
-          ? parseInt(h.data.level)
-          : undefined,
-      number:
-        h.data?.number != null && h.data?.number != ""
-          ? parseInt(h.data.number)
-          : undefined,
-      parentId: parseInt(h.parent as string),
-      text: h.text,
-      type: h.data?.type,
-    })),
-  };
-}
-
-function daoOutNode(
-  data:
-    | NonNullable<ProgramQuery["program"]>
-    | NonNullable<SpecialisationQuery["specialisation"]>
-) {
-  let handbook: NodeModel<FileProperties>[];
-  if (data.handbook && data.handbook.length) {
-    handbook = data.handbook.map((h) => ({
-      id: h.nodeId,
-      parent: h.parentId as unknown as string,
-      text: h.text || "",
-      droppable: h.folder || false,
-      data: {
-        dbId: h.id,
-        type: h.type!,
-        credits: (h.credits || "") as string,
-        flagged: h.flagged!,
-        level: (h.level || "") as string,
-        number: (h.number || "") as string,
-      },
-    }));
-  } else {
-    let structure = JSON.parse(data.structureSource || "[]");
-    let sequence = JSON.parse(data.sequenceSource || "[]");
-
-    handbook = buildNodes(data.name, { structure, sequence });
-  }
-
-  return {
-    code: data.code,
-    name: data.name,
-    url: data.url,
-    id: data.id,
-    handbook,
-  };
-}
-
 function ProgramsView({
-  setSelected,
   selected,
   programs,
-  id,
 }: {
-  setSelected(node: TreeNode): void;
-  selected: TreeNode | null;
+  selected: number;
   programs: ProgramsQuery["programs"];
-  id: string;
 }) {
   const [filter, setFilter] = useState("");
-
-  const [saveProgram] = useSaveProgramHandbookMutation();
-  const [loadProgram] = useProgramLazyQuery();
 
   return (
     <div>
@@ -225,22 +56,6 @@ function ProgramsView({
           onChange={(e) => setFilter(e.currentTarget.value)}
           className="flex-1 h-8"
         />
-        <button
-          type="button"
-          className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
-          onClick={() => {
-            if (!selected) {
-              return;
-            }
-            saveProgram({
-              variables: {
-                input: daoInNode(selected),
-              },
-            });
-          }}
-        >
-          Save
-        </button>
       </div>
 
       <ul>
@@ -254,26 +69,23 @@ function ProgramsView({
         ).map((p, i) => (
           <li
             key={i}
-            onClick={() => {
-              loadProgram({
-                variables: {
-                  id: p.id,
-                },
-              }).then(({ data }) => {
-                if (data && data.program) {
-                  setSelected(daoOutNode(data.program));
-                }
-              });
-            }}
             className={"cursor-pointer px-2 py-1 flex items-center"}
             style={{
-              background: selected && selected.code === p.code ? "silver" : "",
+              background: selected && selected === p.id ? "silver" : "",
             }}
           >
-            {p.updated && (
-              <HiCheck className="mr-2" style={{ color: "green" }} />
-            )}{" "}
-            {p.name}
+            <Link
+              href={`/admin/handbook/specialisations/${toUrlName(p.name)}?id=${
+                p.id
+              }`}
+            >
+              <a>
+                {p.updated && (
+                  <HiCheck className="mr-2" style={{ color: "green" }} />
+                )}{" "}
+                {p.name}
+              </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -282,20 +94,13 @@ function ProgramsView({
 }
 
 function SpecialisationsView({
-  setSelected,
   selected,
   specialisations,
-  id,
 }: {
-  setSelected(node: TreeNode): void;
-  selected: TreeNode | null;
+  selected: number | null;
   specialisations: SpecialisationsQuery["specialisations"];
-  id: string;
 }) {
   const [filter, setFilter] = useState("");
-
-  const [save] = useSaveSpecialisationHandbookMutation();
-  const [load] = useSpecialisationLazyQuery();
 
   return (
     <div>
@@ -306,22 +111,6 @@ function SpecialisationsView({
           onChange={(e) => setFilter(e.currentTarget.value)}
           className="flex-1 h-8"
         />
-        <button
-          type="button"
-          className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
-          onClick={() => {
-            if (!selected) {
-              return;
-            }
-            save({
-              variables: {
-                input: daoInNode(selected),
-              },
-            });
-          }}
-        >
-          Save
-        </button>
       </div>
 
       <ul>
@@ -333,28 +122,24 @@ function SpecialisationsView({
             )
           : specialisations
         ).map((p, i) => (
-          <li
-            key={i}
-            onClick={() => {
-              load({
-                variables: {
-                  id: p.id,
-                },
-              }).then(({ data }) => {
-                if (data && data.specialisation) {
-                  setSelected(daoOutNode(data.specialisation));
-                }
-              });
-            }}
-            className={"cursor-pointer px-2 py-1 flex items-center"}
-            style={{
-              background: selected && selected.code === p.code ? "silver" : "",
-            }}
-          >
-            {p.updated && (
-              <HiCheck className="mr-2" style={{ color: "green" }} />
-            )}{" "}
-            {p.name}
+          <li key={i}>
+            <Link
+              href={`/admin/handbook/specialisations/${toUrlName(p.name)}?id=${
+                p.id
+              }`}
+            >
+              <a
+                className={"cursor-pointer px-2 py-1 flex items-center"}
+                style={{
+                  background: selected && selected === p.id ? "silver" : "",
+                }}
+              >
+                {p.updated && (
+                  <HiCheck className="mr-2" style={{ color: "green" }} />
+                )}{" "}
+                {p.name}
+              </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -362,15 +147,13 @@ function SpecialisationsView({
   );
 }
 
-export const TreeView = (args: {
-  specialisationId?: string;
-  programId?: string;
-}) => {
-  const [part, setPart] = useState(
-    args.specialisationId ? "majors" : "programs"
-  );
-  const [tree, setTree] = useState<NodeModel<FileProperties>[]>([]);
-  const [selected, setSelected] = useState<TreeNode | null>(null);
+export function Layout(args: {
+  part: string;
+  model?: Model;
+  id?: number | null;
+  save?(tree: NodeModel<FileProperties>[]): void;
+}) {
+  const [part, setPart] = useState(args.part);
 
   const { data: programData, loading: loadingPrograms } = useProgramsQuery();
   const { data: specialisationData, loading: loadingSpecialisations } =
@@ -407,38 +190,6 @@ export const TreeView = (args: {
       a.name.localeCompare(b.name)
     );
   }, [programOptions, majorOptions]);
-
-  const handleDrop = (
-    newTree: NodeModel<FileProperties>[],
-    options: DropOptions<FileProperties>
-  ) => {
-    // args.onDrop(newTree, options);
-    setTree(newTree);
-  };
-
-  const handleTextChange = (id: NodeModel["id"], value: string) => {
-    const newTree = tree.map((node) => {
-      if (node.id === id) {
-        return {
-          ...node,
-          text: value,
-        };
-      }
-
-      return node;
-    });
-
-    setTree(newTree);
-  };
-
-  function clone(id: NodeModel["id"]) {
-    const node = tree.find((t) => t.id === id);
-    const clone = JSON.parse(JSON.stringify(node));
-    clone.id = getGuid();
-    const newTree = [...tree, clone];
-
-    setTree(newTree);
-  }
 
   if (
     loadingPrograms ||
@@ -483,52 +234,116 @@ export const TreeView = (args: {
         </div>
 
         {/* Tree View */}
-        {part === "programs" ? (
-          <ProgramsView
-            id={args.programId}
-            selected={selected}
-            setSelected={(p) => {
-              setSelected(p);
-              initGuid(p);
-              setTree(p.handbook);
-            }}
-            programs={programData.programs}
-          />
+        {part === "programs" && args.id ? (
+          <ProgramsView selected={args.id} programs={programData.programs} />
         ) : (
           <SpecialisationsView
-            id={args.specialisationId}
-            selected={selected}
-            setSelected={(p) => {
-              setSelected(p);
-              initGuid(p);
-              setTree(p.handbook);
-            }}
+            selected={args.id!}
             specialisations={specialisationData.specialisations}
           />
         )}
       </div>
       <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
-        {selected && (
-          <div
-            style={{
-              padding: 8,
-              display: "flex",
-              alignItems: "center",
-              position: "sticky",
-              top: 0,
-              background: "white",
-              width: "100%",
-              zIndex: 1,
+        {args.id && args.model && args.save && (
+          <TreeView
+            defaultTree={args.model.handbook}
+            model={args.model}
+            all={all}
+            programOptions={programOptions}
+            majorOptions={majorOptions}
+            save={args.save}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+const TreeView = ({
+  defaultTree,
+  save,
+  programOptions,
+  majorOptions,
+  all,
+  model,
+}: {
+  defaultTree: NodeModel<FileProperties>[];
+  save(tree: NodeModel<FileProperties>[]): void;
+  programOptions: Option[];
+  majorOptions: Option[];
+  all: Option[];
+  model: { name: string; id: number; url: string };
+}) => {
+  const [tree, setTree] = useState<NodeModel<FileProperties>[]>(defaultTree);
+
+  const handleDrop = (
+    newTree: NodeModel<FileProperties>[],
+    options: DropOptions<FileProperties>
+  ) => {
+    // args.onDrop(newTree, options);
+    setTree(newTree);
+  };
+
+  const handleTextChange = (id: NodeModel["id"], value: string) => {
+    const newTree = tree.map((node) => {
+      if (node.id === id) {
+        return {
+          ...node,
+          text: value,
+        };
+      }
+
+      return node;
+    });
+
+    setTree(newTree);
+  };
+
+  function clone(id: NodeModel["id"]) {
+    const node = tree.find((t) => t.id === id);
+    const clone = JSON.parse(JSON.stringify(node));
+    clone.id = getGuid();
+    const newTree = [...tree, clone];
+
+    setTree(newTree);
+  }
+
+  return (
+    <DndProvider
+      backend={MultiBackend}
+      debugMode={true}
+      options={getBackendOptions()}
+    >
+      <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
+        <div
+          style={{
+            padding: 8,
+            display: "flex",
+            alignItems: "center",
+            position: "sticky",
+            top: 0,
+            background: "white",
+            width: "100%",
+            zIndex: 1,
+          }}
+        >
+          <button
+            type="button"
+            className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
+            onClick={() => {
+              save(tree);
             }}
           >
-            <a
-              href={`https://hbook.westernsydney.edu.au${selected.url}`}
-              target="__blank"
-            >
-              {selected.name}
-            </a>
-          </div>
-        )}
+            Save
+          </button>
+          <a
+            href={`https://hbook.westernsydney.edu.au${model.url}`}
+            target="__blank"
+          >
+            {model.name}
+          </a>
+        </div>
+
         <div style={{ paddingTop: 20 }}>
           <Tree
             tree={tree}
@@ -593,11 +408,11 @@ export const TreeView = (args: {
             placeholderRender={(node, { depth }) => (
               <Placeholder node={node} depth={depth} />
             )}
-            key={selected ? selected.code : ""}
+            key={model.id}
             initialOpen={true}
           />
         </div>
       </div>
-    </div>
+    </DndProvider>
   );
 };
