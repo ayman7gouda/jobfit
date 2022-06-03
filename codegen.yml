@@ -3,6 +3,7 @@ schema: "http://localhost:3000/api/graphql"
 documents: "src/**/*.graphql"
 config:
   contextType: pages/api/graphql#Context
+
 generates:
   src/generated/serverTypes.ts:
     plugins:

@@ -1,0 +1,17 @@
+query Specialisation($id: Int!) {
+  specialisation(id: $id) {
+    id
+    name
+    code
+    url
+    legacyCode
+    description
+    availability
+    structureSource
+    sequenceSource
+    handbook {
+      ...Handbook
+    }
+    updated
+  }
+}

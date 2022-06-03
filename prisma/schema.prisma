@@ -239,6 +239,60 @@ model SubjectBgSkill {
   @@index([skillId], map: "SubjectBgSkill_skillId_fkey")
 }
 
+model Program {
+  id              Int                     @id @default(autoincrement())
+  name            String                  @db.VarChar(512)
+  code            String
+  url             String                  @db.VarChar(512)
+  description     String                  @db.Text
+  structureSource String                  @db.LongText
+  sequenceSource  String                  @db.LongText
+  updated         String?
+  handbook        Handbook[]
+  specialisations SpecialisationProgram[]
+}
+
+model SpecialisationProgram {
+  program          Program        @relation(fields: [programId], references: [id])
+  programId        Int
+  specialisation   Specialisation @relation(fields: [specialisationId], references: [id])
+  specialisationId Int
+
+  @@id([programId, specialisationId])
+}
+
+model Specialisation {
+  id              Int                     @id @default(autoincrement())
+  url             String                  @db.VarChar(512)
+  name            String                  @db.VarChar(512)
+  code            String
+  legacyCode      String?
+  description     String?                 @db.Text
+  availability    String?                 @db.Text
+  structureSource String?                 @db.LongText
+  sequenceSource  String?                 @db.LongText
+  updated         String?
+  handbook        Handbook[]
+  programs        SpecialisationProgram[]
+}
+
+model Handbook {
+  id               Int             @id @default(autoincrement())
+  nodeId           Int
+  programId        Int?
+  program          Program?        @relation(fields: [programId], references: [id])
+  specialisationId Int?
+  specialisaton    Specialisation? @relation(fields: [specialisationId], references: [id])
+  parentId         Int?
+  text             String?         @db.Text
+  folder           Boolean?
+  type             String?
+  number           Int?
+  credits          Int?
+  level            Int?
+  flagged          Boolean?
+}
+
 // views
 
 // CREATE OR REPLACE VIEW AnzscoJob AS

@@ -1,0 +1,86 @@
+type Program {
+  id: Int!
+  name: String!
+  code: String!
+  url: String!
+  description: String
+  structureSource: String
+  sequenceSource: String
+  handbook: [Handbook!]
+  specialisations: [SpecialisationProgram!]
+  updated: String
+}
+
+input ProgramInput {
+  id: Int!
+  handbook: [HandbookInput!]
+}
+
+type SpecialisationProgram {
+  programId: Int!
+  program: Program
+  specialisation: Specialisation
+  specialisationId: Int!
+}
+
+type Specialisation {
+  id: Int!
+  url: String!
+  name: String!
+  code: String!
+  legacyCode: String
+  description: String
+  availability: String
+  structureSource: String
+  sequenceSource: String
+  handbook: [Handbook!]
+  programs: [SpecialisationProgram!]
+  updated: String
+}
+
+input SpecialisationInput {
+  id: Int!
+  handbook: [HandbookInput!]
+}
+
+type Handbook {
+  id: Int!
+  nodeId: Int!
+  programId: Int
+  program: Program
+  specialisationId: Int
+  specialisation: Specialisation
+  parentId: Int
+  text: String
+  folder: Boolean
+  type: String
+  number: Int
+  credits: Int
+  level: Int
+  flagged: Boolean
+}
+
+input HandbookInput {
+  id: Int
+  nodeId: Int!
+  parentId: Int
+  text: String
+  folder: Boolean
+  type: String
+  number: Int
+  credits: Int
+  level: Int
+  flagged: Boolean
+}
+
+type Query {
+  programs: [Program!]!
+  program(id: Int!): Program
+  specialisations: [Specialisation!]!
+  specialisation(id: Int!): Specialisation
+}
+
+type Mutation {
+  saveProgramHandbook(input: ProgramInput!): Program
+  saveSpecialisationHandbook(input: SpecialisationInput!): Specialisation
+}

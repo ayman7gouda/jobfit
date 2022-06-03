@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Data } from "components/Data";
+
 import AccordUI from "components/AccordUI";
+import { Data } from "components/Data";
 import LineChartUI from "components/LineChartUI";
 
 export default function CareerData() {
@@ -19,6 +20,7 @@ export default function CareerData() {
             {Data.map((Data) => {
               return (
                 <AccordUI
+                  key={Data.id}
                   title={Data.career}
                   Id={Data.id}
                   children={Data.description}
@@ -32,6 +34,7 @@ export default function CareerData() {
             {Data.map((Data) => {
               return (
                 <LineChartUI
+                  key={Data.id}
                   data={Data}
                   Id={Data.id}
                   Index={Index}
@@ -40,7 +43,9 @@ export default function CareerData() {
               );
             })}
             <div className="flex items-start justify-end absolute bottom-0 left-0 m-2">
-              <span className="text-xs text-med-blue">Market data provided by Burning Glass</span>
+              <span className="text-xs text-med-blue">
+                Market data provided by Burning Glass
+              </span>
             </div>
           </div>
         </div>

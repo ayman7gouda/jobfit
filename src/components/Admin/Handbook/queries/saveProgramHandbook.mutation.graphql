@@ -1,0 +1,9 @@
+mutation SaveProgramHandbook($input: ProgramInput!) {
+  saveProgramHandbook(input: $input) {
+    id
+    updated
+    handbook {
+      ...Handbook
+    }
+  }
+}

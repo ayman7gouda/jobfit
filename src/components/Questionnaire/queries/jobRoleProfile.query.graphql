@@ -9,6 +9,7 @@ query JobRoleProfile($unit: Int!) {
       name
     }
     jobCount
+    projection
     maxSalary
     minSalary
     skills {

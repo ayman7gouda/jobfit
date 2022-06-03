@@ -1,9 +1,9 @@
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 
 import { Layout } from 'components/Admin/Skills/Layout';
 import { SkillDetails } from 'components/Admin/Skills/SkillDetails';
 
-const Home: NextPage = () => {
+const Page: NextPage = () => {
   return (
     <Layout>
       <SkillDetails />
@@ -11,4 +11,8 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+Page.getInitialProps = async (context: NextPageContext) => {
+  return {};
+};
+
+export default Page;

@@ -1,7 +1,7 @@
-import { getDataFromTree } from '@apollo/client/react/ssr';
+import { getDataFromTree } from "@apollo/client/react/ssr";
 
-import { getApolloClient } from 'lib/createClient';
-import Document from 'next/document';
+import { getApolloClient } from "lib/createClient";
+import Document from "next/document";
 
 class DocumentWithApollo extends Document {
   // Reference: https://gist.github.com/Tylerian/16d48e5850b407ba9e3654e17d334c1e
