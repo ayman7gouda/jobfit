@@ -290,6 +290,7 @@ model Handbook {
   number           Int?
   credits          Int?
   level            Int?
+  reference        Int?
   flagged          Boolean?
 }
 

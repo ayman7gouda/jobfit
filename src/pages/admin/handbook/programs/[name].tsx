@@ -22,7 +22,7 @@ import { useRouter } from "next/router";
 //   return children;
 // };
 
-export function SpecialisationContainer({
+function Container({
   all,
   programOptions,
   majorOptions,
@@ -47,7 +47,7 @@ export function SpecialisationContainer({
   }
 
   const tree = daoOutNode(data.program);
-  initGuid(tree);
+  initGuid(tree.handbook);
 
   return (
     <TreeView
@@ -81,7 +81,7 @@ const Page = () => {
         id={numId}
         part="programs"
         treeView={({ programOptions, majorOptions, all }) => (
-          <SpecialisationContainer
+          <Container
             programOptions={programOptions}
             majorOptions={majorOptions}
             all={all}

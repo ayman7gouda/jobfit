@@ -73,7 +73,7 @@ function buildNodes(
         droppable: true,
         text: parentSequence.program,
         data: {
-          type: "and",
+          type: "",
         },
       });
 
@@ -85,7 +85,7 @@ function buildNodes(
           droppable: true,
           text: sequence.name || "Sequence",
           data: {
-            type: "and",
+            type: "",
           },
         });
 
@@ -111,17 +111,21 @@ export function daoInNode(selected: TreeNode): ProgramInput {
       nodeId: parseInt(h.id as string),
       credits:
         h.data?.credits != null && h.data?.credits != ""
-          ? parseInt(h.data.credits)
+          ? parseInt(h.data!.credits)
           : undefined,
       flagged: h.data?.flagged,
       folder: h.droppable,
       level:
-        h.data?.level != null && h.data?.level != ""
+        h.data?.level != null && h.data.level != ""
           ? parseInt(h.data.level)
           : undefined,
       number:
-        h.data?.number != null && h.data?.number != ""
+        h.data?.number != null && h.data.number != ""
           ? parseInt(h.data.number)
+          : undefined,
+      reference:
+        h.data?.reference != null && h.data!.reference != ""
+          ? parseInt(h.data!.reference)
           : undefined,
       parentId: parseInt(h.parent as string),
       text: h.text,
@@ -149,8 +153,10 @@ export function daoOutNode(
         flagged: h.flagged!,
         level: (h.level || "") as string,
         number: (h.number || "") as string,
+        reference: (h.reference || "") as string,
       },
     }));
+    // handbook = handbook.filter((h, i) => handbook.)
   } else {
     let structure = JSON.parse(data.structureSource || "[]");
     let sequence = JSON.parse(data.sequenceSource || "[]");

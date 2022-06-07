@@ -9,7 +9,7 @@ export type SaveSpecialisationHandbookMutationVariables = Types.Exact<{
 }>;
 
 
-export type SaveSpecialisationHandbookMutation = { __typename?: 'Mutation', saveSpecialisationHandbook?: { __typename?: 'Specialisation', id: number, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, number?: number | null, credits?: number | null, level?: number | null, flagged?: boolean | null, nodeId: number, programId?: number | null, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null }> | null } | null };
+export type SaveSpecialisationHandbookMutation = { __typename?: 'Mutation', saveSpecialisationHandbook?: { __typename?: 'Specialisation', id: number, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, number?: number | null, credits?: number | null, level?: number | null, flagged?: boolean | null, nodeId: number, programId?: number | null, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, reference?: number | null }> | null } | null };
 
 
 export const SaveSpecialisationHandbookDocument = gql`

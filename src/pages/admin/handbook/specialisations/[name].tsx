@@ -47,7 +47,7 @@ export function SpecialisationContainer({
   }
 
   const tree = daoOutNode(data.specialisation);
-  initGuid(tree);
+  initGuid(tree.handbook);
 
   return (
     <TreeView

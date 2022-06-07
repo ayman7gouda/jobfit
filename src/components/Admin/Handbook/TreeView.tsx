@@ -8,9 +8,11 @@ import {
 } from "@minoru/react-dnd-treeview";
 
 import { toUrlName } from "lib/utils";
+import debounce from "lodash/debounce";
 import Link from "next/link";
-import { HiCheck } from "react-icons/hi";
+import { HiCheck, HiChevronLeft, HiChevronRight, HiSave } from "react-icons/hi";
 
+// import "react-select-search/style.css";
 import { CustomDragPreview } from "./CustomDragPreview";
 import { CustomNode } from "./CustomNode";
 import styles from "./EditableNodes.module.css";
@@ -72,7 +74,7 @@ function ProgramsView({
             <Link
               href={`/admin/handbook/programs/${toUrlName(p.name)}?id=${p.id}`}
             >
-              <a>
+              <a className="flex items-center">
                 {p.updated && (
                   <HiCheck className="mr-2" style={{ color: "green" }} />
                 )}{" "}
@@ -143,7 +145,7 @@ function SpecialisationsView({
 export function Layout(args: {
   part: string;
   id?: number | null;
-  treeView(args: {
+  treeView?(args: {
     all: Option[];
     programOptions: Option[];
     majorOptions: Option[];
@@ -163,7 +165,7 @@ export function Layout(args: {
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((p, i) => ({
         name: `${p.name} [${p.code}]`,
-        value: p.code,
+        value: p.id.toString(),
       }));
   }, [programData?.programs]);
 
@@ -176,7 +178,7 @@ export function Layout(args: {
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((p, i) => ({
           name: `${p.name} [${p.code}]`,
-          value: p.code,
+          value: p.id.toString(),
         }))
     );
   }, [specialisationData?.specialisations]);
@@ -240,11 +242,19 @@ export function Layout(args: {
         )}
       </div>
       <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
-        {args.id && args.treeView({ programOptions, majorOptions, all })}
+        {args.id &&
+          args.treeView &&
+          args.treeView({ programOptions, majorOptions, all })}
       </div>
     </div>
   );
 }
+
+type UndoNode = {
+  previous?: UndoNode;
+  next?: UndoNode;
+  content: NodeModel<FileProperties>[];
+};
 
 export const TreeView = ({
   defaultTree,
@@ -261,7 +271,30 @@ export const TreeView = ({
   all: Option[];
   model: { name: string; id: number; url: string };
 }) => {
-  const [tree, setTree] = useState<NodeModel<FileProperties>[]>(defaultTree);
+  const [tree, setCurrentTree] =
+    useState<NodeModel<FileProperties>[]>(defaultTree);
+  const [undoQueue, setUndoQueue] = useState<UndoNode>({
+    previous: undefined,
+    content: defaultTree,
+    next: undefined,
+  });
+
+  const addUndoNode = useMemo(() => {
+    return debounce((tree) => {
+      let current: UndoNode = {
+        previous: undoQueue,
+        next: undefined,
+        content: tree,
+      };
+      undoQueue.next = current;
+      setUndoQueue(current);
+    }, 500);
+  }, [undoQueue]);
+
+  function setTree(tree: NodeModel<FileProperties>[]) {
+    addUndoNode(tree);
+    setCurrentTree(tree);
+  }
 
   const handleDrop = (
     newTree: NodeModel<FileProperties>[],
@@ -311,13 +344,45 @@ export const TreeView = ({
       >
         <button
           type="button"
-          className="ml-2 bg-slate-200 hover:bg-slate-300 px-4"
+          className="ml-2 mr-2 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
           onClick={() => {
             save(tree);
           }}
         >
+          <HiSave className="mr-2" />
           Save
         </button>
+
+        <button
+          type="button"
+          disabled={!undoQueue.previous}
+          className="ml-2 py-2 rounded-l-lg rounded-r-none disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+          onClick={() => {
+            if (undoQueue.previous) {
+              setUndoQueue(undoQueue.previous);
+              setCurrentTree(undoQueue.previous.content);
+            }
+          }}
+        >
+          <HiChevronLeft className="mr-2" />
+          Undo
+        </button>
+
+        <button
+          type="button"
+          disabled={!undoQueue.next}
+          className="ml-[2px] mr-2 py-2 rounded-r-lg disabled:bg-slate-300 rounded-l-none bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+          onClick={() => {
+            if (undoQueue.next) {
+              setUndoQueue(undoQueue.next);
+              setCurrentTree(undoQueue.next.content);
+            }
+          }}
+        >
+          Redo
+          <HiChevronRight className="ml-2" />
+        </button>
+
         <a
           href={`https://hbook.westernsydney.edu.au${model.url}`}
           target="__blank"
@@ -346,8 +411,17 @@ export const TreeView = ({
               clone={clone}
               tree={tree}
               onAddNode={(node) => setTree(tree.concat(node))}
-              onDeleteNode={(id) => {
-                setTree(tree.filter((n) => n.id !== id && n.parent !== id));
+              onDeleteNode={(id, handleChildren) => {
+                if (!handleChildren || handleChildren === "delete") {
+                  setTree(tree.filter((n) => n.id !== id && n.parent !== id));
+                } else {
+                  let node = tree.find((t) => t.id === id);
+                  setTree(
+                    tree.map((t) =>
+                      t.parent === id ? { ...t, parent: node!.parent } : t
+                    )
+                  );
+                }
               }}
               onNodeChange={(id, value) => {
                 const { text, ...rest } = value;
@@ -355,7 +429,7 @@ export const TreeView = ({
                   if (node.id === id) {
                     return {
                       ...node,
-                      // text: text || node.text,
+                      text: text || node.text,
                       data: {
                         ...node.data,
                         ...(rest as any),

@@ -33,6 +33,7 @@ export type Handbook = {
   parentId?: Maybe<Scalars['Int']>;
   program?: Maybe<Program>;
   programId?: Maybe<Scalars['Int']>;
+  reference?: Maybe<Scalars['Int']>;
   specialisation?: Maybe<Specialisation>;
   specialisationId?: Maybe<Scalars['Int']>;
   text?: Maybe<Scalars['String']>;
@@ -48,6 +49,7 @@ export type HandbookInput = {
   nodeId: Scalars['Int'];
   number?: InputMaybe<Scalars['Int']>;
   parentId?: InputMaybe<Scalars['Int']>;
+  reference?: InputMaybe<Scalars['Int']>;
   text?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
 };
@@ -201,7 +203,7 @@ export type Program = {
 };
 
 export type ProgramInput = {
-  handbook?: InputMaybe<Array<HandbookInput>>;
+  handbook: Array<HandbookInput>;
   id: Scalars['Int'];
 };
 
@@ -363,7 +365,7 @@ export type Specialisation = {
 };
 
 export type SpecialisationInput = {
-  handbook?: InputMaybe<Array<HandbookInput>>;
+  handbook: Array<HandbookInput>;
   id: Scalars['Int'];
 };
 
@@ -573,6 +575,7 @@ export type HandbookResolvers<ContextType = Context, ParentType extends Resolver
   parentId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   program?: Resolver<Maybe<ResolversTypes['Program']>, ParentType, ContextType>;
   programId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  reference?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   specialisation?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType>;
   specialisationId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
