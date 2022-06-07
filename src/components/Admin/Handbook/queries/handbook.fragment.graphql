@@ -10,4 +10,5 @@ fragment Handbook on Handbook {
   text
   folder
   type
+  reference
 }

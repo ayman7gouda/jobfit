@@ -22,9 +22,21 @@ export const programResolvers: Resolvers = {
     },
   },
   Mutation: {
-    async saveProgramHandbook(_, { input: { id, ...rest } }, { db }) {
-      const updateNodes = rest.handbook!.filter((h) => !!h.id);
-      const createNodes = rest.handbook!.filter((h) => !h.id);
+    async saveProgramHandbook(_, { input: { id, handbook } }, { db }) {
+      const updateNodes = handbook.filter((h) => !!h.id);
+      const createNodes = handbook.filter((h) => !h.id);
+
+      const existing = await db.handbook.findMany({
+        where: { programId: id },
+      });
+      const deleteNodes = existing.filter((e) =>
+        handbook.every((h) => h.id !== e.id)
+      );
+      if (deleteNodes.length) {
+        await db.handbook.deleteMany({
+          where: { id: { in: deleteNodes.map((n) => n.id) } },
+        });
+      }
 
       for (let node of updateNodes) {
         const { id, ...other } = node;
@@ -41,9 +53,21 @@ export const programResolvers: Resolvers = {
         },
       });
     },
-    async saveSpecialisationHandbook(_, { input: { id, ...rest } }, { db }) {
-      const updateNodes = rest.handbook!.filter((h) => !!h.id);
-      const createNodes = rest.handbook!.filter((h) => !h.id);
+    async saveSpecialisationHandbook(_, { input: { id, handbook } }, { db }) {
+      const updateNodes = handbook.filter((h) => !!h.id);
+      const createNodes = handbook.filter((h) => !h.id);
+
+      const existing = await db.handbook.findMany({
+        where: { specialisationId: id },
+      });
+      const deleteNodes = existing.filter((e) =>
+        handbook.every((h) => h.id !== e.id)
+      );
+      if (deleteNodes.length) {
+        await db.handbook.deleteMany({
+          where: { id: { in: deleteNodes.map((n) => n.id) } },
+        });
+      }
 
       for (let node of updateNodes) {
         const { id, ...other } = node;

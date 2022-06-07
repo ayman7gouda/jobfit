@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectSearch, { SelectSearchOption } from "react-select-search";
 
 import { NodeModel } from "@minoru/react-dnd-treeview";
 
 import CloneIcon, {
+  HiArrowUp,
+  HiBeaker,
   HiCheck,
   HiChevronDown,
   HiChevronRight,
@@ -19,9 +21,23 @@ import CloneIcon, {
 } from "react-icons/hi";
 
 import styles from "./CustomNode.module.css";
+import { daoOutNode } from "./helpers";
+import {
+  ProgramQueryResult,
+  useProgramLazyQuery,
+} from "./queries/program.query.generated";
+import {
+  SpecialisationQueryResult,
+  useSpecialisationLazyQuery,
+} from "./queries/specialisation.query.generated";
 import { FileProperties, getGuid } from "./types";
 
 type Option = { name: string; value: string };
+
+type NodeChange = (
+  id: NodeModel["id"],
+  value: Partial<FileProperties> & { text?: string }
+) => void;
 
 type Props = {
   node: NodeModel<FileProperties>;
@@ -30,21 +46,21 @@ type Props = {
   tree: NodeModel<FileProperties>[];
   onToggle: (id: NodeModel["id"]) => void;
   onTextChange: (id: NodeModel["id"], value: string) => void;
-  onNodeChange: (
-    id: NodeModel["id"],
-    value: Partial<FileProperties> & { text?: string }
-  ) => void;
+  onNodeChange: NodeChange;
   clone: (id: NodeModel["id"]) => void;
   onAddNode: (
     node: NodeModel<FileProperties> | Array<NodeModel<FileProperties>>
   ) => void;
-  onDeleteNode: (id: number) => void;
+  onDeleteNode: (id: number, handleChildren?: "delete" | "copy") => void;
   programs: Option[];
   majors: Option[];
   all: Option[];
 };
 
-function IconButton({ children, ...rest }) {
+function IconButton({
+  children,
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className="cursor-pointer p-1 bg-slate-200 hover:bg-slate-400 rounded-md mx-1"
@@ -55,7 +71,9 @@ function IconButton({ children, ...rest }) {
   );
 }
 
-function TextField(props) {
+function TextField(
+  props: React.HTMLAttributes<HTMLInputElement> & { value?: string }
+) {
   return (
     <input
       {...props}
@@ -64,7 +82,10 @@ function TextField(props) {
   );
 }
 
-function Select({ children, ...rest }) {
+function Select({
+  children,
+  ...rest
+}: React.HTMLAttributes<HTMLSelectElement> & { value?: string }) {
   return (
     <select
       {...rest}
@@ -94,12 +115,111 @@ function makeName(
   id: string,
   def = ""
 ) {
-  console.log();
   let item = nodes.find((n) => n.value === id);
   if (!item || item.value == "") {
     return def;
   }
   return item.name;
+}
+
+export function EditLink(props: {
+  programs: Option[];
+  node: NodeModel<FileProperties>;
+  onNodeChange: NodeChange;
+  setLabelText(value: string): void;
+  query: any;
+  getData(result: any): any;
+}) {
+  const [programNodes, setProgramNodes] = useState(
+    [] as NodeModel<FileProperties>[]
+  );
+  const [findProgram] = props.query({ fetchPolicy: "network-only" });
+
+  useEffect(() => {
+    if (props.node.data?.number) {
+      findProgram({
+        variables: { id: parseInt(props.node.data?.number) },
+      }).then((result: any) => {
+        let data = props.getData(result);
+        if (data) {
+          const nodes = daoOutNode(data);
+          setProgramNodes(nodes.handbook);
+        }
+      });
+    }
+  }, []);
+
+  return (
+    <>
+      <SelectSearch
+        options={props.programs}
+        value={props.node.data?.number}
+        onChange={(e) => {
+          if (!e) {
+            return;
+          }
+
+          let id = e as unknown as string;
+          let numId = parseInt(id);
+
+          let program = props.programs.find((p) => p.value == id);
+
+          props.setLabelText(program?.name + " > None");
+
+          props.onNodeChange(props.node.id, {
+            number: e as unknown as string,
+            // text: program?.name + " > None",
+          });
+
+          findProgram({ variables: { id: numId } }).then((result: any) => {
+            let data = props.getData(result);
+            if (data) {
+              const nodes = daoOutNode(data);
+              setProgramNodes(nodes.handbook);
+            }
+          });
+        }}
+        search
+        filterOptions={valueFilter}
+        placeholder="Select the program"
+      />
+      <Select
+        value={props.node.data?.reference}
+        style={{ minWidth: 180 }}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          let id = e.currentTarget.value;
+          props.onNodeChange(props.node.id, {
+            reference: id,
+          });
+          let program = props.programs.find(
+            (p) => p.value == props.node.data?.number
+          );
+          let spc = programNodes.find((p) => p.id == id);
+          props.setLabelText(program?.name + " > " + spc?.text);
+        }}
+      >
+        <option value="">Please Select</option>
+        {programNodes
+          .filter((n) => n.data?.type === "pool")
+          .map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.text}
+            </option>
+          ))}
+      </Select>
+      <TextField
+        className={styles.textField}
+        value={props.node.data?.level}
+        onChange={(e) => {
+          props.onNodeChange(props.node.id, {
+            level: e.currentTarget.value,
+          });
+        }}
+        style={{ width: 80, margin: "0px 8px" }}
+        placeholder="Level"
+      />
+    </>
+  );
 }
 
 export const CustomNode: React.FC<Props> = (props) => {
@@ -131,6 +251,8 @@ export const CustomNode: React.FC<Props> = (props) => {
     props.onTextChange(id, labelText);
   };
 
+  // console.log(props.node.id + " " + props.node.text);
+
   return (
     <div
       className={styles.root}
@@ -153,6 +275,12 @@ export const CustomNode: React.FC<Props> = (props) => {
       </div>
       {props.node.data?.type === "link" ? (
         <HiLink style={{ color: "purple" }} />
+      ) : props.node.data?.type === "programLink" ? (
+        <HiLink style={{ color: "orange" }} />
+      ) : props.node.data?.type === "specialisationLink" ? (
+        <HiLink style={{ color: "blue" }} />
+      ) : props.node.data?.type === "elective" ? (
+        <HiBeaker style={{ color: "green" }} />
       ) : props.node.data?.type === "programConstraint" ? (
         <HiLockClosed style={{ color: "red" }} />
       ) : props.node.droppable ? (
@@ -196,6 +324,28 @@ export const CustomNode: React.FC<Props> = (props) => {
       <div className={styles.nodeInner}>
         {visibleInput ? (
           <div className={styles.inputWrapper}>
+            {props.node.data?.type === "programLink" && (
+              <EditLink
+                programs={props.programs}
+                node={props.node}
+                onNodeChange={props.onNodeChange}
+                setLabelText={setLabelText}
+                query={useProgramLazyQuery}
+                getData={(result: ProgramQueryResult) => result.data?.program}
+              />
+            )}
+            {props.node.data?.type === "specialisationLink" && (
+              <EditLink
+                programs={props.majors}
+                node={props.node}
+                onNodeChange={props.onNodeChange}
+                setLabelText={setLabelText}
+                query={useSpecialisationLazyQuery}
+                getData={(result: SpecialisationQueryResult) =>
+                  result.data?.specialisation
+                }
+              />
+            )}
             {props.node.data?.type === "programConstraint" ? (
               <SelectSearch
                 options={props.all}
@@ -203,7 +353,7 @@ export const CustomNode: React.FC<Props> = (props) => {
                 onChange={(e) => setLabelText(e as unknown as string)}
                 search
                 filterOptions={valueFilter}
-                placeholder="Select the major"
+                placeholder="Select the program or specialisation"
               />
             ) : // <select
             //   onChange={handleChangeText}
@@ -220,7 +370,10 @@ export const CustomNode: React.FC<Props> = (props) => {
             props.node.data?.type === "link" ? (
               <Select
                 value={labelText}
-                onChange={(e) => setLabelText(e.currentTarget.value)}
+                style={{ minWidth: 280 }}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setLabelText(e.currentTarget.value)
+                }
               >
                 <option value="">Please Select</option>
                 {props.tree
@@ -241,7 +394,9 @@ export const CustomNode: React.FC<Props> = (props) => {
                 filterOptions={valueFilter}
                 placeholder="Select the major"
               />
-            ) : (
+            ) : props.node.data?.type === "subject" ||
+              props.node.data?.type == "pool" ||
+              !props.node.data?.type ? (
               <TextField
                 className={styles.textField}
                 value={labelText}
@@ -252,7 +407,7 @@ export const CustomNode: React.FC<Props> = (props) => {
                   }
                 }}
               />
-            )}
+            ) : null}
             {props.node.droppable && (
               <>
                 <Select
@@ -260,11 +415,11 @@ export const CustomNode: React.FC<Props> = (props) => {
                     props.onNodeChange(id, { type: e.currentTarget.value })
                   }
                   value={props.node.data?.type}
-                  style={{ marginRight: 4 }}
+                  style={{ marginRight: 4, width: 180 }}
                 >
                   <option value="">Please Select ...</option>
                   <option value="or">OR</option>
-                  <option value="and">AND</option>
+                  <option value="">AND</option>
                   <option value="pool">Pool</option>
                   <option value="major">Major</option>
                   <option value="minor">Minor</option>
@@ -314,7 +469,8 @@ export const CustomNode: React.FC<Props> = (props) => {
 
             {!props.node.droppable && (
               <>
-                {props.node.data?.type === "link" && (
+                {(props.node.data?.type === "link" ||
+                  props.node.data?.type === "elective") && (
                   <TextField
                     className={styles.textField}
                     value={props.node.data?.level}
@@ -323,7 +479,7 @@ export const CustomNode: React.FC<Props> = (props) => {
                         level: e.currentTarget.value,
                       });
                     }}
-                    style={{ width: 40, margin: "0px 8px" }}
+                    style={{ width: 80, margin: "0px 8px" }}
                     placeholder="Level"
                     onKeyDown={(e) => {
                       if (e.key == "Enter") {
@@ -340,17 +496,18 @@ export const CustomNode: React.FC<Props> = (props) => {
                   style={{ marginRight: 4 }}
                 >
                   <option value="subject">Subject</option>
-                  <option value="link">Link</option>
+                  <option value="link">Pool Link</option>
+                  <option value="programLink">Program Pool Link</option>
+                  <option value="specialisationLink">
+                    Specialisation Pool Link
+                  </option>
+                  <option value="elective">Elective</option>
                   <option value="programConstraint">Program Constraint</option>
                 </Select>
               </>
             )}
 
-            <IconButton
-              onClick={handleSubmit}
-              disabled={labelText === ""}
-              data-testid={`btn-submit-${id}`}
-            >
+            <IconButton onClick={handleSubmit} data-testid={`btn-submit-${id}`}>
               <HiCheck />
             </IconButton>
 
@@ -376,7 +533,7 @@ export const CustomNode: React.FC<Props> = (props) => {
                       id: getGuid(),
                       parent: props.node.id,
                       droppable: true,
-                      text: "Folder",
+                      text: "Complete all of the following",
                     })
                   }
                 >
@@ -443,9 +600,6 @@ export const CustomNode: React.FC<Props> = (props) => {
                           parent: props.node.id,
                           text: "Year " + num,
                           droppable: true,
-                          data: {
-                            type: "and",
-                          },
                         },
 
                         {
@@ -453,9 +607,6 @@ export const CustomNode: React.FC<Props> = (props) => {
                           parent: yearId,
                           text: "Autumn",
                           droppable: true,
-                          data: {
-                            type: "and",
-                          },
                         },
 
                         {
@@ -463,9 +614,6 @@ export const CustomNode: React.FC<Props> = (props) => {
                           parent: yearId,
                           text: "Spring",
                           droppable: true,
-                          data: {
-                            type: "and",
-                          },
                         },
                       ];
                     }
@@ -479,6 +627,16 @@ export const CustomNode: React.FC<Props> = (props) => {
                 >
                   <HiCollection />
                 </IconButton>
+
+                <IconButton
+                  title="Copy children to parent"
+                  onClick={() =>
+                    props.onDeleteNode(props.node.id as any, "copy")
+                  }
+                >
+                  <HiArrowUp />
+                </IconButton>
+
                 <IconButton
                   onClick={() => props.onDeleteNode(props.node.id as any)}
                 >
@@ -505,6 +663,12 @@ export const CustomNode: React.FC<Props> = (props) => {
                   (props.node.data?.level
                     ? `, level ${props.node.data?.level}`
                     : "")
+                : props.node.data?.type === "elective"
+                ? `Elective${
+                    props.node.data.level
+                      ? `, Level ${props.node.data.level}`
+                      : ""
+                  }`
                 : props.node.text}
             </div>
 

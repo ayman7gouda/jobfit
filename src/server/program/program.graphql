@@ -13,7 +13,7 @@ type Program {
 
 input ProgramInput {
   id: Int!
-  handbook: [HandbookInput!]
+  handbook: [HandbookInput!]!
 }
 
 type SpecialisationProgram {
@@ -40,7 +40,7 @@ type Specialisation {
 
 input SpecialisationInput {
   id: Int!
-  handbook: [HandbookInput!]
+  handbook: [HandbookInput!]!
 }
 
 type Handbook {
@@ -57,6 +57,7 @@ type Handbook {
   number: Int
   credits: Int
   level: Int
+  reference: Int
   flagged: Boolean
 }
 
@@ -70,6 +71,7 @@ input HandbookInput {
   number: Int
   credits: Int
   level: Int
+  reference: Int
   flagged: Boolean
 }
 
