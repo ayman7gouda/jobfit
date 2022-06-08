@@ -491,6 +491,10 @@ export const TreeView = ({
           sort={false}
           insertDroppableFirst={false}
           canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+            if (dropTarget?.data?.type?.indexOf("link") == 0) {
+              return false;
+            }
+
             if (dragSource?.parent === dropTargetId) {
               return true;
             }

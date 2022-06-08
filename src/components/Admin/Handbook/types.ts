@@ -10,7 +10,7 @@ export type NodeType =
   | "folder"
   | "subject"
   | "constraint:program"
-  | "elective"
+  | "link:elective"
   | "collection";
 
 export type FileProperties = {

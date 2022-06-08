@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SelectSearch, { SelectSearchOption } from 'react-select-search';
 
 import CloneIcon, {
-  HiBeaker, HiCheck, HiDocument, HiDuplicate, HiFolder, HiLockClosed, HiPencil, HiTrash, HiX
+  HiCheck, HiDocument, HiDuplicate, HiFolder, HiLockClosed, HiPencil, HiTrash, HiX
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
@@ -53,31 +53,6 @@ export function LeafEditor(
         />
       )}
 
-      {props.node.data.type &&
-        (props.node.data.type.indexOf("link:own") >= 0 ||
-          props.node.data.type === "elective") && (
-          <TextField
-            type="number"
-            className={styles.textField}
-            value={props.node.data.level?.toString()}
-            onChange={(e) => {
-              props.onNodeChange(props.node.id, {
-                level:
-                  e.currentTarget.value === ""
-                    ? undefined
-                    : parseFloat(e.currentTarget.value),
-              });
-            }}
-            style={{ width: 80, margin: "0px 8px" }}
-            placeholder="Level"
-            onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                handleSubmit();
-              }
-            }}
-          />
-        )}
-
       <Select
         onChange={(e) =>
           props.onNodeChange(id, { type: e.currentTarget.value as NodeType })
@@ -87,7 +62,7 @@ export function LeafEditor(
       >
         <option value="subject">Subject</option>
         <option value="constraint:program">Program Constraint</option>
-        <option value="elective">Elective</option>
+        {/* <option value="elective">Elective</option> */}
       </Select>
 
       <IconButton onClick={handleSubmit}>
@@ -157,11 +132,6 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
 
   const indent = props.depth * 24;
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    props.onToggle(props.node.id);
-  };
-
   const handleShowInput = () => {
     setVisibleInput(true);
   };
@@ -178,6 +148,8 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
           : "",
       }}
     >
+      <div className={styles.arrow}></div>
+
       {props.node.data.type && props.node.data.type.indexOf("link") == 0 && (
         <LinkNode
           node={props.node}
@@ -186,9 +158,7 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
         />
       )}
 
-      {props.node.data.type === "elective" ? (
-        <HiBeaker style={{ color: "green" }} />
-      ) : props.node.data.type === "constraint:program" ? (
+      {props.node.data.type === "constraint:program" ? (
         <HiLockClosed style={{ color: "red" }} />
       ) : (
         <HiDocument />
