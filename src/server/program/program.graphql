@@ -43,6 +43,11 @@ input SpecialisationInput {
   handbook: [HandbookInput!]!
 }
 
+enum Selection {
+  AND
+  OR
+}
+
 type Handbook {
   id: Int!
   nodeId: Int!
@@ -54,10 +59,12 @@ type Handbook {
   text: String
   folder: Boolean
   type: String
+  selection: Selection
   number: Int
   credits: Int
   level: Int
   reference: Int
+  collection: Int
   flagged: Boolean
   selector: String
   index: Int
@@ -71,10 +78,12 @@ input HandbookInput {
   index: Int
   folder: Boolean
   type: String
+  selection: Selection
   number: Int
   credits: Int
   level: Int
   reference: Int
+  collection: Int
   flagged: Boolean
   selector: String
 }

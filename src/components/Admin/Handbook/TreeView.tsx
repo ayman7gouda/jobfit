@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { DragLayerMonitorProps, DropOptions, NodeModel, Tree } from '@minoru/react-dnd-treeview';
+import { DragLayerMonitorProps, DropOptions, Tree } from '@minoru/react-dnd-treeview';
 
 import { toUrlName } from 'lib/utils';
 import debounce from 'lodash/debounce';
@@ -16,14 +16,15 @@ import { ProgramsQuery, useProgramsQuery } from './queries/programs.query.genera
 import {
   SpecialisationsQuery, useSpecialisationsQuery
 } from './queries/specialisations.query.generated';
-import { FileProperties, getGuid, Option } from './types';
+import { getGuid } from './shared';
+import { FileProperties, NodeModel, Option } from './types';
 
 type Model = {
   code: string;
   name: string;
   url: string;
   id: number;
-  handbook: NodeModel<FileProperties>[];
+  handbook: NodeModel[];
 };
 
 function ProgramsView({
@@ -138,6 +139,7 @@ export function Layout(args: {
   id?: number | null;
   treeView?(args: {
     all: Option[];
+    minorOptions: Option[];
     programOptions: Option[];
     majorOptions: Option[];
   }): any;
@@ -152,25 +154,43 @@ export function Layout(args: {
     if (!programData?.programs) {
       return [];
     }
-    return [...programData.programs]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((p, i) => ({
-        name: `${p.name} [${p.code}]`,
-        value: p.id.toString(),
-      }));
+    return [{ name: "Nothing", value: "" as unknown as number }].concat(
+      [...programData.programs]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((p, i) => ({
+          name: `${p.name} [${p.code}]`,
+          value: p.id,
+        }))
+    );
   }, [programData?.programs]);
 
   const majorOptions = useMemo(() => {
     if (!specialisationData?.specialisations) {
       return [];
     }
-    return [{ name: "Nothing", value: "" }].concat(
+    return [{ name: "Nothing", value: "" as unknown as number }].concat(
       [...specialisationData.specialisations]
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((p, i) => ({
           name: `${p.name} [${p.code}]`,
-          value: p.id.toString(),
+          value: p.id,
         }))
+        .filter((f) => f.name.indexOf("Major") >= 0)
+    );
+  }, [specialisationData?.specialisations]);
+
+  const minorOptions = useMemo(() => {
+    if (!specialisationData?.specialisations) {
+      return [];
+    }
+    return [{ name: "Nothing", value: "" as unknown as number }].concat(
+      [...specialisationData.specialisations]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((p, i) => ({
+          name: `${p.name} [${p.code}]`,
+          value: p.id,
+        }))
+        .filter((f) => f.name.indexOf("Minor") >= 0)
     );
   }, [specialisationData?.specialisations]);
 
@@ -178,7 +198,7 @@ export function Layout(args: {
     return [...programOptions, ...majorOptions].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-  }, [programOptions, majorOptions]);
+  }, [programOptions, majorOptions, minorOptions]);
 
   if (
     loadingPrograms ||
@@ -235,7 +255,7 @@ export function Layout(args: {
       <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
         {args.id &&
           args.treeView &&
-          args.treeView({ programOptions, majorOptions, all })}
+          args.treeView({ programOptions, majorOptions, minorOptions, all })}
       </div>
     </div>
   );
@@ -244,7 +264,7 @@ export function Layout(args: {
 type UndoNode = {
   previous?: UndoNode;
   next?: UndoNode;
-  content: NodeModel<FileProperties>[];
+  content: NodeModel[];
 };
 
 export const TreeView = ({
@@ -253,19 +273,20 @@ export const TreeView = ({
   saving,
   programOptions,
   majorOptions,
+  minorOptions,
   all,
   model,
 }: {
-  defaultTree: NodeModel<FileProperties>[];
-  save(tree: NodeModel<FileProperties>[]): void;
+  defaultTree: NodeModel[];
+  save(tree: NodeModel[]): void;
   saving: boolean;
   programOptions: Option[];
   majorOptions: Option[];
+  minorOptions: Option[];
   all: Option[];
   model: { name: string; id: number; url: string };
 }) => {
-  const [tree, setCurrentTree] =
-    useState<NodeModel<FileProperties>[]>(defaultTree);
+  const [tree, setCurrentTree] = useState<NodeModel[]>(defaultTree);
   const [undoQueue, setUndoQueue] = useState<UndoNode>({
     previous: undefined,
     content: defaultTree,
@@ -284,15 +305,12 @@ export const TreeView = ({
     }, 500);
   }, [undoQueue]);
 
-  function setTree(tree: NodeModel<FileProperties>[]) {
+  function setTree(tree: NodeModel[]) {
     addUndoNode(tree);
     setCurrentTree(tree);
   }
 
-  const handleDrop = (
-    newTree: NodeModel<FileProperties>[],
-    options: DropOptions<FileProperties>
-  ) => {
+  const handleDrop = (newTree: any[], options: DropOptions<FileProperties>) => {
     // args.onDrop(newTree, options);
     setTree(newTree);
   };
@@ -312,17 +330,32 @@ export const TreeView = ({
     setTree(newTree);
   };
 
-  function clone(id: NodeModel["id"]) {
+  function cloneNode(id: NodeModel["id"]): NodeModel[] {
     const node = tree.find((t) => t.id === id);
-    const clone = JSON.parse(JSON.stringify(node));
-    clone.id = getGuid();
-    const newTree = [...tree, clone];
 
+    let nodes = [];
+
+    let clone = JSON.parse(JSON.stringify(node));
+    clone.id = getGuid();
+    nodes.push(clone);
+
+    let childNodes = tree.filter((t) => t.parent === id);
+    for (let node of childNodes) {
+      nodes.push(...cloneNode(node.id));
+    }
+
+    return nodes;
+  }
+
+  function clone(id: NodeModel["id"]) {
+    const newTree = tree.concat(cloneNode(id));
     setTree(newTree);
   }
 
   return (
-    <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
+    <div
+      style={{ flex: 1, height: "100%", overflow: "auto", paddingBottom: 140 }}
+    >
       <div
         style={{
           padding: 8,
@@ -388,17 +421,15 @@ export const TreeView = ({
         <Tree
           tree={tree}
           rootId={0}
-          render={(
-            node: NodeModel<FileProperties>,
-            { depth, isOpen, onToggle }
-          ) => (
+          render={(node, { depth, isOpen, onToggle }) => (
             <CustomNode
-              node={node}
+              node={node as NodeModel}
               depth={depth}
               isOpen={isOpen}
               onToggle={onToggle}
               programs={programOptions}
               majors={majorOptions}
+              minors={minorOptions}
               all={all}
               onTextChange={handleTextChange}
               clone={clone}
@@ -427,12 +458,13 @@ export const TreeView = ({
                 }
               }}
               onNodeChange={(id, value) => {
-                const { text, ...rest } = value;
+                const { text, droppable, ...rest } = value;
                 const newTree = tree.map((node) => {
                   if (node.id === id) {
                     return {
                       ...node,
                       text: text || node.text,
+                      droppable: droppable == null ? node.droppable : droppable,
                       data: {
                         ...node.data,
                         ...(rest as any),
@@ -467,8 +499,44 @@ export const TreeView = ({
           placeholderRender={(node, { depth }) => (
             <Placeholder node={node} depth={depth} />
           )}
+          canDrag={(node) => !node?.data?.temp}
+          // onChangeOpen={(nodes) => {
+          //   let newNodes = [];
+          //   for (let nodeId of nodes) {
+          //     let node = tree.find((t) => t.id == nodeId)!;
+          //     if (node.data?.type === "link:own") {
+          //       let currentPool = tree.find((t) => t.id == node.text);
+
+          //       if (currentPool != null) {
+          //         let poolChildren = tree.filter(
+          //           (t) => t.parent == currentPool!.id
+          //         );
+          //         newNodes.push(
+          //           ...poolChildren.map((c) => ({
+          //             ...c,
+          //             id: getGuid(),
+          //             parent: node.id,
+          //             data: { ...c.data, temp: true },
+          //           }))
+          //         );
+          //       }
+          //     }
+          //   }
+          //   if (newNodes.length) {
+          //     setTree(tree.concat(newNodes));
+          //   }
+          // }}
+
           key={model.id}
           initialOpen={true}
+          // initialOpen={tree
+          //   .filter(
+          //     (t) =>
+          //       !t.data ||
+          //       !t.data.type ||
+          //       (t.data.type.indexOf("link:") == -1 && t.data.type !== "pool")
+          //   )
+          //   .map((t) => t.id)}
         />
       </div>
     </div>

@@ -276,6 +276,11 @@ model Specialisation {
   programs        SpecialisationProgram[]
 }
 
+enum Selection {
+  AND
+  OR
+}
+
 model Handbook {
   id               Int             @id @default(autoincrement())
   nodeId           Int
@@ -287,10 +292,12 @@ model Handbook {
   text             String?         @db.Text
   folder           Boolean?
   type             String?
+  selection        Selection?
   number           Int?
   credits          Int?
   level            Int?
   reference        Int?
+  collection       Int?
   selector         String?         @db.VarChar(256)
   flagged          Boolean?
   index            Int?

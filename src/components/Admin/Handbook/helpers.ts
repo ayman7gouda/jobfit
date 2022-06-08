@@ -1,10 +1,9 @@
-import { NodeModel } from "@minoru/react-dnd-treeview";
+import { ProgramInput, Selection } from 'generated/clientTypes';
 
-import { ProgramInput } from "generated/clientTypes";
-
-import { ProgramQuery } from "./queries/program.query.generated";
-import { SpecialisationQuery } from "./queries/specialisation.query.generated";
-import { FileProperties, getGuid, TreeNode } from "./types";
+import { ProgramQuery } from './queries/program.query.generated';
+import { SpecialisationQuery } from './queries/specialisation.query.generated';
+import { getGuid } from './shared';
+import { NodeModel, NodeType, TreeNode } from './types';
 
 export type Structure = Array<{
   name: string;
@@ -31,7 +30,7 @@ export type Program = {
 function buildNodes(
   name: string,
   value: { structure: Structure; sequence: Sequence }
-) {
+): NodeModel[] {
   const nodes = [];
   let parent = getGuid();
   nodes.push({
@@ -39,6 +38,7 @@ function buildNodes(
     parent: 0,
     droppable: true,
     text: name,
+    data: {},
   });
 
   if (value.structure) {
@@ -51,6 +51,10 @@ function buildNodes(
           parent: parent,
           droppable: true,
           text: "Structure: " + structure.name,
+          data: {
+            type: "folder" as NodeType,
+            selection: Selection.And,
+          },
         });
 
         for (let subject of structure.subjects) {
@@ -58,6 +62,9 @@ function buildNodes(
             id: getGuid(),
             parent: child,
             text: subject.code + " " + subject.name,
+            data: {
+              type: "subject" as NodeType,
+            },
           });
         }
       }
@@ -73,7 +80,8 @@ function buildNodes(
         droppable: true,
         text: parentSequence.program,
         data: {
-          type: "",
+          type: "folder" as NodeType,
+          selection: Selection.And,
         },
       });
 
@@ -83,9 +91,10 @@ function buildNodes(
           id: sequenceId,
           parent: parentSequenceId,
           droppable: true,
-          text: sequence.name || "Sequence",
+          text: sequence.name ? "Sequence: " + sequence.name : "Sequence",
           data: {
-            type: "",
+            type: "folder" as NodeType,
+            selection: Selection.And,
           },
         });
 
@@ -94,6 +103,7 @@ function buildNodes(
             id: getGuid(),
             parent: sequenceId,
             text: subject.code + " " + subject.name,
+            data: {},
           });
         }
       }
@@ -106,33 +116,25 @@ function buildNodes(
 export function daoInNode(selected: TreeNode): ProgramInput {
   return {
     id: selected.id,
-    handbook: selected.handbook.map((h, i) => ({
-      id: h.data?.dbId,
-      nodeId: parseInt(h.id as string),
-      credits:
-        h.data?.credits != null && h.data?.credits != ""
-          ? parseInt(h.data!.credits)
-          : undefined,
-      flagged: h.data?.flagged,
-      folder: h.droppable,
-      index: i,
-      level:
-        h.data?.level != null && h.data.level != ""
-          ? parseInt(h.data.level)
-          : undefined,
-      number:
-        h.data?.number != null && h.data.number != ""
-          ? parseInt(h.data.number)
-          : undefined,
-      reference:
-        h.data?.reference != null && h.data!.reference != ""
-          ? parseInt(h.data!.reference)
-          : undefined,
-      parentId: parseInt(h.parent as string),
-      text: h.text,
-      selector: h.data?.selector,
-      type: h.data?.type,
-    })),
+    handbook: selected.handbook
+      .filter((h) => !h.data.temp)
+      .map((h, i) => ({
+        id: h.data.dbId,
+        nodeId: parseInt(h.id as string),
+        parentId: parseInt(h.parent as string),
+        text: h.text,
+        folder: h.droppable,
+        type: h.data.type,
+        selection: h.data.selection,
+        number: h.data.number,
+        credits: h.data.credits,
+        level: h.data.level,
+        reference: h.data.reference,
+        collection: h.data.collection,
+        selector: h.data?.selector,
+        flagged: h.data.flagged,
+        index: i,
+      })),
   };
 }
 
@@ -141,7 +143,7 @@ export function daoOutNode(
     | NonNullable<ProgramQuery["program"]>
     | NonNullable<SpecialisationQuery["specialisation"]>
 ) {
-  let handbook: NodeModel<FileProperties>[];
+  let handbook: NodeModel[];
   if (data.handbook && data.handbook.length) {
     handbook = data.handbook
       .map((h) => ({
@@ -152,12 +154,14 @@ export function daoOutNode(
         index: h.index || 0,
         data: {
           dbId: h.id,
-          type: h.type!,
-          credits: (h.credits || "") as string,
+          type: h.folder && !h.type ? "folder" : (h.type! as NodeType),
+          selection: h.folder && !h.selection ? Selection.And : h.selection!,
+          credits: h.credits!,
           flagged: h.flagged!,
-          level: (h.level || "") as string,
-          number: (h.number || "") as string,
-          reference: (h.reference || "") as string,
+          level: h.level!,
+          collection: h.collection!,
+          number: h.number!,
+          reference: h.reference!,
         },
       }))
       .sort((a, b) => (a.index < b.index ? -1 : 1));
