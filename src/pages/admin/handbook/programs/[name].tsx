@@ -1,15 +1,14 @@
-import {
-  DndProvider,
-  getBackendOptions,
-  MultiBackend,
-} from "@minoru/react-dnd-treeview";
+import { DndProvider, getBackendOptions, MultiBackend } from '@minoru/react-dnd-treeview';
 
-import { daoInNode, daoOutNode } from "components/Admin/Handbook/helpers";
-import { useProgramQuery } from "components/Admin/Handbook/queries/program.query.generated";
-import { useSaveProgramHandbookMutation } from "components/Admin/Handbook/queries/saveProgramHandbook.mutation.generated";
-import { Layout, TreeView } from "components/Admin/Handbook/TreeView";
-import { initGuid, Option } from "components/Admin/Handbook/types";
-import { useRouter } from "next/router";
+import { daoInNode, daoOutNode } from 'components/Admin/Handbook/helpers';
+import { useProgramQuery } from 'components/Admin/Handbook/queries/program.query.generated';
+import {
+  useSaveProgramHandbookMutation
+} from 'components/Admin/Handbook/queries/saveProgramHandbook.mutation.generated';
+import { initGuid } from 'components/Admin/Handbook/shared';
+import { Layout, TreeView } from 'components/Admin/Handbook/TreeView';
+import { Option } from 'components/Admin/Handbook/types';
+import { useRouter } from 'next/router';
 
 // const ClientOnly = ({ children }: any) => {
 //   const [isClient, setClient] = useState(false);
@@ -26,10 +25,12 @@ function Container({
   all,
   programOptions,
   majorOptions,
+  minorOptions,
   id,
 }: {
   programOptions: Option[];
   majorOptions: Option[];
+  minorOptions: Option[];
   all: Option[];
   id: number;
 }) {
@@ -57,6 +58,7 @@ function Container({
       all={all}
       programOptions={programOptions}
       majorOptions={majorOptions}
+      minorOptions={minorOptions}
       saving={saving}
       save={(h) => {
         save({
@@ -85,6 +87,7 @@ const Page = () => {
           <Container
             programOptions={programOptions}
             majorOptions={majorOptions}
+            minorOptions={majorOptions}
             all={all}
             id={numId}
           />

@@ -1,16 +1,17 @@
 fragment Handbook on Handbook {
   id
-  number
-  credits
-  level
-  flagged
   nodeId
-  programId
   parentId
   text
   folder
   type
+  selection
+  number
+  credits
+  level
   reference
+  collection
+  flagged
   selector
   index
 }

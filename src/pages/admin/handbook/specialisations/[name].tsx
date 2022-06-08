@@ -1,15 +1,16 @@
-import {
-  DndProvider,
-  getBackendOptions,
-  MultiBackend,
-} from "@minoru/react-dnd-treeview";
+import { DndProvider, getBackendOptions, MultiBackend } from '@minoru/react-dnd-treeview';
 
-import { daoInNode, daoOutNode } from "components/Admin/Handbook/helpers";
-import { useSaveSpecialisationHandbookMutation } from "components/Admin/Handbook/queries/saveSpecialisationHandbook.mutation.generated";
-import { useSpecialisationQuery } from "components/Admin/Handbook/queries/specialisation.query.generated";
-import { Layout, TreeView } from "components/Admin/Handbook/TreeView";
-import { initGuid, Option } from "components/Admin/Handbook/types";
-import { useRouter } from "next/router";
+import { daoInNode, daoOutNode } from 'components/Admin/Handbook/helpers';
+import {
+  useSaveSpecialisationHandbookMutation
+} from 'components/Admin/Handbook/queries/saveSpecialisationHandbook.mutation.generated';
+import {
+  useSpecialisationQuery
+} from 'components/Admin/Handbook/queries/specialisation.query.generated';
+import { initGuid } from 'components/Admin/Handbook/shared';
+import { Layout, TreeView } from 'components/Admin/Handbook/TreeView';
+import { Option } from 'components/Admin/Handbook/types';
+import { useRouter } from 'next/router';
 
 // const ClientOnly = ({ children }: any) => {
 //   const [isClient, setClient] = useState(false);
@@ -26,10 +27,12 @@ export function SpecialisationContainer({
   all,
   programOptions,
   majorOptions,
+  minorOptions,
   id,
 }: {
   programOptions: Option[];
   majorOptions: Option[];
+  minorOptions: Option[];
   all: Option[];
   id: number;
 }) {
@@ -58,6 +61,7 @@ export function SpecialisationContainer({
       all={all}
       programOptions={programOptions}
       majorOptions={majorOptions}
+      minorOptions={minorOptions}
       save={(h) => {
         save({
           variables: {
@@ -81,10 +85,11 @@ export const Page = () => {
       <Layout
         id={numId}
         part="majors"
-        treeView={({ programOptions, majorOptions, all }) => (
+        treeView={({ programOptions, majorOptions, minorOptions, all }) => (
           <SpecialisationContainer
             programOptions={programOptions}
             majorOptions={majorOptions}
+            minorOptions={minorOptions}
             all={all}
             id={numId}
           />

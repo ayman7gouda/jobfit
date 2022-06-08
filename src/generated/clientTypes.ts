@@ -20,6 +20,7 @@ export type EmployerCount = {
 
 export type Handbook = {
   __typename?: 'Handbook';
+  collection?: Maybe<Scalars['Int']>;
   credits?: Maybe<Scalars['Int']>;
   flagged?: Maybe<Scalars['Boolean']>;
   folder?: Maybe<Scalars['Boolean']>;
@@ -32,6 +33,7 @@ export type Handbook = {
   program?: Maybe<Program>;
   programId?: Maybe<Scalars['Int']>;
   reference?: Maybe<Scalars['Int']>;
+  selection?: Maybe<Selection>;
   selector?: Maybe<Scalars['String']>;
   specialisation?: Maybe<Specialisation>;
   specialisationId?: Maybe<Scalars['Int']>;
@@ -40,6 +42,7 @@ export type Handbook = {
 };
 
 export type HandbookInput = {
+  collection?: InputMaybe<Scalars['Int']>;
   credits?: InputMaybe<Scalars['Int']>;
   flagged?: InputMaybe<Scalars['Boolean']>;
   folder?: InputMaybe<Scalars['Boolean']>;
@@ -50,6 +53,7 @@ export type HandbookInput = {
   number?: InputMaybe<Scalars['Int']>;
   parentId?: InputMaybe<Scalars['Int']>;
   reference?: InputMaybe<Scalars['Int']>;
+  selection?: InputMaybe<Selection>;
   selector?: InputMaybe<Scalars['String']>;
   text?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
@@ -266,6 +270,11 @@ export type QuerySkillClusterArgs = {
 export type QuerySpecialisationArgs = {
   id: Scalars['Int'];
 };
+
+export enum Selection {
+  And = 'AND',
+  Or = 'OR'
+}
 
 export type SfiaEstimate = {
   __typename?: 'SfiaEstimate';
