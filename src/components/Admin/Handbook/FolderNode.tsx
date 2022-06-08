@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import { Selection } from 'generated/clientTypes';
 import {
-  HiArrowUp, HiCheck, HiChevronDown, HiChevronRight, HiCollection, HiDocument, HiDuplicate,
-  HiFolder, HiLink, HiLockClosed, HiOutlineDocument, HiPencil, HiTrash, HiX
+  HiArrowUp, HiBeaker, HiCheck, HiChevronDown, HiChevronRight, HiCollection, HiDocument,
+  HiDuplicate, HiFolder, HiLink, HiLockClosed, HiOutlineDocument, HiPencil, HiTrash, HiX
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
@@ -166,10 +166,12 @@ export function FolderEditor(
       )}
       {props.node.data.type === "link:collection" && (
         <Select
-          value={labelText}
+          value={props.node.data.reference?.toString()}
           style={{ minWidth: 280 }}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setLabelText(e.currentTarget.value)
+            props.onNodeChange(props.node.id, {
+              reference: parseInt(e.currentTarget.value),
+            })
           }
         >
           <option value="">Please Select</option>
@@ -183,6 +185,31 @@ export function FolderEditor(
         </Select>
       )}
 
+      {props.node.data.type &&
+        (props.node.data.type.indexOf("link:collection") >= 0 ||
+          props.node.data.type === "link:elective") && (
+          <TextField
+            type="number"
+            className={styles.textField}
+            value={props.node.data.level?.toString()}
+            onChange={(e) => {
+              props.onNodeChange(props.node.id, {
+                level:
+                  e.currentTarget.value === ""
+                    ? undefined
+                    : parseFloat(e.currentTarget.value),
+              });
+            }}
+            style={{ width: 80, margin: "0px 8px" }}
+            placeholder="Level"
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                handleSubmit();
+              }
+            }}
+          />
+        )}
+
       <Select
         onChange={(e) =>
           props.onNodeChange(id, { type: e.currentTarget.value as NodeType })
@@ -192,7 +219,9 @@ export function FolderEditor(
       >
         <option value="folder">Sequence</option>
         <option value="collection">Collection</option>
+
         <optgroup label="Links">
+          <option value="link:elective">Electives</option>
           <option value="link:collection">Collection</option>
           <option value="link:program">Program</option>
           <option value="link:major">Major</option>
@@ -392,14 +421,16 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
       }}
     >
       <div className={`${styles.arrow} ${props.isOpen ? styles.isOpen : ""}`}>
-        {/* {props.node.data.type?.indexOf("link") === -1 && ( */}
-        <div onClick={handleToggle}>
-          {props.isOpen ? <HiChevronDown /> : <HiChevronRight />}
-        </div>
-        {/* )} */}
+        {props.node.data.type?.indexOf("link") === -1 && (
+          <div onClick={handleToggle}>
+            {props.isOpen ? <HiChevronDown /> : <HiChevronRight />}
+          </div>
+        )}
       </div>
 
-      {props.node.data.type === "link:collection" ? (
+      {props.node.data.type === "link:elective" ? (
+        <HiBeaker style={{ color: "green" }} />
+      ) : props.node.data.type === "link:collection" ? (
         <HiLink style={{ color: "purple" }} />
       ) : props.node.data.type === "link:program" ? (
         <HiLink style={{ color: "orange" }} />
@@ -448,7 +479,13 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
               onClick={handleShowInput}
               className={styles.nodeLabel}
             >
-              {props.node.text}
+              {props.node.data.type === "link:collection"
+                ? props.tree.find((t) => t.id === props.node.data.reference)
+                    ?.text || "Not Found "
+                : props.node.text}
+              {props.node.data.level != null
+                ? `, Level ${props.node.data.level}`
+                : null}
             </div>
 
             <IconButton onClick={handleShowInput}>
