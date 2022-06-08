@@ -8,7 +8,7 @@ specifiers:
   '@graphql-codegen/typescript-operations': ^2.3.5
   '@graphql-codegen/typescript-react-apollo': ^3.2.11
   '@graphql-codegen/typescript-resolvers': ^2.6.1
-  '@minoru/react-dnd-treeview': ^2.0.0
+  '@minoru/react-dnd-treeview': 2.0.1-alpha.0
   '@prisma/client': ^3.14.0
   '@tailwindcss/aspect-ratio': ^0.4.0
   '@tailwindcss/forms': ^0.5.1
@@ -51,7 +51,7 @@ specifiers:
 
 dependencies:
   '@apollo/client': 3.6.6_7oyq4t3ocdziwagw7zfqg4youi
-  '@minoru/react-dnd-treeview': 2.0.0_s2dwq6itmbotqcs7p4ayy6iyty
+  '@minoru/react-dnd-treeview': 2.0.1-alpha.0_s2dwq6itmbotqcs7p4ayy6iyty
   '@prisma/client': 3.14.0_prisma@3.14.0
   '@tailwindcss/forms': 0.5.2_tailwindcss@3.0.24
   '@types/lodash': 4.14.182
@@ -1398,8 +1398,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.13
     dev: true
 
-  /@minoru/react-dnd-treeview/2.0.0_s2dwq6itmbotqcs7p4ayy6iyty:
-    resolution: {integrity: sha512-Xi5Kg+ViHHgcMd5q4CNvkDKTDvHIglW29POMZXsCJYQC8sBAcLzuF/J5QW+1s8M+j82UOWBbRHNl1eGWOg99Lg==}
+  /@minoru/react-dnd-treeview/2.0.1-alpha.0_s2dwq6itmbotqcs7p4ayy6iyty:
+    resolution: {integrity: sha512-H7WlRDkme1RbPK3LP1mzFDTvVLfsSVXeyEuAVPs74cTsAAAOY0Z89vgRRplzW/eU3S1IpI/LjQbCyrRO74b68A==}
     peerDependencies:
       react: ^18.1.0
       react-dnd: ^16.0.1

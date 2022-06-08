@@ -36,7 +36,7 @@ export function SpecialisationContainer({
   const { data, loading } = useSpecialisationQuery({
     variables: { id },
   });
-  const [save] = useSaveSpecialisationHandbookMutation();
+  const [save, { loading: saving }] = useSaveSpecialisationHandbookMutation();
 
   if (loading) {
     return <div>Loading ...</div>;
@@ -52,6 +52,7 @@ export function SpecialisationContainer({
   return (
     <TreeView
       key={id}
+      saving={saving}
       defaultTree={tree.handbook}
       model={tree}
       all={all}

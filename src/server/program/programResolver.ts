@@ -1,4 +1,4 @@
-import { Resolvers } from "generated/serverTypes";
+import { Resolvers } from 'generated/serverTypes';
 
 export const programResolvers: Resolvers = {
   Query: {
@@ -51,6 +51,9 @@ export const programResolvers: Resolvers = {
             create: createNodes,
           },
         },
+        include: {
+          handbook: true,
+        },
       });
     },
     async saveSpecialisationHandbook(_, { input: { id, handbook } }, { db }) {
@@ -81,6 +84,9 @@ export const programResolvers: Resolvers = {
           handbook: {
             create: createNodes,
           },
+        },
+        include: {
+          handbook: true,
         },
       });
     },

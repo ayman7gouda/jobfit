@@ -9,7 +9,7 @@ export type SpecialisationQueryVariables = Types.Exact<{
 }>;
 
 
-export type SpecialisationQuery = { __typename?: 'Query', specialisation?: { __typename?: 'Specialisation', id: number, name: string, code: string, url: string, legacyCode?: string | null, description?: string | null, availability?: string | null, structureSource?: string | null, sequenceSource?: string | null, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, number?: number | null, credits?: number | null, level?: number | null, flagged?: boolean | null, nodeId: number, programId?: number | null, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, reference?: number | null }> | null } | null };
+export type SpecialisationQuery = { __typename?: 'Query', specialisation?: { __typename?: 'Specialisation', id: number, name: string, code: string, url: string, legacyCode?: string | null, description?: string | null, availability?: string | null, structureSource?: string | null, sequenceSource?: string | null, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, number?: number | null, credits?: number | null, level?: number | null, flagged?: boolean | null, nodeId: number, programId?: number | null, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, reference?: number | null, selector?: string | null, index?: number | null }> | null } | null };
 
 
 export const SpecialisationDocument = gql`

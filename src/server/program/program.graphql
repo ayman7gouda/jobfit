@@ -59,6 +59,8 @@ type Handbook {
   level: Int
   reference: Int
   flagged: Boolean
+  selector: String
+  index: Int
 }
 
 input HandbookInput {
@@ -66,6 +68,7 @@ input HandbookInput {
   nodeId: Int!
   parentId: Int
   text: String
+  index: Int
   folder: Boolean
   type: String
   number: Int
@@ -73,6 +76,7 @@ input HandbookInput {
   level: Int
   reference: Int
   flagged: Boolean
+  selector: String
 }
 
 type Query {

@@ -36,7 +36,7 @@ function Container({
   const { data, loading } = useProgramQuery({
     variables: { id },
   });
-  const [save] = useSaveProgramHandbookMutation();
+  const [save, { loading: saving }] = useSaveProgramHandbookMutation();
 
   if (loading) {
     return <div>Loading ...</div>;
@@ -57,6 +57,7 @@ function Container({
       all={all}
       programOptions={programOptions}
       majorOptions={majorOptions}
+      saving={saving}
       save={(h) => {
         save({
           variables: {

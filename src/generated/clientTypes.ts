@@ -24,6 +24,7 @@ export type Handbook = {
   flagged?: Maybe<Scalars['Boolean']>;
   folder?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
+  index?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Int']>;
   nodeId: Scalars['Int'];
   number?: Maybe<Scalars['Int']>;
@@ -31,6 +32,7 @@ export type Handbook = {
   program?: Maybe<Program>;
   programId?: Maybe<Scalars['Int']>;
   reference?: Maybe<Scalars['Int']>;
+  selector?: Maybe<Scalars['String']>;
   specialisation?: Maybe<Specialisation>;
   specialisationId?: Maybe<Scalars['Int']>;
   text?: Maybe<Scalars['String']>;
@@ -42,11 +44,13 @@ export type HandbookInput = {
   flagged?: InputMaybe<Scalars['Boolean']>;
   folder?: InputMaybe<Scalars['Boolean']>;
   id?: InputMaybe<Scalars['Int']>;
+  index?: InputMaybe<Scalars['Int']>;
   level?: InputMaybe<Scalars['Int']>;
   nodeId: Scalars['Int'];
   number?: InputMaybe<Scalars['Int']>;
   parentId?: InputMaybe<Scalars['Int']>;
   reference?: InputMaybe<Scalars['Int']>;
+  selector?: InputMaybe<Scalars['String']>;
   text?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
 };

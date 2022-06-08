@@ -291,7 +291,9 @@ model Handbook {
   credits          Int?
   level            Int?
   reference        Int?
+  selector         String?         @db.VarChar(256)
   flagged          Boolean?
+  index            Int?
 }
 
 // views

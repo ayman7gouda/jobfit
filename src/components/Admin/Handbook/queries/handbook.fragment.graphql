@@ -11,4 +11,6 @@ fragment Handbook on Handbook {
   folder
   type
   reference
+  selector
+  index
 }

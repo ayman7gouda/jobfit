@@ -1,36 +1,24 @@
-import React, { useEffect, useState } from "react";
-import SelectSearch, { SelectSearchOption } from "react-select-search";
+import React, { useCallback, useEffect, useState } from 'react';
+import SelectSearch, { SelectSearchOption } from 'react-select-search';
 
-import { NodeModel } from "@minoru/react-dnd-treeview";
+import { ApolloClient, DocumentNode, useApolloClient } from '@apollo/client';
+import { NodeModel } from '@minoru/react-dnd-treeview';
 
+import debounce from 'lodash/debounce';
 import CloneIcon, {
-  HiArrowUp,
-  HiBeaker,
-  HiCheck,
-  HiChevronDown,
-  HiChevronRight,
-  HiCollection,
-  HiDocument,
-  HiDuplicate,
-  HiFolder,
-  HiLink,
-  HiLockClosed,
-  HiPencil,
-  HiTrash,
-  HiX,
-} from "react-icons/hi";
+  HiArrowUp, HiBeaker, HiCheck, HiChevronDown, HiChevronRight, HiCollection, HiDocument,
+  HiDuplicate, HiExclamationCircle, HiFolder, HiLink, HiLockClosed, HiPencil, HiTrash, HiX
+} from 'react-icons/hi';
 
-import styles from "./CustomNode.module.css";
-import { daoOutNode } from "./helpers";
+import styles from './CustomNode.module.css';
+import { daoOutNode } from './helpers';
 import {
-  ProgramQueryResult,
-  useProgramLazyQuery,
-} from "./queries/program.query.generated";
+  ProgramDocument, ProgramQueryResult, useProgramLazyQuery
+} from './queries/program.query.generated';
 import {
-  SpecialisationQueryResult,
-  useSpecialisationLazyQuery,
-} from "./queries/specialisation.query.generated";
-import { FileProperties, getGuid } from "./types";
+  SpecialisationDocument, SpecialisationQuery, SpecialisationQueryResult, useSpecialisationLazyQuery
+} from './queries/specialisation.query.generated';
+import { FileProperties, getGuid } from './types';
 
 type Option = { name: string; value: string };
 
@@ -49,7 +37,8 @@ type Props = {
   onNodeChange: NodeChange;
   clone: (id: NodeModel["id"]) => void;
   onAddNode: (
-    node: NodeModel<FileProperties> | Array<NodeModel<FileProperties>>
+    node: NodeModel<FileProperties> | Array<NodeModel<FileProperties>>,
+    insert?: boolean
   ) => void;
   onDeleteNode: (id: number, handleChildren?: "delete" | "copy") => void;
   programs: Option[];
@@ -133,17 +122,38 @@ export function EditLink(props: {
   const [programNodes, setProgramNodes] = useState(
     [] as NodeModel<FileProperties>[]
   );
+  const [program, setProgram] = useState<Option | undefined>(undefined);
+  const [pool, setPool] = useState<NodeModel<FileProperties> | undefined>(
+    undefined
+  );
   const [findProgram] = props.query({ fetchPolicy: "network-only" });
 
   useEffect(() => {
     if (props.node.data?.number) {
+      const programId = parseInt(props.node.data?.number);
       findProgram({
-        variables: { id: parseInt(props.node.data?.number) },
+        variables: { id: programId },
       }).then((result: any) => {
         let data = props.getData(result);
         if (data) {
           const nodes = daoOutNode(data);
           setProgramNodes(nodes.handbook);
+
+          // set the program
+          if (props.node.data?.number) {
+            let program = props.programs.find(
+              (p) => p.value == props.node.data?.number
+            );
+            setProgram(program);
+          }
+
+          //set the pool
+          if (props.node.data?.reference) {
+            let spc = nodes.handbook.find(
+              (p) => p.id == props.node.data?.reference
+            );
+            setPool(spc);
+          }
         }
       });
     }
@@ -164,11 +174,10 @@ export function EditLink(props: {
 
           let program = props.programs.find((p) => p.value == id);
 
+          setProgram(program);
           props.setLabelText(program?.name + " > None");
-
           props.onNodeChange(props.node.id, {
             number: e as unknown as string,
-            // text: program?.name + " > None",
           });
 
           findProgram({ variables: { id: numId } }).then((result: any) => {
@@ -191,10 +200,9 @@ export function EditLink(props: {
           props.onNodeChange(props.node.id, {
             reference: id,
           });
-          let program = props.programs.find(
-            (p) => p.value == props.node.data?.number
-          );
+
           let spc = programNodes.find((p) => p.id == id);
+          setPool(spc);
           props.setLabelText(program?.name + " > " + spc?.text);
         }}
       >
@@ -207,6 +215,22 @@ export function EditLink(props: {
             </option>
           ))}
       </Select>
+      <TextField
+        className={styles.textField}
+        value={props.node.data?.selector}
+        onChange={(e) => {
+          props.onNodeChange(props.node.id, {
+            selector: e.currentTarget.value,
+          });
+          props.setLabelText(
+            program?.name +
+              (pool ? " > " + pool.text : "") +
+              (e.currentTarget.value ? " > " + e.currentTarget.value : "")
+          );
+        }}
+        style={{ width: 200, margin: "0px 8px" }}
+        placeholder="Selector"
+      />
       <TextField
         className={styles.textField}
         value={props.node.data?.level}
@@ -226,7 +250,10 @@ export const CustomNode: React.FC<Props> = (props) => {
   const { id, text } = props.node;
   const [visibleInput, setVisibleInput] = useState(false);
   const [labelText, setLabelText] = useState(text);
+  const [linkError, setLinkError] = useState<string | null>(null);
+
   const indent = props.depth * 24;
+  const client = useApolloClient();
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -251,6 +278,34 @@ export const CustomNode: React.FC<Props> = (props) => {
     props.onTextChange(id, labelText);
   };
 
+  const checkLink = useCallback(
+    debounce(() => {
+      if (
+        props.node.data?.reference &&
+        (props.node.data?.type === "specialisationLink" ||
+          props.node.data?.type === "programLink")
+      ) {
+        if (props.node.data?.type === "specialisationLink") {
+          checkPoolLink(
+            client,
+            props.node,
+            SpecialisationDocument,
+            "specialisation"
+          ).then((a) => setLinkError(a));
+        } else if (props.node.data?.type === "programLink") {
+          checkPoolLink(client, props.node, ProgramDocument, "program").then(
+            (a) => setLinkError(a)
+          );
+        }
+      }
+    }, 1000),
+    [props.node]
+  );
+
+  useEffect(() => {
+    checkLink();
+  });
+
   // console.log(props.node.id + " " + props.node.text);
 
   return (
@@ -273,6 +328,13 @@ export const CustomNode: React.FC<Props> = (props) => {
           </div>
         )}
       </div>
+      {linkError && (
+        <HiExclamationCircle
+          title={linkError}
+          style={{ color: "red", width: 30, height: 30 }}
+        />
+      )}
+
       {props.node.data?.type === "link" ? (
         <HiLink style={{ color: "purple" }} />
       ) : props.node.data?.type === "programLink" ? (
@@ -418,8 +480,8 @@ export const CustomNode: React.FC<Props> = (props) => {
                   style={{ marginRight: 4, width: 180 }}
                 >
                   <option value="">Please Select ...</option>
-                  <option value="or">OR</option>
-                  <option value="">AND</option>
+                  <option value="or">Or</option>
+                  <option value="">And</option>
                   <option value="pool">Pool</option>
                   <option value="major">Major</option>
                   <option value="minor">Minor</option>
@@ -497,12 +559,12 @@ export const CustomNode: React.FC<Props> = (props) => {
                 >
                   <option value="subject">Subject</option>
                   <option value="link">Pool Link</option>
-                  <option value="programLink">Program Pool Link</option>
+                  <option value="programLink">Program Link</option>
                   <option value="specialisationLink">
-                    Specialisation Pool Link
+                    Specialisation Link
                   </option>
                   <option value="elective">Elective</option>
-                  <option value="programConstraint">Program Constraint</option>
+                  <option value="programConstraint">Criteria</option>
                 </Select>
               </>
             )}
@@ -617,12 +679,15 @@ export const CustomNode: React.FC<Props> = (props) => {
                         },
                       ];
                     }
-                    props.onAddNode([
-                      ...addYear(1),
-                      ...addYear(2),
-                      ...addYear(3),
-                      ...addYear(4),
-                    ]);
+                    props.onAddNode(
+                      [
+                        ...addYear(1),
+                        ...addYear(2),
+                        ...addYear(3),
+                        ...addYear(4),
+                      ],
+                      true
+                    );
                   }}
                 >
                   <HiCollection />
@@ -689,3 +754,76 @@ export const CustomNode: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+async function checkPoolLink(
+  client: ApolloClient<object>,
+  node: NodeModel<FileProperties>,
+  document: DocumentNode,
+  name: "program" | "specialisation"
+) {
+  const program = await client.query({
+    query: document,
+    variables: { id: node.data?.number },
+  });
+  if (
+    program.data == null ||
+    program.data[name] == null ||
+    program.data[name].handbook == null
+  ) {
+    return "Not found or not processed yet!";
+  }
+  let data = program.data[name];
+  if (
+    node.data?.reference &&
+    data.handbook?.every(
+      (h: any) => h.nodeId.toString() != node.data?.reference
+    )
+  ) {
+    return "Pool not found";
+  }
+  if (node.data && node.data.selector && node.data.reference) {
+    // get all nodes of the pool node
+    let poolNodes = data.handbook.filter(
+      (n: any) => n.parentId && n.parentId.toString() === node.data!.reference
+    );
+    if (poolNodes.length == 0) {
+      return "Selected pool has nothing to select from ;(";
+    }
+
+    // check if all pool nodes contain the selected selection
+    for (let poolNode of poolNodes) {
+      if (poolNode.type === "major" || poolNode.type === "minor") {
+        let subPool = await await client.query<SpecialisationQuery>({
+          query: SpecialisationDocument,
+          variables: { id: parseInt(node.text) },
+        });
+        if (
+          subPool == null ||
+          subPool.data == null ||
+          subPool.data.specialisation == null
+        ) {
+          return "Invalid pool declaration";
+        }
+        if (subPool.data.specialisation.handbook == null) {
+          return (
+            "Specialisation not yet processed: " +
+            subPool.data.specialisation.name
+          );
+        }
+
+        let poolNodes = subPool.data.specialisation.handbook.filter(
+          (h) => h.type === "pool"
+        );
+        if (poolNodes.every((p) => p.text !== node.data!.selector)) {
+          return `Specialisation "${subPool.data.specialisation.name} [${
+            subPool.data.specialisation.code
+          }] does not contain pool named "${node.data!.selector}"`;
+        }
+      }
+    }
+    // if (program.data.program.handbook?.every(
+    //   (h) => !h.parentId || program.data.program!.handbook!.find(v => v.id === h.parentId)?.text != node.data?.selector
+    // ))
+  }
+  return "";
+}
