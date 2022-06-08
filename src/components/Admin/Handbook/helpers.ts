@@ -106,7 +106,7 @@ function buildNodes(
 export function daoInNode(selected: TreeNode): ProgramInput {
   return {
     id: selected.id,
-    handbook: selected.handbook.map((h) => ({
+    handbook: selected.handbook.map((h, i) => ({
       id: h.data?.dbId,
       nodeId: parseInt(h.id as string),
       credits:
@@ -115,6 +115,7 @@ export function daoInNode(selected: TreeNode): ProgramInput {
           : undefined,
       flagged: h.data?.flagged,
       folder: h.droppable,
+      index: i,
       level:
         h.data?.level != null && h.data.level != ""
           ? parseInt(h.data.level)
@@ -129,6 +130,7 @@ export function daoInNode(selected: TreeNode): ProgramInput {
           : undefined,
       parentId: parseInt(h.parent as string),
       text: h.text,
+      selector: h.data?.selector,
       type: h.data?.type,
     })),
   };
@@ -141,21 +143,24 @@ export function daoOutNode(
 ) {
   let handbook: NodeModel<FileProperties>[];
   if (data.handbook && data.handbook.length) {
-    handbook = data.handbook.map((h) => ({
-      id: h.nodeId,
-      parent: h.parentId as unknown as string,
-      text: h.text || "",
-      droppable: h.folder || false,
-      data: {
-        dbId: h.id,
-        type: h.type!,
-        credits: (h.credits || "") as string,
-        flagged: h.flagged!,
-        level: (h.level || "") as string,
-        number: (h.number || "") as string,
-        reference: (h.reference || "") as string,
-      },
-    }));
+    handbook = data.handbook
+      .map((h) => ({
+        id: h.nodeId,
+        parent: h.parentId as unknown as string,
+        text: h.text || "",
+        droppable: h.folder || false,
+        index: h.index || 0,
+        data: {
+          dbId: h.id,
+          type: h.type!,
+          credits: (h.credits || "") as string,
+          flagged: h.flagged!,
+          level: (h.level || "") as string,
+          number: (h.number || "") as string,
+          reference: (h.reference || "") as string,
+        },
+      }))
+      .sort((a, b) => (a.index < b.index ? -1 : 1));
     // handbook = handbook.filter((h, i) => handbook.)
   } else {
     let structure = JSON.parse(data.structureSource || "[]");

@@ -6,6 +6,7 @@ export type FileProperties = {
   credits?: string;
   reference?: string;
   level?: string;
+  selector?: string;
   flagged?: boolean;
   dbId?: number;
 };
@@ -16,7 +17,6 @@ let guid = 10;
 
 export function initGuid(nodes: NodeModel<FileProperties>[]) {
   guid = Math.max(...nodes.map((c: any) => parseInt(c.id))) + 1;
-  console.log("GUID: " + guid);
 }
 
 export function getGuid() {

@@ -1,31 +1,22 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 
-import {
-  DragLayerMonitorProps,
-  DropOptions,
-  NodeModel,
-  Tree,
-} from "@minoru/react-dnd-treeview";
+import { DragLayerMonitorProps, DropOptions, NodeModel, Tree } from '@minoru/react-dnd-treeview';
 
-import { toUrlName } from "lib/utils";
-import debounce from "lodash/debounce";
-import Link from "next/link";
-import { HiCheck, HiChevronLeft, HiChevronRight, HiSave } from "react-icons/hi";
+import { toUrlName } from 'lib/utils';
+import debounce from 'lodash/debounce';
+import Link from 'next/link';
+import { HiCheck, HiChevronLeft, HiChevronRight, HiSave } from 'react-icons/hi';
 
 // import "react-select-search/style.css";
-import { CustomDragPreview } from "./CustomDragPreview";
-import { CustomNode } from "./CustomNode";
-import styles from "./EditableNodes.module.css";
-import { Placeholder } from "./Placeholder";
+import { CustomDragPreview } from './CustomDragPreview';
+import { CustomNode } from './CustomNode';
+import styles from './EditableNodes.module.css';
+import { Placeholder } from './Placeholder';
+import { ProgramsQuery, useProgramsQuery } from './queries/programs.query.generated';
 import {
-  ProgramsQuery,
-  useProgramsQuery,
-} from "./queries/programs.query.generated";
-import {
-  SpecialisationsQuery,
-  useSpecialisationsQuery,
-} from "./queries/specialisations.query.generated";
-import { FileProperties, getGuid, Option } from "./types";
+  SpecialisationsQuery, useSpecialisationsQuery
+} from './queries/specialisations.query.generated';
+import { FileProperties, getGuid, Option } from './types';
 
 type Model = {
   code: string;
@@ -259,6 +250,7 @@ type UndoNode = {
 export const TreeView = ({
   defaultTree,
   save,
+  saving,
   programOptions,
   majorOptions,
   all,
@@ -266,6 +258,7 @@ export const TreeView = ({
 }: {
   defaultTree: NodeModel<FileProperties>[];
   save(tree: NodeModel<FileProperties>[]): void;
+  saving: boolean;
   programOptions: Option[];
   majorOptions: Option[];
   all: Option[];
@@ -350,7 +343,7 @@ export const TreeView = ({
           }}
         >
           <HiSave className="mr-2" />
-          Save
+          {saving ? "Saving ..." : "Save"}
         </button>
 
         <button
@@ -410,7 +403,17 @@ export const TreeView = ({
               onTextChange={handleTextChange}
               clone={clone}
               tree={tree}
-              onAddNode={(node) => setTree(tree.concat(node))}
+              onAddNode={(node, insert) => {
+                if (insert) {
+                  if (Array.isArray(node)) {
+                    setTree(node.concat(tree));
+                  } else {
+                    setTree([node].concat(tree));
+                  }
+                } else {
+                  setTree(tree.concat(node));
+                }
+              }}
               onDeleteNode={(id, handleChildren) => {
                 if (!handleChildren || handleChildren === "delete") {
                   setTree(tree.filter((n) => n.id !== id && n.parent !== id));
