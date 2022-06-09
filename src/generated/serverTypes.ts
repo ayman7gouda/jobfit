@@ -30,6 +30,7 @@ export type Handbook = {
   id: Scalars['Int'];
   index?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Int']>;
+  maxNumber?: Maybe<Scalars['Int']>;
   nodeId: Scalars['Int'];
   number?: Maybe<Scalars['Int']>;
   parentId?: Maybe<Scalars['Int']>;
@@ -40,6 +41,8 @@ export type Handbook = {
   selector?: Maybe<Scalars['String']>;
   specialisation?: Maybe<Specialisation>;
   specialisationId?: Maybe<Scalars['Int']>;
+  subjectCode?: Maybe<Scalars['String']>;
+  subjectName?: Maybe<Scalars['String']>;
   text?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
 };
@@ -52,12 +55,15 @@ export type HandbookInput = {
   id?: InputMaybe<Scalars['Int']>;
   index?: InputMaybe<Scalars['Int']>;
   level?: InputMaybe<Scalars['Int']>;
+  maxNumber?: InputMaybe<Scalars['Int']>;
   nodeId: Scalars['Int'];
   number?: InputMaybe<Scalars['Int']>;
   parentId?: InputMaybe<Scalars['Int']>;
   reference?: InputMaybe<Scalars['Int']>;
   selection?: InputMaybe<Selection>;
   selector?: InputMaybe<Scalars['String']>;
+  subjectCode?: InputMaybe<Scalars['String']>;
+  subjectName?: InputMaybe<Scalars['String']>;
   text?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
 };
@@ -274,10 +280,9 @@ export type QuerySpecialisationArgs = {
   id: Scalars['Int'];
 };
 
-export enum Selection {
-  And = 'AND',
-  Or = 'OR'
-}
+export type Selection =
+  | 'AND'
+  | 'OR';
 
 export type SfiaEstimate = {
   __typename?: 'SfiaEstimate';
@@ -586,6 +591,7 @@ export type HandbookResolvers<ContextType = Context, ParentType extends Resolver
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   index?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   level?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  maxNumber?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nodeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   number?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   parentId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -596,6 +602,8 @@ export type HandbookResolvers<ContextType = Context, ParentType extends Resolver
   selector?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   specialisation?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType>;
   specialisationId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  subjectCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subjectName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

@@ -83,11 +83,11 @@ const Page = () => {
       <Layout
         id={numId}
         part="programs"
-        treeView={({ programOptions, majorOptions, all }) => (
+        treeView={({ programOptions, majorOptions, minorOptions, all }) => (
           <Container
             programOptions={programOptions}
             majorOptions={majorOptions}
-            minorOptions={majorOptions}
+            minorOptions={minorOptions}
             all={all}
             id={numId}
           />
