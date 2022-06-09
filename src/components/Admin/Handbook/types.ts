@@ -11,12 +11,14 @@ export type NodeType =
   | "subject"
   | "constraint:program"
   | "link:elective"
-  | "collection";
+  | "collection"
+  | "program";
 
 export type FileProperties = {
   type?: NodeType;
   selection?: Selection;
   number?: number;
+  maxNumber?: number;
   credits?: number;
   level?: number;
   reference?: number;
@@ -25,6 +27,8 @@ export type FileProperties = {
   flagged?: boolean;
   dbId?: number;
   temp?: boolean;
+  subjectCode?: string;
+  subjectName?: string;
 };
 
 export type TreeNode = {
@@ -35,7 +39,11 @@ export type TreeNode = {
   url: string;
 };
 
-export declare type NodeModel = TreeNodeModel & { data: FileProperties };
+export declare type NodeModel = TreeNodeModel & {
+  id: number;
+  index?: number;
+  data: FileProperties;
+};
 
 export type NodeChange = (
   id: NodeModel["id"],

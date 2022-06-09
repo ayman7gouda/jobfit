@@ -1,394 +1,106 @@
 import { useState } from 'react';
 
-import { Selection } from 'generated/clientTypes';
+import { toUrlName } from 'lib/utils';
 import {
-  HiArrowUp, HiBeaker, HiCheck, HiChevronDown, HiChevronRight, HiCollection, HiDocument,
-  HiDuplicate, HiFolder, HiLink, HiLockClosed, HiOutlineDocument, HiPencil, HiTrash, HiX
+  HiBeaker, HiChevronDown, HiChevronRight, HiCollection, HiDuplicate, HiFolder, HiLibrary, HiLink,
+  HiPencil, HiTrash
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
-import { LinkEditor } from './LinkNode';
-import { ProgramQueryResult, useProgramLazyQuery } from './queries/program.query.generated';
-import {
-  SpecialisationQueryResult, useSpecialisationLazyQuery
-} from './queries/specialisation.query.generated';
-import { getGuid, IconButton, Select, TextField } from './shared';
-import { CustomNodeProps, NodeModel, NodeType } from './types';
+import { FolderEditor } from './FolderEditor';
+import { IconButton } from './shared';
+import { CustomNodeProps, NodeModel } from './types';
 
-export function FolderEditor(
-  props: CustomNodeProps & { setVisibleInput: Function }
-) {
-  const [labelText, setLabelText] = useState(props.node.text);
-  const { id, text } = props.node;
+type ParentStructure = { parent: NodeModel; child: NodeModel };
 
-  const handleCancel = () => {
-    setLabelText(text);
-    props.setVisibleInput(false);
-  };
+function findParent(node: NodeModel, props: CustomNodeProps): NodeModel {
+  return props.tree.find((n) => n.id === node.parent)!;
+}
 
-  const handleSubmit = () => {
-    props.setVisibleInput(false);
-    props.onTextChange(id, labelText);
-  };
+function findParents(node: NodeModel, props: CustomNodeProps): number[] {
+  let parents = [];
+  while (node && node.data.type !== "program" && node.parent) {
+    parents.push(node.parent as number);
+    node = findParent(node, props);
+  }
+  return parents;
+}
 
-  return (
-    <div className={styles.inputWrapper}>
-      <div className="flex mx-2">
-        <div
-          onClick={() =>
-            props.onNodeChange(id, {
-              selection: Selection.And,
-            })
-          }
-          className={`${
-            props.node.data.selection === "AND"
-              ? "bg-green-400"
-              : "bg-slate-200"
-          } ${
-            props.node.data.selection === "AND" ? "text-white" : ""
-          } px-2 py-1 rounded-l-lg cursor-pointer`}
-        >
-          And
-        </div>
-        <div
-          onClick={() =>
-            props.onNodeChange(id, {
-              selection: Selection.Or,
-            })
-          }
-          className={`${
-            props.node.data.selection === "OR" ? "bg-green-400" : "bg-slate-200"
-          } ${
-            props.node.data.selection === "OR" ? "text-white" : ""
-          } px-2 py-1 rounded-r-lg cursor-pointer`}
-        >
-          Or
-        </div>
-      </div>
+function findParentsAndChildren(
+  node: NodeModel,
+  props: CustomNodeProps
+): ParentStructure[] {
+  let parents: ParentStructure[] = [];
+  while (node && node.data.type !== "program" && node.parent) {
+    let p = props.tree.find((n) => n.id === node.parent)!;
+    parents.push({ parent: p, child: node });
+    node = p;
+  }
+  return parents;
+}
 
-      {props.node.data.type?.indexOf("link") === -1 && (
-        <TextField
-          key="text"
-          className={styles.textField}
-          value={labelText}
-          onChange={(e) => {
-            setLabelText(e.currentTarget.value);
-          }}
-          style={{ width: 250, margin: "0px 8px" }}
-          placeholder="Text"
-        />
-      )}
+function renderOrder(props: CustomNodeProps) {
+  let parents = findParents(props.node, props);
 
-      {/* <Select
-        onChange={(e) =>
-          props.onNodeChange(id, {
-            selection: e.currentTarget.value as Selection,
-          })
-        }
-        value={props.node.data.selection}
-        style={{ marginRight: 4, width: 80 }}
-      >
-        <option value="AND">And</option>
-        <option value="OR">Or</option>
-      </Select> */}
-
-      {props.node.data.selection === "OR" && (
-        <>
-          <TextField
-            type="number"
-            key="Number"
-            className={styles.textField}
-            style={{ width: 70, marginLeft: 8 }}
-            value={props.node.data.number?.toString()}
-            placeholder="#"
-            onChange={(e) => {
-              props.onNodeChange(id, {
-                number:
-                  e.currentTarget.value === ""
-                    ? undefined
-                    : parseFloat(e.currentTarget.value),
-              });
-            }}
-            onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                handleSubmit();
-              }
-            }}
-          />
-          <TextField
-            type="number"
-            key="Credits"
-            className={styles.textField}
-            style={{ width: 70, marginLeft: 8 }}
-            value={props.node.data.credits?.toString()}
-            placeholder="Cr."
-            onChange={(e) =>
-              props.onNodeChange(id, {
-                credits:
-                  e.currentTarget.value === ""
-                    ? undefined
-                    : parseFloat(e.currentTarget.value),
-              })
-            }
-            onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                handleSubmit();
-              }
-            }}
-          />
-        </>
-      )}
-
-      {props.node.data.type === "link:program" && (
-        <LinkEditor
-          programs={props.programs}
-          node={props.node}
-          onNodeChange={props.onNodeChange}
-          setLabelText={setLabelText}
-          query={useProgramLazyQuery}
-          getData={(result: ProgramQueryResult) => result.data?.program}
-        />
-      )}
-      {(props.node.data.type === "link:major" ||
-        props.node.data.type === "link:minor") && (
-        <LinkEditor
-          programs={
-            props.node.data.type === "link:major" ? props.majors : props.minors
-          }
-          node={props.node}
-          onNodeChange={props.onNodeChange}
-          setLabelText={setLabelText}
-          query={useSpecialisationLazyQuery}
-          getData={(result: SpecialisationQueryResult) =>
-            result.data?.specialisation
-          }
-        />
-      )}
-      {props.node.data.type === "link:collection" && (
-        <Select
-          value={props.node.data.reference?.toString()}
-          style={{ minWidth: 280 }}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            props.onNodeChange(props.node.id, {
-              reference: parseInt(e.currentTarget.value),
-            })
-          }
-        >
-          <option value="">Please Select</option>
-          {props.tree
-            .filter((n) => n.data.type === "collection")
-            .map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.text}
-              </option>
-            ))}
-        </Select>
-      )}
-
-      {props.node.data.type &&
-        (props.node.data.type.indexOf("link:collection") >= 0 ||
-          props.node.data.type === "link:elective") && (
-          <TextField
-            type="number"
-            className={styles.textField}
-            value={props.node.data.level?.toString()}
-            onChange={(e) => {
-              props.onNodeChange(props.node.id, {
-                level:
-                  e.currentTarget.value === ""
-                    ? undefined
-                    : parseFloat(e.currentTarget.value),
-              });
-            }}
-            style={{ width: 80, margin: "0px 8px" }}
-            placeholder="Level"
-            onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                handleSubmit();
-              }
-            }}
-          />
-        )}
-
-      <Select
-        onChange={(e) =>
-          props.onNodeChange(id, { type: e.currentTarget.value as NodeType })
-        }
-        value={props.node.data.type}
-        style={{ marginRight: 4, width: 180 }}
-      >
-        <option value="folder">Sequence</option>
-        <option value="collection">Collection</option>
-
-        <optgroup label="Links">
-          <option value="link:elective">Electives</option>
-          <option value="link:collection">Collection</option>
-          <option value="link:program">Program</option>
-          <option value="link:major">Major</option>
-          <option value="link:minor">Minor</option>
-        </optgroup>
-      </Select>
-
-      <IconButton onClick={handleSubmit}>
-        <HiCheck />
-      </IconButton>
-
-      <IconButton onClick={handleCancel}>
-        <HiX />
-      </IconButton>
-
-      <IconButton
-        title="Add Folder"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            droppable: true,
-            text: "Complete all of the following",
-            data: {
-              type: "folder",
-              selection: Selection.And,
-            },
-          })
-        }
-      >
-        <HiFolder style={{ color: "salmon" }} />
-      </IconButton>
-
-      <IconButton
-        title="Add Collection"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            droppable: true,
-            text: `Select 1 of the following`,
-            data: {
-              type: "collection",
-              selection: Selection.Or,
-              number: 0,
-            },
-          })
-        }
-      >
-        <HiFolder style={{ color: "green" }} />
-      </IconButton>
-
-      <IconButton
-        title="Add Subject"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            text: "Subject",
-            data: {
-              type: "subject",
-            },
-          })
-        }
-      >
-        <HiDocument />
-      </IconButton>
-
-      <IconButton
-        title="Add Constraint"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            text: "",
-            data: {
-              type: "constraint:program",
-            },
-          })
-        }
-      >
-        <HiLockClosed />
-      </IconButton>
-
-      <IconButton
-        title="Add Year"
-        onClick={() => {
-          function addYear(num: number) {
-            let yearId = getGuid();
-
-            return [
-              {
-                id: yearId,
-                parent: props.node.id,
-                text: "Year " + num,
-                droppable: true,
-                data: {
-                  type: "folder",
-                  selection: Selection.And,
-                },
-              },
-
-              {
-                id: getGuid(),
-                parent: yearId,
-                text: "Autumn",
-                droppable: true,
-                data: {
-                  type: "folder",
-                  selection: Selection.And,
-                },
-              },
-
-              {
-                id: getGuid(),
-                parent: yearId,
-                text: "Spring",
-                droppable: true,
-                data: {
-                  type: "folder",
-                  selection: Selection.And,
-                },
-              },
-            ] as NodeModel[];
-          }
-          props.onAddNode(
-            [...addYear(1), ...addYear(2), ...addYear(3), ...addYear(4)],
-            true
-          );
-        }}
-      >
-        <HiCollection />
-      </IconButton>
-
-      <IconButton
-        title="Copy children to parent"
-        onClick={() => props.onDeleteNode(props.node.id as any, "copy")}
-      >
-        <HiArrowUp />
-      </IconButton>
-
-      <IconButton
-        title="Convert to leaf node"
-        onClick={() =>
-          props.onNodeChange(props.node.id, {
-            droppable: false,
-          })
-        }
-      >
-        <HiOutlineDocument style={{ color: "blue" }} />
-      </IconButton>
-
-      <IconButton onClick={() => props.onDeleteNode(props.node.id as any)}>
-        <HiTrash />
-      </IconButton>
-
-      <input
-        type="checkbox"
-        title="Flag Warning"
-        className="ml-1 focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-        checked={props.node.data.flagged}
-        onClick={(e) =>
-          props.onNodeChange(id, { flagged: e.currentTarget.checked })
-        }
-      />
-    </div>
+  let nodes = props.tree.filter(
+    (t) =>
+      t.data.type === props.node.data.type &&
+      t.data.reference === props.node.data.reference &&
+      t.data.collection === props.node.data.collection &&
+      t.data.selector === props.node.data.selector
   );
+  let nodeParents: { [index: string]: ParentStructure[] } = {};
+
+  nodes.forEach((n) => (nodeParents[n.id] = findParentsAndChildren(n, props)));
+
+  // filter only nodes which are in the same program
+  nodes = nodes.filter((n) =>
+    nodeParents[n.id].some((p) => parents.indexOf(p.parent.id as number) >= 0)
+  );
+
+  nodes.sort((a, b) => {
+    let parentA: ParentStructure = nodeParents[a.id].find((ap) =>
+      nodeParents[b.id].some((bp) => ap.parent.id === bp.parent.id)
+    )!;
+    let parentB: ParentStructure = nodeParents[b.id].find((bp) =>
+      nodeParents[a.id].some((ap) => ap.parent.id === bp.parent.id)
+    )!;
+
+    return parentA.child.index! < parentB.child.index! ? -1 : 1;
+  });
+
+  // find the current index
+  let index = nodes.indexOf(props.node);
+
+  // calculate the beginning
+
+  let order = 0;
+
+  for (let i = 0; i < index; i++) {
+    order += nodes[i].data.number || 0;
+  }
+
+  // now generate the text
+  let text = "";
+  for (let i = 0; i < (props.node.data.number || 0); i++) {
+    order += 1;
+
+    // if (order == 0) {
+    //   text += "1<sup>st</sup>";
+    // } else if (order === 1) {
+    //   text += "2<sup>nd</sup>";
+    // } else if (order === 2) {
+    //   text += "3<sup>rd</sup>";
+    // } else {
+    //   text += order + 1 + "<sup>th</sup>";
+    // }
+
+    text += order;
+    if (i < (props.node.data.number || 0) - 1) {
+      text += ", ";
+    }
+  }
+  return <span dangerouslySetInnerHTML={{ __html: text }} />;
 }
 
 export const FolderNode: React.FC<CustomNodeProps> = (props) => {
@@ -437,9 +149,11 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
       ) : props.node.data.type === "link:major" ? (
         <HiLink style={{ color: "blue" }} />
       ) : props.node.data.type === "link:minor" ? (
-        <HiLink style={{ color: "yellow" }} />
+        <HiLink style={{ color: "darkgoldenrod" }} />
       ) : props.node.data.type === "collection" ? (
         <HiCollection style={{ color }} />
+      ) : props.node.data.type === "program" ? (
+        <HiLibrary style={{ color: "blue" }} />
       ) : (
         <HiFolder style={{ color }} />
       )}
@@ -449,51 +163,117 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
           <FolderEditor {...props} setVisibleInput={setVisibleInput} />
         ) : (
           <div className={styles.inputWrapper}>
-            {props.node.data.type !== "folder" && (
-              <>
-                {props.node.data.selection === "AND" && (
+            {props.node.data.type !== "folder" &&
+              props.node.data.selection === "AND" && (
+                <div className="flex">
                   <div
-                    className="bg-red-400 px-2 py-1 mr-1 rounded-lg nowrap text-white text-xs"
+                    className="bg-red-700 font-bold px-2 py-1 rounded-l-lg nowrap text-white text-xs"
                     style={{}}
                   >
-                    All of
+                    All
                   </div>
-                )}
-                {props.node.data.selection === "OR" && (
                   <div
-                    className="bg-green-400 px-2 py-1 mr-1 rounded-lg nowrap text-white text-xs"
+                    className="bg-red-500 px-2 py-1 mr-1 rounded-r-lg nowrap text-white text-xs"
                     style={{}}
                   >
-                    {props.node.data.number === 0
-                      ? "Any of"
-                      : `${props.node.data.number} of`}
-                    {props.node.data.credits
-                      ? props.node.data.credits + "c"
-                      : null}
+                    {props.node.data.type === "collection"
+                      ? " from the collection"
+                      : props.node.data.type === "program"
+                      ? "of the program"
+                      : " of the"}
                   </div>
-                )}
-              </>
-            )}
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={handleShowInput}
-              className={styles.nodeLabel}
-            >
-              {props.node.data.type === "link:collection"
-                ? props.tree.find((t) => t.id === props.node.data.reference)
-                    ?.text || "Not Found "
-                : props.node.text}
-              {props.node.data.level != null
-                ? `, Level ${props.node.data.level}`
-                : null}
-            </div>
+                </div>
+              )}
+            {props.node.data.selection === "OR" && (
+              <div className="flex">
+                <div
+                  className="bg-green-700 font-bold px-2 py-1 rounded-l-lg nowrap text-white text-xs"
+                  style={{}}
+                >
+                  {props.node.data.maxNumber != null &&
+                    props.node.data.number != 0 &&
+                    "Min "}
+                  {props.node.data.number == 0
+                    ? props.node.data.maxNumber == null
+                      ? "Any"
+                      : ""
+                    : props.node.data.number}
+                  {props.node.data.maxNumber
+                    ? ` Max ${props.node.data.maxNumber}`
+                    : null}
 
+                  {(props.node.data.number && props.node.data.number > 10) ||
+                  (props.node.data.maxNumber && props.node.data.maxNumber > 10)
+                    ? " credits"
+                    : ""}
+                </div>
+                <div
+                  className="bg-green-500 px-2 py-1 mr-1 rounded-r-lg nowrap text-white text-xs"
+                  style={{}}
+                >
+                  {props.node.data.type === "collection"
+                    ? " from the collection"
+                    : " from the"}
+                </div>
+              </div>
+            )}
+            {props.node.data.type?.indexOf("link") == 0 &&
+              findParent(props.node, props).data.type !== "collection" &&
+              findParent(props.node, props).data.selection !== "OR" && (
+                <div
+                  className="bg-orange-300 mr-1 font-bold px-2 py-1 rounded-lg nowrap text-white text-xs"
+                  style={{}}
+                >
+                  {renderOrder(props)}
+                </div>
+              )}
+            {(props.node.text ||
+              props.node.data.type === "link:collection") && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={handleShowInput}
+                className={styles.nodeLabel}
+              >
+                {props.node.data.type === "link:collection"
+                  ? props.tree.find((t) => t.id === props.node.data.reference)
+                      ?.text || "Not Found "
+                  : props.node.text}
+                {props.node.data.level != null
+                  ? `, Level ${props.node.data.level}`
+                  : null}
+              </div>
+            )}
             <IconButton onClick={handleShowInput}>
               <HiPencil />
             </IconButton>
             <IconButton title="Clone Node" onClick={() => props.clone(id)}>
               <HiDuplicate />
             </IconButton>
+            {(props.node.data.type === "link:major" ||
+              props.node.data.type === "link:minor") && (
+              <a
+                href={`/admin/handbook/specialisations/${toUrlName(
+                  props.node.text
+                )}?id=${props.node.data.reference}`}
+                target="__blank"
+              >
+                <IconButton>
+                  <HiLink />
+                </IconButton>
+              </a>
+            )}
+            {props.node.data.type === "link:program" && (
+              <a
+                href={`/admin/handbook/program/${toUrlName(
+                  props.node.text
+                )}?id=${props.node.data.reference}`}
+                target="__blank"
+              >
+                <IconButton>
+                  <HiLink />
+                </IconButton>
+              </a>
+            )}
             <IconButton
               onClick={() => props.onDeleteNode(props.node.id as any)}
             >

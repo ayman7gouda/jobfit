@@ -294,6 +294,7 @@ model Handbook {
   type             String?
   selection        Selection?
   number           Int?
+  maxNumber        Int?
   credits          Int?
   level            Int?
   reference        Int?
@@ -301,6 +302,8 @@ model Handbook {
   selector         String?         @db.VarChar(256)
   flagged          Boolean?
   index            Int?
+  subjectCode      String?
+  subjectName      String?
 }
 
 // views

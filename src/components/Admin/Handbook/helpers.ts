@@ -1,4 +1,4 @@
-import { ProgramInput, Selection } from 'generated/clientTypes';
+import { Handbook, ProgramInput, Selection } from 'generated/clientTypes';
 
 import { ProgramQuery } from './queries/program.query.generated';
 import { SpecialisationQuery } from './queries/specialisation.query.generated';
@@ -33,9 +33,12 @@ function buildNodes(
 ): NodeModel[] {
   const nodes = [];
   let parent = getGuid();
+  let idx = 0;
+
   nodes.push({
     id: parent,
     parent: 0,
+    index: idx++,
     droppable: true,
     text: name,
     data: {},
@@ -50,20 +53,26 @@ function buildNodes(
           id: child,
           parent: parent,
           droppable: true,
+          index: idx++,
           text: "Structure: " + structure.name,
           data: {
             type: "folder" as NodeType,
-            selection: Selection.And,
+            selection: "AND" as Selection,
           },
         });
 
         for (let subject of structure.subjects) {
+          let code = extractCode(subject.code);
+          let subjectCode = code ? code : subject.code;
           nodes.push({
             id: getGuid(),
             parent: child,
-            text: subject.code + " " + subject.name,
+            index: idx++,
+            text: subjectCode + " " + subject.name,
             data: {
               type: "subject" as NodeType,
+              subjectCode: subjectCode!,
+              subjectName: subject.name,
             },
           });
         }
@@ -78,10 +87,11 @@ function buildNodes(
         id: parentSequenceId,
         parent: parent,
         droppable: true,
+        index: idx++,
         text: parentSequence.program,
         data: {
           type: "folder" as NodeType,
-          selection: Selection.And,
+          selection: "AND" as Selection,
         },
       });
 
@@ -91,19 +101,28 @@ function buildNodes(
           id: sequenceId,
           parent: parentSequenceId,
           droppable: true,
+          index: idx++,
           text: sequence.name ? "Sequence: " + sequence.name : "Sequence",
           data: {
             type: "folder" as NodeType,
-            selection: Selection.And,
+            selection: "AND" as Selection,
           },
         });
 
         for (let subject of sequence.sequence) {
+          let code = extractCode(subject.code);
+          let subjectCode = code ? code : subject.code;
+
           nodes.push({
             id: getGuid(),
             parent: sequenceId,
-            text: subject.code + " " + subject.name,
-            data: {},
+            index: idx++,
+            text: subjectCode + " " + subject.name,
+            data: {
+              type: "subject" as NodeType,
+              subjectCode: subjectCode!,
+              subjectName: subject.name,
+            },
           });
         }
       }
@@ -113,6 +132,58 @@ function buildNodes(
   return nodes;
 }
 
+export function extractCode(text: string) {
+  let match = text.match(/^[A-Z]{4}\s\d{4}/);
+  if (match) {
+    return match[0].replace(/\s/g, "");
+  }
+  match = text.match(/^[A-Z]{4}\d{4}/);
+  if (match) {
+    return match[0];
+  }
+  return null;
+}
+
+function parseSubjectCode(selected: Handbook) {
+  if (selected.subjectCode) {
+    return selected.subjectCode;
+  }
+  if (
+    selected.folder ||
+    (!!selected.type && selected.type !== "subject") ||
+    !selected.text
+  ) {
+    return null;
+  }
+  return extractCode(selected.text);
+}
+
+export function extractName(text: string) {
+  let match = text.match(/^[A-Z]{4}\s\d{4}\s(.*)/);
+  if (match) {
+    return match[1];
+  }
+  match = text.match(/^[A-Z]{4}\d{4}\s(.*)/);
+  if (match) {
+    return match[1];
+  }
+  return null;
+}
+
+function parseSubjectName(selected: Handbook) {
+  if (selected.subjectName) {
+    return selected.subjectName;
+  }
+  if (
+    selected.folder ||
+    (!!selected.type && selected.type !== "subject") ||
+    !selected.text
+  ) {
+    return null;
+  }
+  return extractName(selected.text);
+}
+
 export function daoInNode(selected: TreeNode): ProgramInput {
   return {
     id: selected.id,
@@ -120,19 +191,22 @@ export function daoInNode(selected: TreeNode): ProgramInput {
       .filter((h) => !h.data.temp)
       .map((h, i) => ({
         id: h.data.dbId,
-        nodeId: parseInt(h.id as string),
+        nodeId: h.id,
         parentId: parseInt(h.parent as string),
-        text: h.text,
+        text: h.data.subjectCode ? "" : h.text,
         folder: h.droppable,
         type: h.data.type,
         selection: h.data.selection,
         number: h.data.number,
+        maxNumber: h.data.maxNumber,
         credits: h.data.credits,
         level: h.data.level,
         reference: h.data.reference,
         collection: h.data.collection,
-        selector: h.data?.selector,
+        selector: h.data.selector,
         flagged: h.data.flagged,
+        subjectCode: h.data.subjectCode,
+        subjectName: h.data.subjectName,
         index: i,
       })),
   };
@@ -146,24 +220,38 @@ export function daoOutNode(
   let handbook: NodeModel[];
   if (data.handbook && data.handbook.length) {
     handbook = data.handbook
-      .map((h) => ({
-        id: h.nodeId,
-        parent: h.parentId as unknown as string,
-        text: h.text || "",
-        droppable: h.folder || false,
-        index: h.index || 0,
-        data: {
-          dbId: h.id,
-          type: h.folder && !h.type ? "folder" : (h.type! as NodeType),
-          selection: h.folder && !h.selection ? Selection.And : h.selection!,
-          credits: h.credits!,
-          flagged: h.flagged!,
-          level: h.level!,
-          collection: h.collection!,
-          number: h.number!,
-          reference: h.reference!,
-        },
-      }))
+      .map((h, j) => {
+        let subjectCode = parseSubjectCode(h)!;
+        let subjectName = parseSubjectName(h)!;
+
+        return {
+          id: h.nodeId,
+          parent: h.parentId as unknown as string,
+          text: subjectCode ? `${subjectCode} ${subjectName}` : h.text || "",
+          droppable: h.folder || false,
+          index: h.index || j,
+          data: {
+            dbId: h.id,
+            type:
+              h.folder && !h.type
+                ? "folder"
+                : !h.folder && !h.type
+                ? "subject"
+                : (h.type! as NodeType),
+            selection: h.folder && !h.selection ? "AND" : h.selection!,
+            selector: h.selector!,
+            credits: h.credits!,
+            flagged: h.flagged!,
+            level: h.level!,
+            collection: h.collection!,
+            number: h.number!,
+            maxNumber: h.maxNumber!,
+            reference: h.reference!,
+            subjectCode,
+            subjectName,
+          },
+        };
+      })
       .sort((a, b) => (a.index < b.index ? -1 : 1));
     // handbook = handbook.filter((h, i) => handbook.)
   } else {

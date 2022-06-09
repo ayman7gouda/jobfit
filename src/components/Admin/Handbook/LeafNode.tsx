@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import SelectSearch, { SelectSearchOption } from 'react-select-search';
+import SelectSearch from 'react-select-search';
 
 import CloneIcon, {
-  HiCheck, HiDocument, HiDuplicate, HiFolder, HiLockClosed, HiPencil, HiTrash, HiX
+  HiCheck, HiChevronRight, HiDocument, HiDuplicate, HiFolder, HiLockClosed, HiPencil, HiTrash, HiX
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
-import { LinkNode } from './LinkNode';
+import { extractCode, extractName } from './helpers';
+import { LinkNode, valueFilter } from './LinkNode';
 import { IconButton, Select, TextField } from './shared';
 import { CustomNodeProps, NodeType, Option } from './types';
 
@@ -28,20 +29,32 @@ export function LeafEditor(
 
   return (
     <div className={styles.inputWrapper}>
-      <TextField
-        className={styles.textField}
-        value={labelText}
-        onChange={(e) => {
-          setLabelText(e.currentTarget.value);
-        }}
-        style={{ width: 250, margin: "0px 8px" }}
-        placeholder="Text"
-      />
+      {(!props.node.data.type || props.node.data.type === "subject") && (
+        <TextField
+          className={styles.textField}
+          value={labelText}
+          onChange={(e) => {
+            setLabelText(e.currentTarget.value);
+
+            let code = extractCode(e.currentTarget.value);
+            if (code) {
+              let name = extractName(e.currentTarget.value);
+
+              props.onNodeChange(props.node.id, {
+                subjectCode: code,
+                subjectName: name!,
+              });
+            }
+          }}
+          style={{ width: 250, margin: "0px 8px" }}
+          placeholder="Text"
+        />
+      )}
 
       {props.node.data.type === "constraint:program" && (
         <SelectSearch
           options={props.all}
-          value={labelText}
+          value={props.node.data.reference as unknown as string}
           onChange={(e) =>
             props.onNodeChange(props.node.id, {
               reference: parseInt(e as unknown as string),
@@ -99,20 +112,6 @@ export function LeafEditor(
       />
     </div>
   );
-}
-
-function valueFilter(options: SelectSearchOption[]) {
-  return function (value: string) {
-    return options.filter((o) =>
-      value
-        .split(" ")
-        .every(
-          (p) =>
-            o.name.toLowerCase().indexOf(p) >= 0 ||
-            (o.value as string).toLowerCase().indexOf(p) >= 0
-        )
-    );
-  };
 }
 
 function makeName(nodes: Option[], id?: number, def = "", level?: string) {
@@ -176,25 +175,20 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
               onClick={handleShowInput}
               className={styles.nodeLabel}
             >
-              {props.node.data.type === "constraint:program"
-                ? makeName(
-                    props.all,
-                    props.node.data.reference,
-                    "Program Constraints"
-                  )
-                : props.node.data.type === "link:collection"
-                ? props.tree.find((t) => t.id === parseInt(props.node.text))
-                    ?.text +
-                  (props.node.data.level
-                    ? `, level ${props.node.data.level}`
-                    : "")
-                : props.node.data.type === "elective"
-                ? `Elective${
-                    props.node.data.level
-                      ? `, Level ${props.node.data.level}`
-                      : ""
-                  }`
-                : props.node.text}
+              {props.node.data.type === "constraint:program" ? (
+                makeName(
+                  props.all,
+                  props.node.data.reference,
+                  "Program Constraints"
+                )
+              ) : props.node.data.subjectCode ? (
+                <div className="flex items-center">
+                  {props.node.data.subjectCode} <HiChevronRight />{" "}
+                  {props.node.data.subjectName}
+                </div>
+              ) : (
+                props.node.text
+              )}
             </div>
 
             <IconButton onClick={handleShowInput}>

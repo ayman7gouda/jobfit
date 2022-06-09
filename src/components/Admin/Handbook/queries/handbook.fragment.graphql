@@ -14,4 +14,7 @@ fragment Handbook on Handbook {
   flagged
   selector
   index
+  subjectCode
+  subjectName
+  maxNumber
 }

@@ -61,6 +61,7 @@ type Handbook {
   type: String
   selection: Selection
   number: Int
+  maxNumber: Int
   credits: Int
   level: Int
   reference: Int
@@ -68,6 +69,8 @@ type Handbook {
   flagged: Boolean
   selector: String
   index: Int
+  subjectCode: String
+  subjectName: String
 }
 
 input HandbookInput {
@@ -80,12 +83,15 @@ input HandbookInput {
   type: String
   selection: Selection
   number: Int
+  maxNumber: Int
   credits: Int
   level: Int
   reference: Int
   collection: Int
   flagged: Boolean
   selector: String
+  subjectCode: String
+  subjectName: String
 }
 
 type Query {

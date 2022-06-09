@@ -4,7 +4,7 @@ import SelectSearch, { SelectSearchOption } from 'react-select-search';
 import { ApolloClient, DocumentNode, useApolloClient } from '@apollo/client';
 
 import debounce from 'lodash/debounce';
-import { HiExclamationCircle } from 'react-icons/hi';
+import { HiArrowCircleLeft, HiArrowCircleRight, HiExclamationCircle } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
 import { daoOutNode } from './helpers';
@@ -133,7 +133,7 @@ export function LinkNode(props: {
   ) : null;
 }
 
-function valueFilter(options: SelectSearchOption[]) {
+export function valueFilter(options: SelectSearchOption[]) {
   return function (value: string) {
     return options.filter((o) =>
       value
@@ -157,6 +157,11 @@ export function LinkEditor(props: {
 }) {
   const [programNodes, setProgramNodes] = useState([] as NodeModel[]);
   const [program, setProgram] = useState<Option | undefined>(undefined);
+  const [showCollection, toggleCollection] = useState(
+    !!props.node.data.collection
+  );
+  const [showSelector, toggleSelector] = useState(!!props.node.data.selector);
+
   const [collection, setCollection] = useState<NodeModel | undefined>(
     undefined
   );
@@ -226,47 +231,85 @@ export function LinkEditor(props: {
         filterOptions={valueFilter}
         placeholder="Select the program"
       />
-      <Select
-        value={(props.node.data.collection || "").toString()}
-        style={{ minWidth: 120 }}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          let id = parseInt(e.currentTarget.value);
-          props.onNodeChange(props.node.id, {
-            reference: id,
-          });
+      {!props.node.data.collection && (
+        <>
+          {showCollection ? (
+            <HiArrowCircleLeft
+              className="mr-1 cursor-pointer"
+              onClick={() => toggleCollection(false)}
+            />
+          ) : (
+            <HiArrowCircleRight
+              className="mr-1 cursor-pointer"
+              onClick={() => toggleCollection(true)}
+            />
+          )}
+        </>
+      )}
 
-          let spc = programNodes.find((p) => p.id == id);
-          setCollection(spc);
-          props.setLabelText(
-            (program?.name || "Not Found") + " > " + (spc?.text || "Not Found")
-          );
-        }}
-      >
-        <option value="">Please Select</option>
-        {programNodes
-          .filter((n) => n.data.type === "collection")
-          .map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.text}
-            </option>
-          ))}
-      </Select>
-      <TextField
-        className={styles.textField}
-        value={props.node.data.selector}
-        onChange={(e) => {
-          props.onNodeChange(props.node.id, {
-            selector: e.currentTarget.value,
-          });
-          props.setLabelText(
-            program?.name +
-              (collection ? " > " + collection.text : "") +
-              (e.currentTarget.value ? " > " + e.currentTarget.value : "")
-          );
-        }}
-        style={{ width: 100, margin: "0px 8px" }}
-        placeholder="Selector"
-      />
+      {showCollection && (
+        <Select
+          value={(props.node.data.collection || "").toString()}
+          style={{ minWidth: 120 }}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            let id = parseInt(e.currentTarget.value);
+            props.onNodeChange(props.node.id, {
+              collection: id,
+            });
+
+            let spc = programNodes.find((p) => p.id == id);
+            setCollection(spc);
+            props.setLabelText(
+              (program?.name || "Not Found") +
+                " > " +
+                (spc?.text || "Not Found")
+            );
+          }}
+        >
+          <option value="">Please Select</option>
+          {programNodes
+            .filter((n) => n.data.type === "collection")
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.text}
+              </option>
+            ))}
+        </Select>
+      )}
+      {showCollection && !props.node.data.selector && (
+        <>
+          {showSelector ? (
+            <HiArrowCircleLeft
+              className="mx-1 cursor-pointer"
+              onClick={() => toggleSelector(false)}
+            />
+          ) : (
+            <HiArrowCircleRight
+              className="mx-1 cursor-pointer"
+              onClick={() => toggleSelector(true)}
+            />
+          )}
+        </>
+      )}
+
+      {showSelector && (
+        <TextField
+          className={styles.textField}
+          value={props.node.data.selector}
+          onChange={(e) => {
+            props.onNodeChange(props.node.id, {
+              selector: e.currentTarget.value,
+            });
+            props.setLabelText(
+              program?.name +
+                (collection ? " > " + collection.text : "") +
+                (e.currentTarget.value ? " > " + e.currentTarget.value : "")
+            );
+          }}
+          style={{ width: 100, marginRight: 8 }}
+          placeholder="Selector"
+        />
+      )}
     </>
   );
 }

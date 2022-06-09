@@ -9,7 +9,7 @@ export type ProgramQueryVariables = Types.Exact<{
 }>;
 
 
-export type ProgramQuery = { __typename?: 'Query', program?: { __typename?: 'Program', id: number, name: string, code: string, url: string, description?: string | null, structureSource?: string | null, sequenceSource?: string | null, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, nodeId: number, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, selection?: Types.Selection | null, number?: number | null, credits?: number | null, level?: number | null, reference?: number | null, collection?: number | null, flagged?: boolean | null, selector?: string | null, index?: number | null }> | null } | null };
+export type ProgramQuery = { __typename?: 'Query', program?: { __typename?: 'Program', id: number, name: string, code: string, url: string, description?: string | null, structureSource?: string | null, sequenceSource?: string | null, updated?: string | null, handbook?: Array<{ __typename?: 'Handbook', id: number, nodeId: number, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, selection?: Types.Selection | null, number?: number | null, credits?: number | null, level?: number | null, reference?: number | null, collection?: number | null, flagged?: boolean | null, selector?: string | null, index?: number | null, subjectCode?: string | null, subjectName?: string | null, maxNumber?: number | null }> | null } | null };
 
 
 export const ProgramDocument = gql`
