@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import {
-  HiArrowUp, HiCheck, HiCollection, HiDocument, HiFolder, HiLockClosed, HiOutlineDocument, HiTrash,
-  HiX
+  HiArrowUp, HiCheck, HiCollection, HiDocumentAdd, HiDownload, HiFolderAdd, HiLockClosed,
+  HiOutlineDocument, HiTrash, HiX
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
@@ -12,11 +12,9 @@ import {
   SpecialisationQueryResult, useSpecialisationLazyQuery
 } from './queries/specialisation.query.generated';
 import { getGuid, IconButton, Select, TextField } from './shared';
-import { CustomNodeProps, NodeModel, NodeType } from './types';
+import { CustomNodeChildProps, NodeModel, NodeType } from './types';
 
-export function FolderEditor(
-  props: CustomNodeProps & { setVisibleInput: Function }
-) {
+export function FolderEditor(props: CustomNodeChildProps) {
   const [labelText, setLabelText] = useState(props.node.text);
   const { id, text } = props.node;
 
@@ -231,13 +229,12 @@ export function FolderEditor(
         <option value="folder">Sequence</option>
         <option value="collection">Collection</option>
         <option value="program">Program</option>
-
         <optgroup label="Links">
-          <option value="link:elective">Electives</option>
-          <option value="link:collection">Collection</option>
-          <option value="link:program">Program</option>
-          <option value="link:major">Major</option>
-          <option value="link:minor">Minor</option>
+          <option value="link:elective">Elective Link</option>
+          <option value="link:collection">Collection Link</option>
+          <option value="link:program">Program Link</option>
+          <option value="link:major">Major Link</option>
+          <option value="link:minor">Minor Link</option>
         </optgroup>
       </Select>
 
@@ -249,44 +246,46 @@ export function FolderEditor(
         <HiX />
       </IconButton>
 
-      <IconButton
-        title="Add AND Folder"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            droppable: true,
-            text: "",
-            data: {
-              type: "folder",
-              selection: "AND",
-            },
-          })
-        }
-      >
-        <HiFolder style={{ color: "salmon" }} />
-      </IconButton>
+      {props.node.data.type?.indexOf("link:") === -1 && (
+        <>
+          <IconButton
+            title="Add AND Folder"
+            onClick={() =>
+              props.onAddNode({
+                id: getGuid(),
+                parent: props.node.id,
+                droppable: true,
+                text: "",
+                data: {
+                  type: "folder",
+                  selection: "AND",
+                },
+              })
+            }
+          >
+            <HiFolderAdd style={{ color: "salmon" }} />
+          </IconButton>
 
-      <IconButton
-        title="Add OR Folder"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            droppable: true,
-            text: "",
-            data: {
-              type: "folder",
-              number: 1,
-              selection: "OR",
-            },
-          })
-        }
-      >
-        <HiFolder style={{ color: "green" }} />
-      </IconButton>
+          <IconButton
+            title="Add OR Folder"
+            onClick={() =>
+              props.onAddNode({
+                id: getGuid(),
+                parent: props.node.id,
+                droppable: true,
+                text: "",
+                data: {
+                  type: "folder",
+                  number: 1,
+                  selection: "OR",
+                },
+              })
+            }
+          >
+            <HiFolderAdd style={{ color: "green" }} />
+          </IconButton>
 
-      {/* <IconButton
+          {/* <IconButton
         title="Add Collection"
         onClick={() =>
           props.onAddNode({
@@ -305,94 +304,103 @@ export function FolderEditor(
         <HiFolder style={{ color: "green" }} />
       </IconButton> */}
 
-      <IconButton
-        title="Add Subject"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            text: "Subject",
-            data: {
-              type: "subject",
-            },
-          })
-        }
-      >
-        <HiDocument />
-      </IconButton>
-
-      <IconButton
-        title="Add Constraint"
-        onClick={() =>
-          props.onAddNode({
-            id: getGuid(),
-            parent: props.node.id,
-            text: "",
-            data: {
-              type: "constraint:program",
-            },
-          })
-        }
-      >
-        <HiLockClosed />
-      </IconButton>
-
-      <IconButton
-        title="Add 4 Years"
-        onClick={() => {
-          function addYear(num: number) {
-            let yearId = getGuid();
-
-            return [
-              {
-                id: yearId,
+          <IconButton
+            title="Add Subject"
+            onClick={() =>
+              props.onAddNode({
+                id: getGuid(),
                 parent: props.node.id,
-                text: "Year " + num,
-                droppable: true,
+                text: "Subject",
                 data: {
-                  type: "folder",
-                  selection: "AND",
+                  type: "subject",
                 },
-              },
+              })
+            }
+          >
+            <HiDocumentAdd />
+          </IconButton>
 
-              {
+          <IconButton
+            title="Add Constraint"
+            onClick={() =>
+              props.onAddNode({
                 id: getGuid(),
-                parent: yearId,
-                text: "Autumn",
-                droppable: true,
+                parent: props.node.id,
+                text: "",
                 data: {
-                  type: "folder",
-                  selection: "AND",
+                  type: "constraint:program",
                 },
-              },
+              })
+            }
+          >
+            <HiLockClosed />
+          </IconButton>
 
-              {
-                id: getGuid(),
-                parent: yearId,
-                text: "Spring",
-                droppable: true,
-                data: {
-                  type: "folder",
-                  selection: "AND",
-                },
-              },
-            ] as NodeModel[];
-          }
-          props.onAddNode(
-            [...addYear(1), ...addYear(2), ...addYear(3), ...addYear(4)],
-            true
-          );
-        }}
-      >
-        <HiCollection />
-      </IconButton>
+          <IconButton
+            title="Import Items"
+            onClick={() => props.setImportRootId(props.node.id)}
+          >
+            <HiDownload />
+          </IconButton>
 
-      <IconButton
-        title="Copy children to parent"
-        onClick={() => props.onDeleteNode(props.node.id as any, "copy")}
-      >
-        <HiArrowUp />
-      </IconButton>
+          <IconButton
+            title="Add 4 Years"
+            onClick={() => {
+              function addYear(num: number) {
+                let yearId = getGuid();
+
+                return [
+                  {
+                    id: yearId,
+                    parent: props.node.id,
+                    text: "Year " + num,
+                    droppable: true,
+                    data: {
+                      type: "folder",
+                      selection: "AND",
+                    },
+                  },
+
+                  {
+                    id: getGuid(),
+                    parent: yearId,
+                    text: "Autumn",
+                    droppable: true,
+                    data: {
+                      type: "folder",
+                      selection: "AND",
+                    },
+                  },
+
+                  {
+                    id: getGuid(),
+                    parent: yearId,
+                    text: "Spring",
+                    droppable: true,
+                    data: {
+                      type: "folder",
+                      selection: "AND",
+                    },
+                  },
+                ] as NodeModel[];
+              }
+              props.onAddNode(
+                [...addYear(1), ...addYear(2), ...addYear(3), ...addYear(4)],
+                true
+              );
+            }}
+          >
+            <HiCollection />
+          </IconButton>
+
+          <IconButton
+            title="Copy children to parent"
+            onClick={() => props.onDeleteNode(props.node.id as any, "copy")}
+          >
+            <HiArrowUp />
+          </IconButton>
+        </>
+      )}
 
       <IconButton
         title="Convert to leaf node"

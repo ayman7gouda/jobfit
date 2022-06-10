@@ -31,7 +31,7 @@ function buildNodes(
   name: string,
   value: { structure: Structure; sequence: Sequence }
 ): NodeModel[] {
-  const nodes = [];
+  const nodes: NodeModel[] = [];
   let parent = getGuid();
   let idx = 0;
 
@@ -41,7 +41,10 @@ function buildNodes(
     index: idx++,
     droppable: true,
     text: name,
-    data: {},
+    data: {
+      selection: "AND",
+      type: "folder",
+    },
   });
 
   if (value.structure) {
@@ -193,7 +196,7 @@ export function daoInNode(selected: TreeNode): ProgramInput {
         id: h.data.dbId,
         nodeId: h.id,
         parentId: parseInt(h.parent as string),
-        text: h.data.subjectCode ? "" : h.text,
+        text: h.data.type === "subject" && h.data.subjectCode ? "" : h.text,
         folder: h.droppable,
         type: h.data.type,
         selection: h.data.selection,
@@ -205,8 +208,8 @@ export function daoInNode(selected: TreeNode): ProgramInput {
         collection: h.data.collection,
         selector: h.data.selector,
         flagged: h.data.flagged,
-        subjectCode: h.data.subjectCode,
-        subjectName: h.data.subjectName,
+        subjectCode: h.data.type === "subject" ? h.data.subjectCode : null,
+        subjectName: h.data.type === "subject" ? h.data.subjectName : null,
         index: i,
       })),
   };

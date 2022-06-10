@@ -4,10 +4,11 @@ import SelectSearch from 'react-select-search';
 import { useApolloClient } from '@apollo/client';
 import { DragLayerMonitorProps, DropOptions, Tree } from '@minoru/react-dnd-treeview';
 
+import { Selection } from 'generated/clientTypes';
 import { toUrlName } from 'lib/utils';
 import debounce from 'lodash/debounce';
 import Link from 'next/link';
-import { HiCheck, HiChevronLeft, HiChevronRight, HiDownload, HiSave } from 'react-icons/hi';
+import { HiCheck, HiChevronLeft, HiChevronRight, HiDownload, HiMenu, HiSave } from 'react-icons/hi';
 
 // import "react-select-search/style.css";
 import { CustomDragPreview } from './CustomDragPreview';
@@ -151,6 +152,7 @@ export function Layout(args: {
   }): any;
 }) {
   const [part, setPart] = useState(args.part);
+  const [leftVisible, toggleLeft] = useState(true);
 
   const { data: programData, loading: loadingPrograms } = useProgramsQuery();
   const { data: specialisationData, loading: loadingSpecialisations } =
@@ -210,52 +212,77 @@ export function Layout(args: {
     !programData ||
     !specialisationData
   ) {
-    return <div>Loading ...</div>;
+    return (
+      <div>
+        Loading programs ...
+        {/* Loading programs ... [{loadingPrograms.toString()}{" "}
+        {loadingSpecialisations.toString()} {(programData == null).toString()}{" "}
+        {(specialisationData == null).toString()}] */}
+      </div>
+    );
   }
 
   return (
     <div style={{ display: "flex", height: "100%", alignItems: "stretch" }}>
-      <div
-        style={{
-          width: 500,
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
-          padding: 16,
-          overflowY: "auto",
-          overflowX: "hidden",
-        }}
-      >
-        <div className="flex gap-1">
+      {!leftVisible && (
+        <div style={{ padding: 16 }}>
           <div
-            className="cursor-pointer p-1 flex-1"
-            style={{
-              background: part == "programs" ? "lightBlue" : "lightGrey",
-            }}
-            onClick={() => setPart("programs")}
+            className="cursor-pointer p-1 flex items-center w-6 flex-initial bg-blue-300 hover:bg-blue-600"
+            onClick={() => toggleLeft(true)}
           >
-            Programs
-          </div>
-          <div
-            className="cursor-pointer p-1 flex-1"
-            style={{
-              background: part == "majors" ? "lightBlue" : "lightGrey",
-            }}
-            onClick={() => setPart("majors")}
-          >
-            Majors
+            <HiMenu />
           </div>
         </div>
+      )}
+      {leftVisible && (
+        <div
+          style={{
+            width: 500,
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            padding: 16,
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        >
+          <div className="flex gap-1">
+            <div
+              className="cursor-pointer p-1 flex items-center w-6 flex-initial bg-blue-300 hover:bg-blue-600"
+              onClick={() => toggleLeft(false)}
+            >
+              <HiMenu />
+            </div>
+            <div
+              className="cursor-pointer p-1 flex-1"
+              style={{
+                background: part == "programs" ? "lightBlue" : "lightGrey",
+              }}
+              onClick={() => setPart("programs")}
+            >
+              Programs
+            </div>
+            <div
+              className="cursor-pointer p-1 flex-1"
+              style={{
+                background: part == "majors" ? "lightBlue" : "lightGrey",
+              }}
+              onClick={() => setPart("majors")}
+            >
+              Majors
+            </div>
+          </div>
 
-        {/* Tree View */}
-        {part === "programs" && args.id ? (
-          <ProgramsView selected={args.id} programs={programData.programs} />
-        ) : (
-          <SpecialisationsView
-            selected={args.id!}
-            specialisations={specialisationData.specialisations}
-          />
-        )}
-      </div>
+          {/* Tree View */}
+          {part === "programs" && args.id ? (
+            <ProgramsView selected={args.id} programs={programData.programs} />
+          ) : (
+            <SpecialisationsView
+              selected={args.id!}
+              specialisations={specialisationData.specialisations}
+            />
+          )}
+        </div>
+      )}
       <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
         {args.id &&
           args.treeView &&
@@ -271,17 +298,41 @@ type UndoNode = {
   content: NodeModel[];
 };
 
+function createPath(node: NodeModel, tree: NodeModel[]) {
+  let name = node.text;
+
+  do {
+    node = tree.find((t) => t.id === node.parent)!;
+    if (node && node.text) {
+      name = node.text + " > " + name;
+    }
+  } while (node);
+
+  return name;
+}
+
 function Import(
-  props: TreeViewProps & { tree: NodeModel[]; setTree(tree: NodeModel[]): void }
+  props: TreeViewProps & {
+    tree: NodeModel[];
+    setTree(tree: NodeModel[]): void;
+    importRootId: number;
+    setImportRootId(num: number | undefined): void;
+  }
 ) {
   const [value, setValue] = useState("");
   const [collection, setCollection] = useState<NodeModel | null>(null);
-  const [program, setProgram] = useState<Option | null>(null);
+  // const [program, setProgram] = useState<Option | null>(null);
   const [programNodes, setProgramNodes] = useState([] as NodeModel[]);
+  const [importType, setImportType] = useState("subject");
+  const [importSelection, setImportSelection] = useState<Selection>("OR");
+  const [pastedItems, setPastedItems] = useState("");
   const client = useApolloClient();
 
   return (
-    <div className="bg-slate-100 px-4 py-1 rounded-lg mx-4 flex items-center">
+    <div
+      className="bg-slate-100 px-4 py-1 rounded-lg mx-4 flex items-center"
+      style={{ position: "sticky", top: 60, zIndex: 100 }}
+    >
       Import:
       <SelectSearch
         options={props.all}
@@ -305,7 +356,7 @@ function Import(
               ? "specialisation"
               : "program";
 
-          setProgram(program);
+          // setProgram(program);
           setValue(id);
 
           client
@@ -332,32 +383,175 @@ function Import(
         }}
       >
         <option value="">Please Select</option>
-        {programNodes
-          .filter((n) => n.data.type === "collection")
-          .map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.text}
-            </option>
-          ))}
+        <optgroup label="Programs">
+          {programNodes
+            .filter((n) => n.data.type === "program" && n.text)
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.text}
+              </option>
+            ))}
+        </optgroup>
+        <optgroup label="Collections">
+          {programNodes
+            .filter((n) => n.data.type === "collection" && n.text)
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.text}
+              </option>
+            ))}
+        </optgroup>
+        <optgroup label="Folders">
+          {programNodes
+            .filter((n) => n.data.type === "folder" && n.text)
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {createPath(p, programNodes)}
+              </option>
+            ))}
+        </optgroup>
       </Select>
+      <div className="font-bold mx-5">OR</div>
+      <div className="w-60">
+        <div className="flex">
+          <Select
+            onChange={(e) => {
+              setImportType(e.currentTarget.value);
+            }}
+            className="bg-blue-200 w-full"
+            value={importType}
+            style={{ background: "rgb(226 232 240)" }}
+          >
+            <option value="program">Programs</option>
+            <option value="major">Majors</option>
+            <option value="minor">Minors</option>
+            <option value="constraint:program">Program Constraint</option>
+            <option value="subject">Subjects</option>
+          </Select>
+          <Select
+            onChange={(e) => {
+              setImportSelection(e.currentTarget.value as Selection);
+            }}
+            className="ml-1 w-24"
+            value={importSelection}
+            style={{ background: "rgb(226 232 240)" }}
+          >
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+          </Select>
+        </div>
+
+        <textarea
+          value={pastedItems}
+          placeholder="Please paste the item names ..."
+          className="rounded-lg mt-1 border-2 h-20 border-slate-300 w-full text-sm"
+          onChange={(e) => setPastedItems(e.currentTarget.value)}
+        ></textarea>
+      </div>
       <button
         type="button"
         className="ml-2 mr-2 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
         onClick={() => {
-          // save(tree);
-          if (collection) {
-            // find parent
-            let first = props.tree[0];
-            while (first.parent && first.parent != 0) {
-              first = props.tree.find((t) => t.id === first.parent)!;
-            }
+          // find parent
+          let idx = props.tree.length + 1;
 
-            let nodes = cloneNode(programNodes, collection!.id, first.id);
+          // save(tree);
+          if (pastedItems && importType) {
+            let nodes: NodeModel[] = [];
+
+            let lines = pastedItems
+              .split("\n")
+              .map((e) => e.trim())
+              .filter((e) => e);
+
+            if (importType === "subject") {
+              let subjects = lines.map((l) => l.split("\t"));
+              console.log(subjects);
+
+              for (let subject of subjects) {
+                let resolved = subject.length >= 2 && subject.length <= 3;
+                nodes.push({
+                  id: getGuid(),
+                  parent: props.importRootId,
+                  index: idx++,
+                  text: resolved ? "" : subject.join(" "),
+                  data: {
+                    type: "subject",
+                    subjectCode: resolved
+                      ? subject[0].replace(/\s/g, "")
+                      : undefined,
+                    subjectName: resolved ? subject[1] : undefined,
+                  },
+                });
+              }
+            } else {
+              let root: NodeModel = {
+                id: getGuid(),
+                parent: props.importRootId,
+                droppable: true,
+                index: idx++,
+                text: "Imported " + importType,
+                data: {
+                  type:
+                    importType !== "constraint:program"
+                      ? "collection"
+                      : "folder",
+                  selection: "OR",
+                  number: 1,
+                },
+              };
+              nodes.push(root);
+
+              let items = lines.map((l) => ({
+                id: props.all.find((p) => p.name.indexOf(l) === 0)?.value,
+                name: l,
+              }));
+
+              for (let item of items) {
+                let resolved = !!item.id;
+                let droppable = resolved && importType !== "constraint:program";
+                nodes.push({
+                  id: getGuid(),
+                  parent: root.id,
+                  droppable,
+                  index: idx++,
+                  text: item.name,
+                  data: {
+                    type:
+                      resolved && importType === "constraint:program"
+                        ? "constraint:program"
+                        : resolved
+                        ? (("link:" + importType) as any)
+                        : "subject",
+                    selection: importSelection as Selection,
+                    number: importSelection === "OR" ? 0 : undefined,
+                    reference: item.id,
+                  },
+                });
+              }
+            }
+            props.setTree(nodes.concat(props.tree));
+          } else if (collection) {
+            let nodes = cloneNode(
+              programNodes,
+              collection!.id,
+              props.importRootId
+            );
             props.setTree(props.tree.concat(nodes));
           }
+          props.setImportRootId(undefined);
         }}
       >
         <HiDownload className="mr-2" /> Import
+      </button>
+      <button
+        type="button"
+        className="ml-2 mr-2 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+        onClick={() => {
+          props.setImportRootId(undefined);
+        }}
+      >
+        Cancel
       </button>
     </div>
   );
@@ -412,7 +606,9 @@ export const TreeView = (props: TreeViewProps) => {
     all,
     model,
   } = props;
-  const [showImport, toggleImport] = useState(false);
+  const [importRootId, setImportRootId] = useState<number | undefined>(
+    undefined
+  );
   const [tree, setCurrentTree] = useState<NodeModel[]>(defaultTree);
   const [undoQueue, setUndoQueue] = useState<UndoNode>({
     previous: undefined,
@@ -491,18 +687,6 @@ export const TreeView = (props: TreeViewProps) => {
 
         <button
           type="button"
-          className={`ml-h mr-h py-2 rounded-lg h-10 ${
-            showImport ? "bg-blue-300" : "bg-blue-200"
-          } hover:bg-blue-400 px-4 flex items-center`}
-          onClick={() => {
-            toggleImport(!showImport);
-          }}
-        >
-          <HiDownload />
-        </button>
-
-        <button
-          type="button"
           disabled={!undoQueue.previous}
           className="ml-2 py-2 rounded-l-lg rounded-r-none disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
           onClick={() => {
@@ -539,7 +723,15 @@ export const TreeView = (props: TreeViewProps) => {
         </a>
       </div>
 
-      {showImport && <Import {...props} tree={tree} setTree={setTree} />}
+      {importRootId && (
+        <Import
+          {...props}
+          tree={tree}
+          setTree={setTree}
+          importRootId={importRootId}
+          setImportRootId={setImportRootId}
+        />
+      )}
 
       <div style={{ paddingTop: 20 }}>
         <Tree
@@ -556,6 +748,8 @@ export const TreeView = (props: TreeViewProps) => {
               minors={minorOptions}
               all={all}
               onTextChange={handleTextChange}
+              importRootId={importRootId}
+              setImportRootId={setImportRootId}
               clone={clone}
               tree={tree}
               onAddNode={(node, insert) => {
@@ -587,7 +781,7 @@ export const TreeView = (props: TreeViewProps) => {
                   if (node.id === id) {
                     return {
                       ...node,
-                      text: text || node.text,
+                      text: text != null ? text : node.text,
                       droppable: droppable == null ? node.droppable : droppable,
                       data: {
                         ...node.data,

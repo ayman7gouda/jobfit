@@ -1,15 +1,13 @@
-import { useState } from 'react';
-
 import { toUrlName } from 'lib/utils';
 import {
   HiBeaker, HiChevronDown, HiChevronRight, HiCollection, HiDuplicate, HiFolder, HiLibrary, HiLink,
-  HiPencil, HiTrash
+  HiLockClosed, HiPencil, HiTrash
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
 import { FolderEditor } from './FolderEditor';
 import { IconButton } from './shared';
-import { CustomNodeProps, NodeModel } from './types';
+import { CustomNodeChildProps, CustomNodeProps, NodeModel } from './types';
 
 type ParentStructure = { parent: NodeModel; child: NodeModel };
 
@@ -103,9 +101,8 @@ function renderOrder(props: CustomNodeProps) {
   return <span dangerouslySetInnerHTML={{ __html: text }} />;
 }
 
-export const FolderNode: React.FC<CustomNodeProps> = (props) => {
+export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
   const { id } = props.node;
-  const [visibleInput, setVisibleInput] = useState(false);
 
   const indent = props.depth * 24;
 
@@ -115,14 +112,18 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
   };
 
   const handleShowInput = () => {
-    setVisibleInput(true);
+    props.setVisibleInput(true);
   };
 
   const color = props.node.data.selection === "AND" ? "salmon" : "green";
+  const children = props.tree.filter(
+    (t) => t.parent === props.node.id && t?.data.type === "constraint:program"
+  );
+  const isConstraint = children.length > 1;
 
   return (
     <div
-      className={styles.root}
+      className={styles.root + " " + styles.buttons}
       style={{
         paddingInlineStart: indent,
         background: props.node.data.temp
@@ -140,7 +141,9 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
         )}
       </div>
 
-      {props.node.data.type === "link:elective" ? (
+      {isConstraint ? (
+        <HiLockClosed style={{ color: "red" }} />
+      ) : props.node.data.type === "link:elective" ? (
         <HiBeaker style={{ color: "green" }} />
       ) : props.node.data.type === "link:collection" ? (
         <HiLink style={{ color: "purple" }} />
@@ -159,8 +162,8 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
       )}
 
       <div className={styles.nodeInner}>
-        {visibleInput ? (
-          <FolderEditor {...props} setVisibleInput={setVisibleInput} />
+        {props.visibleInput ? (
+          <FolderEditor {...props} />
         ) : (
           <div className={styles.inputWrapper}>
             {props.node.data.type !== "folder" &&
@@ -217,7 +220,9 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
                 </div>
               </div>
             )}
-            {props.node.data.type?.indexOf("link") == 0 &&
+            {!!props.node.data.number &&
+              props.node.data.number < 10 &&
+              props.node.data.type?.indexOf("link") == 0 &&
               findParent(props.node, props).data.type !== "collection" &&
               findParent(props.node, props).data.selection !== "OR" && (
                 <div
@@ -243,42 +248,49 @@ export const FolderNode: React.FC<CustomNodeProps> = (props) => {
                   : null}
               </div>
             )}
-            <IconButton onClick={handleShowInput}>
-              <HiPencil />
-            </IconButton>
-            <IconButton title="Clone Node" onClick={() => props.clone(id)}>
-              <HiDuplicate />
-            </IconButton>
-            {(props.node.data.type === "link:major" ||
-              props.node.data.type === "link:minor") && (
-              <a
-                href={`/admin/handbook/specialisations/${toUrlName(
-                  props.node.text
-                )}?id=${props.node.data.reference}`}
-                target="__blank"
+            <div className={styles.dynamic}>
+              <IconButton onClick={handleShowInput}>
+                <HiPencil />
+              </IconButton>
+              <IconButton
+                title="Clone Node"
+                className="bg-green-800"
+                onClick={() => props.clone(id)}
               >
-                <IconButton>
-                  <HiLink />
-                </IconButton>
-              </a>
-            )}
-            {props.node.data.type === "link:program" && (
-              <a
-                href={`/admin/handbook/program/${toUrlName(
-                  props.node.text
-                )}?id=${props.node.data.reference}`}
-                target="__blank"
+                <HiDuplicate />
+              </IconButton>
+              {(props.node.data.type === "link:major" ||
+                props.node.data.type === "link:minor") && (
+                <a
+                  href={`/admin/handbook/specialisations/${toUrlName(
+                    props.node.text
+                  )}?id=${props.node.data.reference}`}
+                  target="__blank"
+                >
+                  <IconButton>
+                    <HiLink />
+                  </IconButton>
+                </a>
+              )}
+              {props.node.data.type === "link:program" && (
+                <a
+                  href={`/admin/handbook/program/${toUrlName(
+                    props.node.text
+                  )}?id=${props.node.data.reference}`}
+                  target="__blank"
+                >
+                  <IconButton>
+                    <HiLink />
+                  </IconButton>
+                </a>
+              )}
+              <IconButton
+                className="bg-red-800"
+                onClick={() => props.onDeleteNode(props.node.id as any)}
               >
-                <IconButton>
-                  <HiLink />
-                </IconButton>
-              </a>
-            )}
-            <IconButton
-              onClick={() => props.onDeleteNode(props.node.id as any)}
-            >
-              <HiTrash />
-            </IconButton>
+                <HiTrash />
+              </IconButton>
+            </div>
           </div>
         )}
       </div>
