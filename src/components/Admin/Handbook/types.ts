@@ -55,6 +55,8 @@ export type CustomNodeProps = {
   depth: number;
   isOpen: boolean;
   tree: NodeModel[];
+  importRootId: number | undefined;
+  setImportRootId(num: number | undefined): void;
   onToggle: (id: NodeModel["id"]) => void;
   onTextChange: (id: NodeModel["id"], value: string) => void;
   onNodeChange: NodeChange;
@@ -65,6 +67,11 @@ export type CustomNodeProps = {
   majors: Option[];
   minors: Option[];
   all: Option[];
+};
+
+export type CustomNodeChildProps = CustomNodeProps & {
+  visibleInput: boolean;
+  setVisibleInput(value: boolean): void;
 };
 
 export type Option = { name: string; value: number };

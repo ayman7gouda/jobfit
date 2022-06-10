@@ -14,11 +14,15 @@ export function getGuid() {
 
 export function IconButton({
   children,
+  className,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className="cursor-pointer p-1 bg-slate-200 hover:bg-slate-400 rounded-md mx-1"
+      className={
+        "cursor-pointer p-1 bg-slate-500  hover:opacity-70 rounded-md mx-1 text-white " +
+        className
+      }
       {...rest}
     >
       {children}
@@ -39,12 +43,16 @@ export function TextField(
 
 export function Select({
   children,
+  className,
   ...rest
 }: React.HTMLAttributes<HTMLSelectElement> & { value?: string }) {
   return (
     <select
       {...rest}
-      className="block max-w-[150px] pl-3 pr-10 py-1 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+      className={
+        (className || "") +
+        " block pl-3 pr-10 py-1 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+      }
     >
       {children}
     </select>

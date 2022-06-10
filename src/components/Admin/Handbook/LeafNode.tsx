@@ -9,11 +9,9 @@ import styles from './CustomNode.module.css';
 import { extractCode, extractName } from './helpers';
 import { LinkNode, valueFilter } from './LinkNode';
 import { IconButton, Select, TextField } from './shared';
-import { CustomNodeProps, NodeType, Option } from './types';
+import { CustomNodeChildProps, NodeType, Option } from './types';
 
-export function LeafEditor(
-  props: CustomNodeProps & { setVisibleInput: Function }
-) {
+export function LeafEditor(props: CustomNodeChildProps) {
   const [labelText, setLabelText] = useState(props.node.text);
   const { id, text } = props.node;
 
@@ -91,14 +89,33 @@ export function LeafEditor(
       </IconButton>
 
       <IconButton
-        title="Convert to folder"
+        title="Convert to AND folder"
         onClick={() =>
           props.onNodeChange(props.node.id, {
             droppable: true,
+            selection: "AND",
           })
         }
       >
-        <HiFolder style={{ color: "blue" }} />
+        <HiFolder style={{ color: "salmon" }} />
+      </IconButton>
+
+      <IconButton
+        title="Convert to OR folder"
+        onClick={() => {
+          {
+            props.onNodeChange(props.node.id, {
+              text: "",
+              droppable: true,
+              selection: "OR",
+              number: 1,
+            });
+            setLabelText("");
+            props.setVisibleInput(false);
+          }
+        }}
+      >
+        <HiFolder style={{ color: "green" }} />
       </IconButton>
 
       <input
@@ -125,19 +142,18 @@ function makeName(nodes: Option[], id?: number, def = "", level?: string) {
   return item.name + (level != null ? `, level ${level}` : "");
 }
 
-export const LeafNode: React.FC<CustomNodeProps> = (props) => {
+export const LeafNode: React.FC<CustomNodeChildProps> = (props) => {
   const { id } = props.node;
-  const [visibleInput, setVisibleInput] = useState(false);
 
   const indent = props.depth * 24;
 
   const handleShowInput = () => {
-    setVisibleInput(true);
+    props.setVisibleInput(true);
   };
 
   return (
     <div
-      className={styles.root}
+      className={styles.root + " " + styles.buttons}
       style={{
         paddingInlineStart: indent,
         background: props.node.data.temp
@@ -164,9 +180,9 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
       )}
 
       <div className={styles.nodeInner}>
-        {visibleInput ? (
+        {props.visibleInput ? (
           <div className={styles.inputWrapper}>
-            <LeafEditor {...props} setVisibleInput={setVisibleInput} />
+            <LeafEditor {...props} />
           </div>
         ) : (
           <div className={styles.inputWrapper}>
@@ -191,17 +207,24 @@ export const LeafNode: React.FC<CustomNodeProps> = (props) => {
               )}
             </div>
 
-            <IconButton onClick={handleShowInput}>
-              <HiPencil />
-            </IconButton>
-            <IconButton title="Clone Node" onClick={() => props.clone(id)}>
-              <HiDuplicate />
-            </IconButton>
-            <IconButton
-              onClick={() => props.onDeleteNode(props.node.id as any)}
-            >
-              <HiTrash />
-            </IconButton>
+            <div className={styles.dynamic}>
+              <IconButton onClick={handleShowInput}>
+                <HiPencil />
+              </IconButton>
+              <IconButton
+                className="bg-green-800"
+                title="Clone Node"
+                onClick={() => props.clone(id)}
+              >
+                <HiDuplicate />
+              </IconButton>
+              <IconButton
+                className="bg-red-800"
+                onClick={() => props.onDeleteNode(props.node.id as any)}
+              >
+                <HiTrash />
+              </IconButton>
+            </div>
           </div>
         )}
       </div>

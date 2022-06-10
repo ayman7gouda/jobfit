@@ -40,3 +40,26 @@
 .nodeLabel {
   padding-right: 15px;
 }
+
+.dynamic {
+  transition: all 0.5s;
+  opacity: 0;
+  white-space: nowrap;
+  display: flex;
+}
+
+.buttons:hover .dynamic {
+  opacity: 1;
+}
+
+.buttons {
+  transition: all 0.5s;
+}
+
+.buttons:hover {
+  background: #f0f0f0;
+}
+
+.inputWrapper:hover .dynamic {
+  opacity: 1;
+}
