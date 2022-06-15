@@ -38,7 +38,7 @@ function ProgramsView({
   selected,
   programs,
 }: {
-  selected: number;
+  selected?: number | null | undefined;
   programs: ProgramsQuery["programs"];
 }) {
   const [filter, setFilter] = useState("");
@@ -48,7 +48,7 @@ function ProgramsView({
       <div className="flex my-2">
         <input
           type="text"
-          placeholder="filter"
+          placeholder="Filter by name / code ..."
           onChange={(e) => setFilter(e.currentTarget.value)}
           className="flex-1 h-8"
         />
@@ -59,7 +59,10 @@ function ProgramsView({
           ? programs.filter(
               (p) =>
                 p.code.indexOf(filter) != -1 ||
-                p.name.toLowerCase().indexOf(filter.toLowerCase()) != -1
+                filter
+                  .toLowerCase()
+                  .split(" ")
+                  .every((e) => p.name.toLowerCase().indexOf(e) != -1)
             )
           : programs
         ).map((p, i) => (
@@ -101,7 +104,7 @@ function SpecialisationsView({
       <div className="flex my-2">
         <input
           type="text"
-          placeholder="filter"
+          placeholder="Filter by name / code ..."
           onChange={(e) => setFilter(e.currentTarget.value)}
           className="flex-1 h-8"
         />
@@ -112,7 +115,10 @@ function SpecialisationsView({
           ? specialisations.filter(
               (p) =>
                 p.code.indexOf(filter) != -1 ||
-                p.name.toLowerCase().indexOf(filter.toLowerCase()) != -1
+                filter
+                  .toLowerCase()
+                  .split(" ")
+                  .every((e) => p.name.toLowerCase().indexOf(e) != -1)
             )
           : specialisations
         ).map((p, i) => (
@@ -273,7 +279,7 @@ export function Layout(args: {
           </div>
 
           {/* Tree View */}
-          {part === "programs" && args.id ? (
+          {part === "programs" ? (
             <ProgramsView selected={args.id} programs={programData.programs} />
           ) : (
             <SpecialisationsView
@@ -412,7 +418,7 @@ function Import(
         </optgroup>
       </Select>
       <div className="font-bold mx-5">OR</div>
-      <div className="w-60">
+      <div className="flex-1 max-w-lg">
         <div className="flex">
           <Select
             onChange={(e) => {

@@ -16,10 +16,12 @@ module.exports = function (wallaby) {
     },
     setup: function (w) {
       const { PrismaClient } = require("@prisma/client");
-      const prisma = new PrismaClient({
-        log: ["query", "info", "warn", "error"],
-      });
-      global.prisma = prisma;
+      if (global.prisma == null) {
+        const prisma = new PrismaClient({
+          log: ["query", "info", "warn", "error"],
+        });
+        global.prisma = prisma;
+      }
     },
     teardown: async function (w) {
       await global.prisma.$disconnect();

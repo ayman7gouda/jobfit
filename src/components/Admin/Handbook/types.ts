@@ -10,6 +10,7 @@ export type NodeType =
   | "folder"
   | "subject"
   | "constraint:program"
+  | "constraint:program:not"
   | "link:elective"
   | "collection"
   | "program";
