@@ -49,7 +49,8 @@ export function LeafEditor(props: CustomNodeChildProps) {
         />
       )}
 
-      {props.node.data.type === "constraint:program" && (
+      {(props.node.data.type === "constraint:program" ||
+        props.node.data.type === "constraint:program:not") && (
         <SelectSearch
           options={props.all}
           value={props.node.data.reference as unknown as string}
@@ -72,7 +73,8 @@ export function LeafEditor(props: CustomNodeChildProps) {
         style={{ marginRight: 4 }}
       >
         <option value="subject">Subject</option>
-        <option value="constraint:program">Program Constraint</option>
+        <option value="constraint:program">+ Program Constraint</option>
+        <option value="constraint:program:not">- Program Constraint</option>
         {/* <option value="elective">Elective</option> */}
       </Select>
 
@@ -173,7 +175,9 @@ export const LeafNode: React.FC<CustomNodeChildProps> = (props) => {
         />
       )}
 
-      {props.node.data.type === "constraint:program" ? (
+      {props.node.data.type === "constraint:program:not" ? (
+        <HiLockClosed style={{ color: "purple" }} />
+      ) : props.node.data.type === "constraint:program" ? (
         <HiLockClosed style={{ color: "red" }} />
       ) : (
         <HiDocument />
@@ -191,7 +195,10 @@ export const LeafNode: React.FC<CustomNodeChildProps> = (props) => {
               onClick={handleShowInput}
               className={styles.nodeLabel}
             >
-              {props.node.data.type === "constraint:program" ? (
+              {props.node.data.type === "constraint:program:not" && "Not "}
+
+              {props.node.data.type === "constraint:program" ||
+              props.node.data.type === "constraint:program:not" ? (
                 makeName(
                   props.all,
                   props.node.data.reference,

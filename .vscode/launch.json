@@ -2,6 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run mocha File",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/mocha",
+      "runtimeArgs": [
+        "--exit",
+        "-r",
+        "tsconfig-paths/register",
+        "-r",
+        "ts-node/register",
+        "${file}"
+      ]
+    },
+    {
       "name": "Launch Program",
       "program": "${workspaceFolder}/imports/anzsco.mjs",
       "request": "launch",
