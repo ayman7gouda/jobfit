@@ -1,4 +1,9 @@
-import { ClientHandbook, Pathway, ProcessingState } from './types';
+import type {
+  ClientHandbook,
+  Pathway,
+  ProcessingState,
+  Sequence,
+} from "./types";
 
 export abstract class HandbookNode {
   constructor(
@@ -10,6 +15,13 @@ export abstract class HandbookNode {
       throw new Error("Invalid node: Parent id and node id is the same!");
     }
   }
+
+  abstract expand(
+    parentSequence: Sequence,
+    nodes: HandbookNode[],
+    handbook: HandbookNode[],
+    externals: Map<number, Pathway[]>
+  ): Sequence[];
 
   abstract process(state: ProcessingState): void;
 }

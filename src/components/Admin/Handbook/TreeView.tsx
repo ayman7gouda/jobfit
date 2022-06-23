@@ -10,6 +10,7 @@ import debounce from 'lodash/debounce';
 import Link from 'next/link';
 import { HiCheck, HiChevronLeft, HiChevronRight, HiDownload, HiMenu, HiSave } from 'react-icons/hi';
 
+import { CombinationsExplorer } from './CombinationsExplorer';
 // import "react-select-search/style.css";
 import { CustomDragPreview } from './CustomDragPreview';
 import { CustomNode } from './CustomNode';
@@ -289,7 +290,9 @@ export function Layout(args: {
           )}
         </div>
       )}
-      <div style={{ flex: 1, height: "100%", overflow: "auto" }}>
+      <div
+        style={{ display: "flex", flex: 1, height: "100%", overflow: "auto" }}
+      >
         {args.id &&
           args.treeView &&
           args.treeView({ programOptions, majorOptions, minorOptions, all })}
@@ -615,6 +618,7 @@ export const TreeView = (props: TreeViewProps) => {
   const [importRootId, setImportRootId] = useState<number | undefined>(
     undefined
   );
+  const [exploring, setExploring] = useState(false);
   const [tree, setCurrentTree] = useState<NodeModel[]>(defaultTree);
   const [undoQueue, setUndoQueue] = useState<UndoNode>({
     previous: undefined,
@@ -665,208 +669,224 @@ export const TreeView = (props: TreeViewProps) => {
   };
 
   return (
-    <div
-      style={{ flex: 1, height: "100%", overflow: "auto", paddingBottom: 140 }}
-    >
+    <>
       <div
         style={{
-          padding: 8,
-          display: "flex",
-          alignItems: "center",
-          position: "sticky",
-          top: 0,
-          background: "white",
-          width: "100%",
-          zIndex: 1,
+          flex: 1,
+          height: "100%",
+          overflow: "auto",
+          paddingBottom: 140,
         }}
       >
-        <button
-          type="button"
-          className="ml-2 mr-2 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
-          onClick={() => {
-            save(tree);
-          }}
-        >
-          <HiSave className="mr-2" />
-          {saving ? "Saving ..." : "Save"}
-        </button>
+        {!exploring && (
+          <div
+            style={{
+              padding: 8,
+              display: "flex",
+              alignItems: "center",
+              position: "sticky",
+              top: 0,
+              background: "white",
+              width: "100%",
+              zIndex: 1,
+            }}
+          >
+            <button
+              type="button"
+              className="ml-2 mr-2 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+              onClick={() => {
+                save(tree);
+              }}
+            >
+              <HiSave className="mr-2" />
+              {saving ? "Saving ..." : "Save"}
+            </button>
 
-        <button
-          type="button"
-          disabled={!undoQueue.previous}
-          className="ml-2 py-2 rounded-l-lg rounded-r-none disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
-          onClick={() => {
-            if (undoQueue.previous) {
-              setUndoQueue(undoQueue.previous);
-              setCurrentTree(undoQueue.previous.content);
-            }
-          }}
-        >
-          <HiChevronLeft className="mr-2" />
-          Undo
-        </button>
+            <button
+              type="button"
+              disabled={!undoQueue.previous}
+              className="ml-2 py-2 rounded-l-lg rounded-r-none disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+              onClick={() => {
+                if (undoQueue.previous) {
+                  setUndoQueue(undoQueue.previous);
+                  setCurrentTree(undoQueue.previous.content);
+                }
+              }}
+            >
+              <HiChevronLeft className="mr-2" />
+              Undo
+            </button>
 
-        <button
-          type="button"
-          disabled={!undoQueue.next}
-          className="ml-[2px] mr-2 py-2 rounded-r-lg disabled:bg-slate-300 rounded-l-none bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
-          onClick={() => {
-            if (undoQueue.next) {
-              setUndoQueue(undoQueue.next);
-              setCurrentTree(undoQueue.next.content);
-            }
-          }}
-        >
-          Redo
-          <HiChevronRight className="ml-2" />
-        </button>
+            <button
+              type="button"
+              disabled={!undoQueue.next}
+              className="ml-[2px] mr-2 py-2 rounded-r-lg disabled:bg-slate-300 rounded-l-none bg-blue-200 hover:bg-blue-300 px-4 flex items-center"
+              onClick={() => {
+                if (undoQueue.next) {
+                  setUndoQueue(undoQueue.next);
+                  setCurrentTree(undoQueue.next.content);
+                }
+              }}
+            >
+              Redo
+              <HiChevronRight className="ml-2" />
+            </button>
 
-        <a
-          href={`https://hbook.westernsydney.edu.au${model.url}`}
-          target="__blank"
-        >
-          {model.name}
-        </a>
-      </div>
+            <a
+              href={`https://hbook.westernsydney.edu.au${model.url}`}
+              target="__blank"
+            >
+              {model.name}
+            </a>
+          </div>
+        )}
 
-      {importRootId && (
-        <Import
-          {...props}
-          tree={tree}
-          setTree={setTree}
-          importRootId={importRootId}
-          setImportRootId={setImportRootId}
-        />
-      )}
+        {importRootId && (
+          <Import
+            {...props}
+            tree={tree}
+            setTree={setTree}
+            importRootId={importRootId}
+            setImportRootId={setImportRootId}
+          />
+        )}
 
-      <div style={{ paddingTop: 20 }}>
-        <Tree
-          tree={tree}
-          rootId={0}
-          render={(node, { depth, isOpen, onToggle }) => (
-            <CustomNode
-              node={node as NodeModel}
-              depth={depth}
-              isOpen={isOpen}
-              onToggle={onToggle}
-              programs={programOptions}
-              majors={majorOptions}
-              minors={minorOptions}
-              all={all}
-              onTextChange={handleTextChange}
-              importRootId={importRootId}
-              setImportRootId={setImportRootId}
-              clone={clone}
-              tree={tree}
-              onAddNode={(node, insert) => {
-                if (insert) {
-                  if (Array.isArray(node)) {
-                    setTree(node.concat(tree));
+        <div style={{ paddingTop: 20 }}>
+          <Tree
+            tree={tree}
+            rootId={0}
+            render={(node, { depth, isOpen, onToggle }) => (
+              <CustomNode
+                node={node as NodeModel}
+                depth={depth}
+                isOpen={isOpen}
+                onToggle={onToggle}
+                programs={programOptions}
+                majors={majorOptions}
+                minors={minorOptions}
+                all={all}
+                onTextChange={handleTextChange}
+                importRootId={importRootId}
+                setImportRootId={setImportRootId}
+                clone={clone}
+                tree={tree}
+                onAddNode={(node, insert) => {
+                  if (insert) {
+                    if (Array.isArray(node)) {
+                      setTree(node.concat(tree));
+                    } else {
+                      setTree([node].concat(tree));
+                    }
                   } else {
-                    setTree([node].concat(tree));
+                    setTree(tree.concat(node));
                   }
-                } else {
-                  setTree(tree.concat(node));
-                }
-              }}
-              onDeleteNode={(id, handleChildren) => {
-                if (!handleChildren || handleChildren === "delete") {
-                  setTree(tree.filter((n) => n.id !== id && n.parent !== id));
-                } else {
-                  let node = tree.find((t) => t.id === id);
-                  setTree(
-                    tree.map((t) =>
-                      t.parent === id ? { ...t, parent: node!.parent } : t
-                    )
-                  );
-                }
-              }}
-              onNodeChange={(id, value) => {
-                const { text, droppable, ...rest } = value;
-                const newTree = tree.map((node) => {
-                  if (node.id === id) {
-                    return {
-                      ...node,
-                      text: text != null ? text : node.text,
-                      droppable: droppable == null ? node.droppable : droppable,
-                      data: {
-                        ...node.data,
-                        ...(rest as any),
-                      },
-                    };
+                }}
+                onDeleteNode={(id, handleChildren) => {
+                  if (!handleChildren || handleChildren === "delete") {
+                    setTree(tree.filter((n) => n.id !== id && n.parent !== id));
+                  } else {
+                    let node = tree.find((t) => t.id === id);
+                    setTree(
+                      tree.map((t) =>
+                        t.parent === id ? { ...t, parent: node!.parent } : t
+                      )
+                    );
                   }
+                }}
+                onNodeChange={(id, value) => {
+                  const { text, droppable, ...rest } = value;
+                  const newTree = tree.map((node) => {
+                    if (node.id === id) {
+                      return {
+                        ...node,
+                        text: text != null ? text : node.text,
+                        droppable:
+                          droppable == null ? node.droppable : droppable,
+                        data: {
+                          ...node.data,
+                          ...(rest as any),
+                        },
+                      };
+                    }
 
-                  return node;
-                });
+                    return node;
+                  });
 
-                setTree(newTree);
-              }}
-            />
-          )}
-          dragPreviewRender={(
-            monitorProps: DragLayerMonitorProps<FileProperties>
-          ) => <CustomDragPreview monitorProps={monitorProps} />}
-          onDrop={handleDrop}
-          classes={{
-            root: styles.treeRoot,
-            draggingSource: styles.draggingSource,
-            placeholder: styles.placeholderContainer,
-          }}
-          sort={false}
-          insertDroppableFirst={false}
-          canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
-            if (dropTarget?.data?.type?.indexOf("link") == 0) {
-              return false;
-            }
+                  setTree(newTree);
+                }}
+              />
+            )}
+            dragPreviewRender={(
+              monitorProps: DragLayerMonitorProps<FileProperties>
+            ) => <CustomDragPreview monitorProps={monitorProps} />}
+            onDrop={handleDrop}
+            classes={{
+              root: styles.treeRoot,
+              draggingSource: styles.draggingSource,
+              placeholder: styles.placeholderContainer,
+            }}
+            sort={false}
+            insertDroppableFirst={false}
+            canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+              if (dropTarget?.data?.type?.indexOf("link") == 0) {
+                return false;
+              }
 
-            if (dragSource?.parent === dropTargetId) {
-              return true;
-            }
-          }}
-          dropTargetOffset={5}
-          placeholderRender={(node, { depth }) => (
-            <Placeholder node={node} depth={depth} />
-          )}
-          canDrag={(node) => !node?.data?.temp}
-          // onChangeOpen={(nodes) => {
-          //   let newNodes = [];
-          //   for (let nodeId of nodes) {
-          //     let node = tree.find((t) => t.id == nodeId)!;
-          //     if (node.data?.type === "link:own") {
-          //       let currentPool = tree.find((t) => t.id == node.text);
+              if (dragSource?.parent === dropTargetId) {
+                return true;
+              }
+            }}
+            dropTargetOffset={5}
+            placeholderRender={(node, { depth }) => (
+              <Placeholder node={node} depth={depth} />
+            )}
+            canDrag={(node) => !node?.data?.temp}
+            // onChangeOpen={(nodes) => {
+            //   let newNodes = [];
+            //   for (let nodeId of nodes) {
+            //     let node = tree.find((t) => t.id == nodeId)!;
+            //     if (node.data?.type === "link:own") {
+            //       let currentPool = tree.find((t) => t.id == node.text);
 
-          //       if (currentPool != null) {
-          //         let poolChildren = tree.filter(
-          //           (t) => t.parent == currentPool!.id
-          //         );
-          //         newNodes.push(
-          //           ...poolChildren.map((c) => ({
-          //             ...c,
-          //             id: getGuid(),
-          //             parent: node.id,
-          //             data: { ...c.data, temp: true },
-          //           }))
-          //         );
-          //       }
-          //     }
-          //   }
-          //   if (newNodes.length) {
-          //     setTree(tree.concat(newNodes));
-          //   }
-          // }}
+            //       if (currentPool != null) {
+            //         let poolChildren = tree.filter(
+            //           (t) => t.parent == currentPool!.id
+            //         );
+            //         newNodes.push(
+            //           ...poolChildren.map((c) => ({
+            //             ...c,
+            //             id: getGuid(),
+            //             parent: node.id,
+            //             data: { ...c.data, temp: true },
+            //           }))
+            //         );
+            //       }
+            //     }
+            //   }
+            //   if (newNodes.length) {
+            //     setTree(tree.concat(newNodes));
+            //   }
+            // }}
 
-          key={model.id}
-          initialOpen={true}
-          // initialOpen={tree
-          //   .filter(
-          //     (t) =>
-          //       !t.data ||
-          //       !t.data.type ||
-          //       (t.data.type.indexOf("link:") == -1 && t.data.type !== "pool")
-          //   )
-          //   .map((t) => t.id)}
-        />
+            key={model.id}
+            initialOpen={true}
+            // initialOpen={tree
+            //   .filter(
+            //     (t) =>
+            //       !t.data ||
+            //       !t.data.type ||
+            //       (t.data.type.indexOf("link:") == -1 && t.data.type !== "pool")
+            //   )
+            //   .map((t) => t.id)}
+          />
+        </div>
       </div>
-    </div>
+      <CombinationsExplorer
+        key={model.id}
+        tree={tree}
+        setTree={setTree}
+        setExploring={setExploring}
+      />
+    </>
   );
 };

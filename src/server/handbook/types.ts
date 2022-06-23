@@ -1,9 +1,22 @@
 import type { Handbook, Program } from "@prisma/client";
 
 import type { NodeType } from "components/Admin/Handbook/types";
-import { Message } from './errorMessages';
+import type { Message } from "./errorMessages";
 
-export type ClientHandbook = Handbook & { type: NodeType };
+export type ClientHandbook = Handbook & {
+  type: NodeType;
+  replaces?: number;
+  // maxCredits?: number;
+  // selectedCredits?: number;
+  collection?: number;
+  collectionChildren?: ClientHandbook[];
+};
+
+export type Sequence = {
+  parent: Sequence | null;
+  child?: Sequence | null | undefined;
+  items: ClientHandbook[];
+};
 
 type SequenceItem = {
   code?: string;

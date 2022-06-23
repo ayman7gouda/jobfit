@@ -187,13 +187,13 @@ function parseSubjectName(selected: Handbook) {
   return extractName(selected.text);
 }
 
-export function daoInNode(selected: TreeNode): ProgramInput {
+export function daoInNode(selected: TreeNode, replaceId = true): ProgramInput {
   return {
     id: selected.id,
     handbook: selected.handbook
       .filter((h) => !h.data.temp)
       .map((h, i) => ({
-        id: h.data.dbId,
+        id: replaceId ? h.data.dbId : h.id,
         nodeId: h.id,
         parentId: parseInt(h.parent as string),
         text: h.data.type === "subject" && h.data.subjectCode ? "" : h.text,
@@ -215,6 +215,39 @@ export function daoInNode(selected: TreeNode): ProgramInput {
   };
 }
 
+export function nodeToTree(h: Handbook, j: number) {
+  let subjectCode = parseSubjectCode(h)!;
+  let subjectName = parseSubjectName(h)!;
+
+  return {
+    id: h.nodeId,
+    parent: h.parentId as unknown as string,
+    text: subjectCode ? `${subjectCode} ${subjectName}` : h.text || "",
+    droppable: h.folder || false,
+    index: h.index || j,
+    data: {
+      dbId: h.id,
+      type:
+        h.folder && !h.type
+          ? "folder"
+          : !h.folder && !h.type
+          ? "subject"
+          : (h.type! as NodeType),
+      selection: h.folder && !h.selection ? "AND" : h.selection!,
+      selector: h.selector!,
+      credits: h.credits!,
+      flagged: h.flagged!,
+      level: h.level!,
+      collection: h.collection!,
+      number: h.number!,
+      maxNumber: h.maxNumber!,
+      reference: h.reference!,
+      subjectCode,
+      subjectName,
+    },
+  };
+}
+
 export function daoOutNode(
   data:
     | NonNullable<ProgramQuery["program"]>
@@ -223,38 +256,8 @@ export function daoOutNode(
   let handbook: NodeModel[];
   if (data.handbook && data.handbook.length) {
     handbook = data.handbook
-      .map((h, j) => {
-        let subjectCode = parseSubjectCode(h)!;
-        let subjectName = parseSubjectName(h)!;
+      .map((h, j) => nodeToTree(h, j))
 
-        return {
-          id: h.nodeId,
-          parent: h.parentId as unknown as string,
-          text: subjectCode ? `${subjectCode} ${subjectName}` : h.text || "",
-          droppable: h.folder || false,
-          index: h.index || j,
-          data: {
-            dbId: h.id,
-            type:
-              h.folder && !h.type
-                ? "folder"
-                : !h.folder && !h.type
-                ? "subject"
-                : (h.type! as NodeType),
-            selection: h.folder && !h.selection ? "AND" : h.selection!,
-            selector: h.selector!,
-            credits: h.credits!,
-            flagged: h.flagged!,
-            level: h.level!,
-            collection: h.collection!,
-            number: h.number!,
-            maxNumber: h.maxNumber!,
-            reference: h.reference!,
-            subjectCode,
-            subjectName,
-          },
-        };
-      })
       .sort((a, b) => (a.index < b.index ? -1 : 1));
     // handbook = handbook.filter((h, i) => handbook.)
   } else {

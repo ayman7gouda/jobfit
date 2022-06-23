@@ -1,7 +1,7 @@
 import { toUrlName } from 'lib/utils';
 import {
-  HiBeaker, HiChevronDown, HiChevronRight, HiCollection, HiDuplicate, HiFolder, HiLibrary, HiLink,
-  HiLockClosed, HiPencil, HiTrash
+  HiBan, HiBeaker, HiChevronDown, HiChevronRight, HiCollection, HiDuplicate, HiFolder, HiLibrary,
+  HiLink, HiLockClosed, HiPencil, HiTrash
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
@@ -53,7 +53,7 @@ function renderOrder(props: CustomNodeProps) {
 
   // filter only nodes which are in the same program
   nodes = nodes.filter((n) =>
-    nodeParents[n.id].some((p) => parents.indexOf(p.parent.id as number) >= 0)
+    nodeParents[n.id].some((p) => parents.indexOf(p.parent?.id as number) >= 0)
   );
 
   nodes.sort((a, b) => {
@@ -124,6 +124,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
   return (
     <div
       className={styles.root + " " + styles.buttons}
+      title={JSON.stringify(props.node, null, 4)}
       style={{
         paddingInlineStart: indent,
         background: props.node.data.temp
@@ -140,7 +141,6 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
           </div>
         )}
       </div>
-
       {isConstraint ? (
         <HiLockClosed style={{ color: "red" }} />
       ) : props.node.data.type === "link:elective" ? (
@@ -157,8 +157,13 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
         <HiCollection style={{ color }} />
       ) : props.node.data.type === "program" ? (
         <HiLibrary style={{ color: "blue" }} />
-      ) : (
+      ) : props.node.data.type === "folder" ? (
         <HiFolder style={{ color }} />
+      ) : (
+        <HiBan
+          style={{ color: "red" }}
+          title={`Unexpected type: ${props.node.data.type}`}
+        />
       )}
 
       <div className={styles.nodeInner}>
