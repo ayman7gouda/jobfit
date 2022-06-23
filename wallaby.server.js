@@ -3,7 +3,11 @@ module.exports = function (wallaby) {
     "mysql://jobfitadmin:!!Kosicka9!!@trescak.synology.me:3306/jobfit-test";
 
   return {
-    files: ["src/server/**/*.ts", "!src/server/**/tests/*.ts"],
+    files: [
+      "src/server/**/*.ts",
+      "src/lib/**/*.ts",
+      "!src/server/**/tests/*.ts",
+    ],
     tests: ["src/server/**/tests/*.ts"],
     compilers: {
       "**/*.ts?(x)": wallaby.compilers.typeScript({
