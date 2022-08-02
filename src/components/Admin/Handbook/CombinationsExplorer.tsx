@@ -7,9 +7,14 @@ import { expandMinimumMaximum, expandOrNodes, expandSequence } from 'server/hand
 
 import { daoInNode, nodeToTree } from './helpers';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
+import { useStepFourResolveNodesLazyQuery } from './queries/stepFourResolveNodes.query.generated';
 import {
   useStepOneExpandCollectionsLazyQuery
 } from './queries/stepOneExpandCollections.query.generated';
+import {
+  useStepThreeExpandConditionsLazyQuery
+} from './queries/stepThreeExpandConditions.query.generated';
+import { useStepTwoExpandExtremesLazyQuery } from './queries/stepTwoExpandExtremes.query.generated';
 
 export function CombinationsExplorer({
   tree,
@@ -42,6 +47,8 @@ export function CombinationsExplorer({
   const programs = handbook.filter((h) => h.type === "Program");
 
   const [collections, setCollections] = useState([] as HandbookFragment[][]);
+  // const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
+
   const [state, setState] = useState({
     collection: {
       index: 0,
@@ -61,10 +68,21 @@ export function CombinationsExplorer({
     },
   });
 
-  const [expandCollection, { loading, data }] =
-    useStepOneExpandCollectionsLazyQuery({
-      context: { clientName: "science" },
-    });
+  const [expandCollection] = useStepOneExpandCollectionsLazyQuery({
+    context: { clientName: "science" },
+  });
+
+  const [expandExtremes] = useStepTwoExpandExtremesLazyQuery({
+    context: { clientName: "science" },
+  });
+
+  const [expandConditions] = useStepThreeExpandConditionsLazyQuery({
+    context: { clientName: "science" },
+  });
+
+  const [expandReferences] = useStepFourResolveNodesLazyQuery({
+    context: { clientName: "science" },
+  });
 
   useEffect(() => {
     expandCollection({ variables: { handbook } }).then(({ data }) => {
@@ -172,7 +190,7 @@ export function CombinationsExplorer({
       let collectionCombination = collections[currentIndex - 1];
 
       // remove all collection children
-      let existingCollections = handbook.filter((h) => h.type === "collection");
+      let existingCollections = handbook.filter((h) => h.type === "Collection");
       let hb = handbook.filter((h) =>
         existingCollections.every((e) => e.id !== h.parentId)
       );

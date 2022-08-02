@@ -21,7 +21,7 @@ export function SubjectSkillSearch() {
         ["mt-8"]: searchQuery,
       })}
     >
-      <SearchBar setSearchQuery={processQuery} />
+      <SearchBar setSearchQuery={processQuery as any} />
 
       {!searchQuery && (
         <a

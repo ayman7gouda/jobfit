@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { NodeType } from 'generated/clientTypes';
 import {
   HiArrowUp, HiCheck, HiCollection, HiDocumentAdd, HiDownload, HiFolderAdd, HiLockClosed,
   HiOutlineDocument, HiTrash, HiX
@@ -12,7 +13,7 @@ import {
   SpecialisationQueryResult, useSpecialisationLazyQuery
 } from './queries/specialisation.query.generated';
 import { getGuid, IconButton, Select, TextField } from './shared';
-import { CustomNodeChildProps, NodeModel, NodeType } from './types';
+import { CustomNodeChildProps, NodeModel } from './types';
 
 export function FolderEditor(props: CustomNodeChildProps) {
   const [labelText, setLabelText] = useState(props.node.text);
@@ -63,7 +64,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
         </div>
       </div>
 
-      {props.node.data.type?.indexOf("link") === -1 && (
+      {props.node.data.type?.indexOf("Link") === -1 && (
         <TextField
           key="text"
           className={styles.textField}
@@ -144,7 +145,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
         </>
       )}
 
-      {props.node.data.type === "link:program" && (
+      {props.node.data.type === "LinkProgram" && (
         <LinkEditor
           programs={props.programs}
           node={props.node}
@@ -154,11 +155,11 @@ export function FolderEditor(props: CustomNodeChildProps) {
           getData={(result: ProgramQueryResult) => result.data?.program}
         />
       )}
-      {(props.node.data.type === "link:major" ||
-        props.node.data.type === "link:minor") && (
+      {(props.node.data.type === "LinkMajor" ||
+        props.node.data.type === "LinkMinor") && (
         <LinkEditor
           programs={
-            props.node.data.type === "link:major" ? props.majors : props.minors
+            props.node.data.type === "LinkMajor" ? props.majors : props.minors
           }
           node={props.node}
           onNodeChange={props.onNodeChange}
@@ -169,7 +170,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
           }
         />
       )}
-      {props.node.data.type === "link:collection" && (
+      {props.node.data.type === "LinkCollection" && (
         <Select
           value={props.node.data.reference?.toString()}
           style={{ minWidth: 280 }}
@@ -181,7 +182,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
         >
           <option value="">Please Select</option>
           {props.tree
-            .filter((n) => n.data.type === "collection")
+            .filter((n) => n.data.type === "Collection")
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {p.text}
@@ -191,8 +192,8 @@ export function FolderEditor(props: CustomNodeChildProps) {
       )}
 
       {props.node.data.type &&
-        (props.node.data.type.indexOf("link:collection") >= 0 ||
-          props.node.data.type === "link:elective") && (
+        (props.node.data.type.indexOf("LinkCollection") >= 0 ||
+          props.node.data.type === "LinkElective") && (
           <TextField
             type="number"
             className={styles.textField}
@@ -218,7 +219,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
       <Select
         onChange={(e) => {
           props.onNodeChange(id, { type: e.currentTarget.value as NodeType });
-          if (e.currentTarget.value === "link:elective") {
+          if (e.currentTarget.value === "LinkElective") {
             setLabelText("Electives");
           }
         }}
@@ -226,15 +227,15 @@ export function FolderEditor(props: CustomNodeChildProps) {
         value={props.node.data.type}
         style={{ marginRight: 4, width: 180, background: "rgb(226 232 240)" }}
       >
-        <option value="folder">Sequence</option>
-        <option value="collection">Collection</option>
-        <option value="program">Program</option>
+        <option value="Folder">Sequence</option>
+        <option value="Collection">Collection</option>
+        <option value="Program">Program</option>
         <optgroup label="Links">
-          <option value="link:elective">Elective Link</option>
-          <option value="link:collection">Collection Link</option>
-          <option value="link:program">Program Link</option>
-          <option value="link:major">Major Link</option>
-          <option value="link:minor">Minor Link</option>
+          <option value="LinkElective">Elective Link</option>
+          <option value="LinkCollection">Collection Link</option>
+          <option value="LinkProgram">Program Link</option>
+          <option value="LinkMajor">Major Link</option>
+          <option value="LinkMinor">Minor Link</option>
         </optgroup>
       </Select>
 
@@ -246,7 +247,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
         <HiX />
       </IconButton>
 
-      {props.node.data.type?.indexOf("link:") === -1 && (
+      {props.node.data.type?.indexOf("Link") === -1 && (
         <>
           <IconButton
             title="Add AND Folder"
@@ -257,7 +258,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                 droppable: true,
                 text: "",
                 data: {
-                  type: "folder",
+                  type: "Folder",
                   selection: "AND",
                 },
               })
@@ -275,7 +276,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                 droppable: true,
                 text: "",
                 data: {
-                  type: "folder",
+                  type: "Folder",
                   number: 1,
                   selection: "OR",
                 },
@@ -312,7 +313,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                 parent: props.node.id,
                 text: "Subject",
                 data: {
-                  type: "subject",
+                  type: "Subject",
                 },
               })
             }
@@ -328,7 +329,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                 parent: props.node.id,
                 text: "",
                 data: {
-                  type: "constraint:program",
+                  type: "ConstraintProgram",
                 },
               })
             }
@@ -356,7 +357,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                     text: "Year " + num,
                     droppable: true,
                     data: {
-                      type: "folder",
+                      type: "Folder",
                       selection: "AND",
                     },
                   },
@@ -367,7 +368,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                     text: "Autumn",
                     droppable: true,
                     data: {
-                      type: "folder",
+                      type: "Folder",
                       selection: "AND",
                     },
                   },

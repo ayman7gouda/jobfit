@@ -51,8 +51,8 @@ async function checkCollectionLink(
     // check if all pool nodes contain the selected selection
     for (let collectionNode of collectionNodes) {
       if (
-        collectionNode.type === "link:major" ||
-        collectionNode.type === "link:minor"
+        collectionNode.type === "LinkMajor" ||
+        collectionNode.type === "LinkMinor"
       ) {
         let subCollection = await await client.query<SpecialisationQuery>({
           query: SpecialisationDocument,
@@ -73,7 +73,7 @@ async function checkCollectionLink(
         }
 
         let collectionNodes = subCollection.data.specialisation.handbook.filter(
-          (h) => h.type === "collection"
+          (h) => h.type === "Collection"
         );
         if (collectionNodes.every((p) => p.text !== node.data!.selector)) {
           return `Specialisation "${subCollection.data.specialisation.name} [${
@@ -100,8 +100,8 @@ export function LinkNode(props: {
   const checkLink = useCallback(
     debounce(() => {
       if (
-        props.node.data.type === "link:minor" ||
-        props.node.data.type === "link:major"
+        props.node.data.type === "LinkMinor" ||
+        props.node.data.type === "LinkMajor"
       ) {
         checkCollectionLink(
           client,
@@ -109,7 +109,7 @@ export function LinkNode(props: {
           SpecialisationDocument,
           "specialisation"
         ).then((a) => setLinkError(a));
-      } else if (props.node.data.type === "link:program") {
+      } else if (props.node.data.type === "LinkProgram") {
         checkCollectionLink(
           client,
           props.node,
@@ -268,7 +268,7 @@ export function LinkEditor(props: {
         >
           <option value="">Please Select</option>
           {programNodes
-            .filter((n) => n.data.type === "collection")
+            .filter((n) => n.data.type === "Collection")
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {p.text}

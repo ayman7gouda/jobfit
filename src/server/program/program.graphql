@@ -95,7 +95,7 @@ input HandbookInput {
   text: String
   index: Int
   folder: Boolean
-  type: String
+  type: NodeType!
   selection: Selection
   number: Int
   maxNumber: Int

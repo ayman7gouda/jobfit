@@ -1,0 +1,5 @@
+query StepThreeExpandConditions($handbook: [HandbookInput!]!) {
+  stepThreeExpandConditions(handbook: $handbook) {
+    ...Handbook
+  }
+}

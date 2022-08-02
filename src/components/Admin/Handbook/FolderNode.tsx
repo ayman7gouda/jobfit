@@ -17,7 +17,7 @@ function findParent(node: NodeModel, props: CustomNodeProps): NodeModel {
 
 function findParents(node: NodeModel, props: CustomNodeProps): number[] {
   let parents = [];
-  while (node && node.data.type !== "program" && node.parent) {
+  while (node && node.data.type !== "Program" && node.parent) {
     parents.push(node.parent as number);
     node = findParent(node, props);
   }
@@ -29,7 +29,7 @@ function findParentsAndChildren(
   props: CustomNodeProps
 ): ParentStructure[] {
   let parents: ParentStructure[] = [];
-  while (node && node.data.type !== "program" && node.parent) {
+  while (node && node.data.type !== "Program" && node.parent) {
     let p = props.tree.find((n) => n.id === node.parent)!;
     parents.push({ parent: p, child: node });
     node = p;
@@ -117,7 +117,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
 
   const color = props.node.data.selection === "AND" ? "salmon" : "green";
   const children = props.tree.filter(
-    (t) => t.parent === props.node.id && t?.data.type === "constraint:program"
+    (t) => t.parent === props.node.id && t?.data.type === "ConstraintProgram"
   );
   const isConstraint = children.length > 1;
 
@@ -135,7 +135,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
       }}
     >
       <div className={`${styles.arrow} ${props.isOpen ? styles.isOpen : ""}`}>
-        {props.node.data.type?.indexOf("link") === -1 && (
+        {props.node.data.type?.indexOf("Link") === -1 && (
           <div onClick={handleToggle}>
             {props.isOpen ? <HiChevronDown /> : <HiChevronRight />}
           </div>
@@ -143,21 +143,21 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
       </div>
       {isConstraint ? (
         <HiLockClosed style={{ color: "red" }} />
-      ) : props.node.data.type === "link:elective" ? (
+      ) : props.node.data.type === "LinkElective" ? (
         <HiBeaker style={{ color: "green" }} />
-      ) : props.node.data.type === "link:collection" ? (
+      ) : props.node.data.type === "LinkCollection" ? (
         <HiLink style={{ color: "purple" }} />
-      ) : props.node.data.type === "link:program" ? (
+      ) : props.node.data.type === "LinkProgram" ? (
         <HiLink style={{ color: "orange" }} />
-      ) : props.node.data.type === "link:major" ? (
+      ) : props.node.data.type === "LinkMajor" ? (
         <HiLink style={{ color: "blue" }} />
-      ) : props.node.data.type === "link:minor" ? (
+      ) : props.node.data.type === "LinkMinor" ? (
         <HiLink style={{ color: "darkgoldenrod" }} />
-      ) : props.node.data.type === "collection" ? (
+      ) : props.node.data.type === "Collection" ? (
         <HiCollection style={{ color }} />
-      ) : props.node.data.type === "program" ? (
+      ) : props.node.data.type === "Program" ? (
         <HiLibrary style={{ color: "blue" }} />
-      ) : props.node.data.type === "folder" ? (
+      ) : props.node.data.type === "Folder" ? (
         <HiFolder style={{ color }} />
       ) : (
         <HiBan
@@ -171,7 +171,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
           <FolderEditor {...props} />
         ) : (
           <div className={styles.inputWrapper}>
-            {props.node.data.type !== "folder" &&
+            {props.node.data.type !== "Folder" &&
               props.node.data.selection === "AND" && (
                 <div className="flex">
                   <div
@@ -184,9 +184,9 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
                     className="bg-red-500 px-2 py-1 mr-1 rounded-r-lg nowrap text-white text-xs"
                     style={{}}
                   >
-                    {props.node.data.type === "collection"
+                    {props.node.data.type === "Collection"
                       ? " from the collection"
-                      : props.node.data.type === "program"
+                      : props.node.data.type === "Program"
                       ? "of the program"
                       : " of the"}
                   </div>
@@ -219,7 +219,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
                   className="bg-green-500 px-2 py-1 mr-1 rounded-r-lg nowrap text-white text-xs"
                   style={{}}
                 >
-                  {props.node.data.type === "collection"
+                  {props.node.data.type === "Collection"
                     ? " from the collection"
                     : " from the"}
                 </div>
@@ -227,8 +227,8 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
             )}
             {!!props.node.data.number &&
               props.node.data.number < 10 &&
-              props.node.data.type?.indexOf("link") == 0 &&
-              findParent(props.node, props).data.type !== "collection" &&
+              props.node.data.type?.indexOf("Link") == 0 &&
+              findParent(props.node, props).data.type !== "Collection" &&
               findParent(props.node, props).data.selection !== "OR" && (
                 <div
                   className="bg-orange-300 mr-1 font-bold px-2 py-1 rounded-lg nowrap text-white text-xs"
@@ -237,14 +237,13 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
                   {renderOrder(props)}
                 </div>
               )}
-            {(props.node.text ||
-              props.node.data.type === "link:collection") && (
+            {(props.node.text || props.node.data.type === "LinkCollection") && (
               <div
                 style={{ cursor: "pointer" }}
                 onClick={handleShowInput}
                 className={styles.nodeLabel}
               >
-                {props.node.data.type === "link:collection"
+                {props.node.data.type === "LinkCollection"
                   ? props.tree.find((t) => t.id === props.node.data.reference)
                       ?.text || "Not Found "
                   : props.node.text}
@@ -264,8 +263,8 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
               >
                 <HiDuplicate />
               </IconButton>
-              {(props.node.data.type === "link:major" ||
-                props.node.data.type === "link:minor") && (
+              {(props.node.data.type === "LinkMajor" ||
+                props.node.data.type === "LinkMinor") && (
                 <a
                   href={`/admin/handbook/specialisations/${toUrlName(
                     props.node.text
@@ -277,7 +276,7 @@ export const FolderNode: React.FC<CustomNodeChildProps> = (props) => {
                   </IconButton>
                 </a>
               )}
-              {props.node.data.type === "link:program" && (
+              {props.node.data.type === "LinkProgram" && (
                 <a
                   href={`/admin/handbook/program/${toUrlName(
                     props.node.text
