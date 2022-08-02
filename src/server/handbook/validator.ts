@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 
 import { groupByArray } from '../../lib/utils';
 import { HandbookErrorMessage, messages } from './errorMessages';
-import { NodeFactory } from './nodes';
 import { cartesian, combinations, fact } from './shared';
 
 import type {
@@ -14,8 +13,6 @@ import type {
 } from "./types";
 
 export async function validateProgram(id: number, db: PrismaClient) {
-  NodeFactory.init();
-
   if (db == null) {
     throw new Error("Client not specified!");
   }
@@ -198,38 +195,6 @@ export function expandSequence(sequence: Sequence, cull = false) {
   return finalSequence;
 }
 
-export function expandSequence2(sequence: Sequence, cull = false) {
-  let finalSequence: ClientHandbook[] = sequence.items;
-
-  while (sequence.parent != null) {
-    finalSequence = sequence.parent.items.flatMap((p) => {
-      if (finalSequence.some((s) => s.replaces === p.id)) {
-        return finalSequence.filter((s) => s.replaces === p.id);
-      }
-      return p;
-    });
-    sequence = sequence.parent;
-  }
-
-  // remove orphaned children from replacements
-  finalSequence = finalSequence.filter((s) =>
-    finalSequence.some((f) => s.parentId == 0 || f.id === s.parentId)
-  );
-
-  if (cull) {
-    finalSequence = finalSequence.map((s: any) => {
-      return Object.keys(s).reduce((prev: any, next) => {
-        if (s[next] != null) {
-          prev[next] = s[next];
-        }
-        return prev;
-      }, {});
-    });
-  }
-
-  return finalSequence;
-}
-
 let levelRegex: { [index: string | number]: RegExp } = {
   1: /1\d\d\d/,
   2: /2\d\d\d/,
@@ -240,231 +205,263 @@ let levelRegex: { [index: string | number]: RegExp } = {
   7: /7\d\d\d/,
 };
 
-export function generateSequences(
-  sequence: ClientHandbook[],
-  handbook: ClientHandbook[],
-  externals?: Map<number, Pathway[]>
-): Sequence[] {
-  let queue: Sequence[] = [];
+// export function expandSequence2(sequence: Sequence, cull = false) {
+//   let finalSequence: ClientHandbook[] = sequence.items;
 
-  // 1. remove all collections that have no reference in the handbook
+//   while (sequence.parent != null) {
+//     finalSequence = sequence.parent.items.flatMap((p) => {
+//       if (finalSequence.some((s) => s.replaces === p.id)) {
+//         return finalSequence.filter((s) => s.replaces === p.id);
+//       }
+//       return p;
+//     });
+//     sequence = sequence.parent;
+//   }
 
-  handbook = handbook.filter(
-    (h) => h.type !== "collection" || handbook.some((s) => s.reference === h.id)
-  );
+//   // remove orphaned children from replacements
+//   finalSequence = finalSequence.filter((s) =>
+//     finalSequence.some((f) => s.parentId == 0 || f.id === s.parentId)
+//   );
 
-  // 2. browse all collection links
-  //    - create combinations of collections with their children and add them to the processing queue
+//   if (cull) {
+//     finalSequence = finalSequence.map((s: any) => {
+//       return Object.keys(s).reduce((prev: any, next) => {
+//         if (s[next] != null) {
+//           prev[next] = s[next];
+//         }
+//         return prev;
+//       }, {});
+//     });
+//   }
 
-  let collectionsWithChildren = handbook
-    .filter((h) => h.type === "collection")
-    .map((h) => {
-      // we will be creating combinations of these element, so we will also remember the original collection
-      let children = handbook
-        .filter(
-          (c) => c.parentId === h.id && c.type && c.type.indexOf("link:") === 0
-        )
-        .map((c) => ({ ...c, collection: h.collection }));
+//   return finalSequence;
+// }
 
-      return {
-        collection: h,
-        linkChildren: children,
-        otherChildren: handbook.filter(
-          (c) => c.parentId === h.id && c.type && c.type.indexOf("link:") === -1
-        ),
-      };
-    });
-  let collectionsWithLinkChildren = collectionsWithChildren.filter(
-    (c) => c.linkChildren.length
-  );
+// export function generateSequences(
+//   sequence: ClientHandbook[],
+//   handbook: ClientHandbook[],
+//   externals?: Map<number, Pathway[]>
+// ): Sequence[] {
+//   let queue: Sequence[] = [];
 
-  // create combinations of subjects
+//   // 1. remove all collections that have no reference in the handbook
 
-  let collectionsWithoutLinks = collectionsWithChildren
-    .filter((c) => c.linkChildren.length == 0 && c.otherChildren.length > 0)
-    .map((c) => ({ ...c.collection, collectionChildren: c.otherChildren }));
+//   handbook = handbook.filter(
+//     (h) => h.type !== "collection" || handbook.some((s) => s.reference === h.id)
+//   );
 
-  // create combinations of link
+//   // 2. browse all collection links
+//   //    - create combinations of collections with their children and add them to the processing queue
 
-  if (collectionsWithLinkChildren.length) {
-    // we will create all possible combinations of links from the collections
-    // for example:
-    //  if collection A had ['link:A', 'link:B']
-    //  and collection B had ['link:A', link:C'] I will have all possible combinations of these references
-    //  such as [[link:A, link:A], [link:A, link:C], [link:B, link:A], [link:B, link:C]]
+//   let collectionsWithChildren = handbook
+//     .filter((h) => h.type === "collection")
+//     .map((h) => {
+//       // we will be creating combinations of these element, so we will also remember the original collection
+//       let children = handbook
+//         .filter(
+//           (c) => c.parentId === h.id && c.type && c.type.indexOf("link:") === 0
+//         )
+//         .map((c) => ({ ...c, collection: h.collection }));
 
-    let collectionCombinations = cartesian(
-      collectionsWithLinkChildren.map((c) => c.linkChildren)
-    );
+//       return {
+//         collection: h,
+//         linkChildren: children,
+//         otherChildren: handbook.filter(
+//           (c) => c.parentId === h.id && c.type && c.type.indexOf("link:") === -1
+//         ),
+//       };
+//     });
+//   let collectionsWithLinkChildren = collectionsWithChildren.filter(
+//     (c) => c.linkChildren.length
+//   );
 
-    for (let combination of collectionCombinations) {
-      // we will now browse each collection group and add as many link elements into replacement collection as we can
+//   // create combinations of subjects
 
-      let collectionsWithLinks: ClientHandbook[] = [];
+//   let collectionsWithoutLinks = collectionsWithChildren
+//     .filter((c) => c.linkChildren.length == 0 && c.otherChildren.length > 0)
+//     .map((c) => ({ ...c.collection, collectionChildren: c.otherChildren }));
 
-      for (let collectionCombination of combination) {
-        let collection = collectionsWithChildren.find(
-          (c) => c.collection.id === collectionCombination.collection
-        );
-        if (!collection) {
-          throw new Error(
-            "Reference collection not found!: " + combination[0].collection
-          );
-        }
+//   // create combinations of link
 
-        let collectionNode: ClientHandbook = {
-          ...collection.collection,
-          collectionChildren: [
-            collectionCombination,
-            ...collection.otherChildren,
-          ],
-        };
-        collectionsWithLinks.push(collectionNode);
-      }
+//   if (collectionsWithLinkChildren.length) {
+//     // we will create all possible combinations of links from the collections
+//     // for example:
+//     //  if collection A had ['link:A', 'link:B']
+//     //  and collection B had ['link:A', link:C'] I will have all possible combinations of these references
+//     //  such as [[link:A, link:A], [link:A, link:C], [link:B, link:A], [link:B, link:C]]
 
-      let rootSequence: Sequence = {
-        parent: null,
-        items: [
-          ...sequence,
-          ...collectionsWithoutLinks,
-          ...collectionsWithLinks,
-        ],
-      };
-      queue.push(rootSequence);
+//     let collectionCombinations = cartesian(
+//       collectionsWithLinkChildren.map((c) => c.linkChildren)
+//     );
 
-      // for (let collectionLink of collectionLinkGroups) {
+//     for (let combination of collectionCombinations) {
+//       // we will now browse each collection group and add as many link elements into replacement collection as we can
 
-      //   // get its children
-      //   let collectionChildren = handbook.filter(
-      //     (h) => h.parentId === collection!.id
-      //   );
-      //   let linkChildren = collectionChildren.filter(
-      //     (c) => c.type && c.type.indexOf("link:") === 0
-      //   );
+//       let collectionsWithLinks: ClientHandbook[] = [];
 
-      //   if (linkChildren.length > 0) {
-      //   } else {
-      //   }
-      // }
-    }
-  } else if (collectionsWithoutLinks.length) {
-    let rootSequence: Sequence = {
-      parent: null,
-      items: [...sequence, ...collectionsWithoutLinks],
-    };
-    queue.push(rootSequence);
-  } else {
-    let rootSequence: Sequence = {
-      parent: null,
-      items: sequence,
-    };
-    queue.push(rootSequence);
-  }
+//       for (let collectionCombination of combination) {
+//         let collection = collectionsWithChildren.find(
+//           (c) => c.collection.id === collectionCombination.collection
+//         );
+//         if (!collection) {
+//           throw new Error(
+//             "Reference collection not found!: " + combination[0].collection
+//           );
+//         }
 
-  // TODO: Now browse all initial nodes and if we have there a collection wih an OR node, expand it!
+//         let collectionNode: ClientHandbook = {
+//           ...collection.collection,
+//           collectionChildren: [
+//             collectionCombination,
+//             ...collection.otherChildren,
+//           ],
+//         };
+//         collectionsWithLinks.push(collectionNode);
+//       }
 
-  let finished = [];
+//       let rootSequence: Sequence = {
+//         parent: null,
+//         items: [
+//           ...sequence,
+//           ...collectionsWithoutLinks,
+//           ...collectionsWithLinks,
+//         ],
+//       };
+//       queue.push(rootSequence);
 
-  // expand all collections
+//       // for (let collectionLink of collectionLinkGroups) {
 
-  while (queue.length) {
-    // clear all the finished queue items
-    let current = queue.pop();
-    if (!current) {
-      break;
-    }
+//       //   // get its children
+//       //   let collectionChildren = handbook.filter(
+//       //     (h) => h.parentId === collection!.id
+//       //   );
+//       //   let linkChildren = collectionChildren.filter(
+//       //     (c) => c.type && c.type.indexOf("link:") === 0
+//       //   );
 
-    // create a "final" version of the sequence
-    const currentSequence = expandSequence(current);
+//       //   if (linkChildren.length > 0) {
+//       //   } else {
+//       //   }
+//       // }
+//     }
+//   } else if (collectionsWithoutLinks.length) {
+//     let rootSequence: Sequence = {
+//       parent: null,
+//       items: [...sequence, ...collectionsWithoutLinks],
+//     };
+//     queue.push(rootSequence);
+//   } else {
+//     let rootSequence: Sequence = {
+//       parent: null,
+//       items: sequence,
+//     };
+//     queue.push(rootSequence);
+//   }
 
-    // 1. browse from leafs to the root and start expanding collection links
-    const collectionLinks = currentSequence.filter(
-      (s) => s.type && s.type === "link:collection"
-    );
+//   // TODO: Now browse all initial nodes and if we have there a collection wih an OR node, expand it!
 
-    const toExpand = currentSequence.filter(
-      (s) => s.folder && s.selection === "OR"
-    );
+//   let finished = [];
 
-    if (collectionLinks.length) {
-      let replacements = expandCollectionLinks(
-        current,
-        currentSequence,
-        collectionLinks
-      );
-      queue.push(...replacements);
-    } else if (toExpand.length) {
-      // 2. once collection links are removed, we expand external links (if required)
+//   // expand all collections
 
-      // 3. once all the links are expanded, we can expand OR nodes
+//   while (queue.length) {
+//     // clear all the finished queue items
+//     let current = queue.pop();
+//     if (!current) {
+//       break;
+//     }
 
-      // group the or nodes by their type so that we have better control about multiple replacements
-      // such as those linking to a major or a minor
-      let groups = groupByArray(toExpand, (s) => s.type + (s.reference || ""));
+//     // create a "final" version of the sequence
+//     const currentSequence = expandSequence(current);
 
-      for (let group of groups) {
-        // expand the node and get all the replacements
-        let replacements =
-          group.values[0].type === "folder"
-            ? expandFolders(current, group.values, handbook, externals)
-            : [];
+//     // 1. browse from leafs to the root and start expanding collection links
+//     const collectionLinks = currentSequence.filter(
+//       (s) => s.type && s.type === "link:collection"
+//     );
 
-        // put back all the replacements
-        queue.push(...replacements);
-      }
-    } else {
-      finished.push(current);
-    }
-  }
+//     const toExpand = currentSequence.filter(
+//       (s) => s.folder && s.selection === "OR"
+//     );
 
-  return finished;
-}
+//     if (collectionLinks.length) {
+//       let replacements = expandCollectionLinks(
+//         current,
+//         currentSequence,
+//         collectionLinks
+//       );
+//       queue.push(...replacements);
+//     } else if (toExpand.length) {
+//       // 2. once collection links are removed, we expand external links (if required)
 
-function expandFolders(
-  parentSequence: Sequence,
-  nodes: ClientHandbook[],
-  handbook: ClientHandbook[],
-  externals: Map<number, Pathway[]>
-): Sequence[] {
-  let nodeReplacements = nodes.map((c) => expandFolder(c, handbook, externals));
-  let result: Sequence[] = [];
+//       // 3. once all the links are expanded, we can expand OR nodes
 
-  for (let combination of cartesian(nodeReplacements)) {
-    result.push({
-      items: combination.flat(),
-      parent: parentSequence,
-    });
-  }
-  return result;
-}
+//       // group the or nodes by their type so that we have better control about multiple replacements
+//       // such as those linking to a major or a minor
+//       let groups = groupByArray(toExpand, (s) => s.type + (s.reference || ""));
 
-function expandFolder(
-  node: ClientHandbook,
-  handbook: ClientHandbook[],
-  externals: Map<number, Pathway[]>
-): ClientHandbook[][] {
-  let children = handbook.filter((h) => h.parentId === node.id);
-  let result: ClientHandbook[][] = [];
+//       for (let group of groups) {
+//         // expand the node and get all the replacements
+//         let replacements =
+//           group.values[0].type === "folder"
+//             ? expandFolders(current, group.values, handbook)
+//             : [];
 
-  // when expanding a folder, the child nodes can only be subjects
-  // meaning we have to expand links prior to expanding folder
-  if (children.some((c) => c.type !== "subject")) {
-    throw new Error("We can only expand folder with subjects");
-  }
+//         // put back all the replacements
+//         queue.push(...replacements);
+//       }
+//     } else {
+//       finished.push(current);
+//     }
+//   }
 
-  if (!node.number) {
-    throw new Error("Unsupported");
-  }
+//   return finished;
+// }
 
-  let num = creditToNumber(node.number);
+// function expandFolders(
+//   parentSequence: Sequence,
+//   nodes: ClientHandbook[],
+//   handbook: ClientHandbook[],
+//   externals: Map<number, Pathway[]>
+// ): Sequence[] {
+//   let nodeReplacements = nodes.map((c) => expandFolder(c, handbook, externals));
+//   let result: Sequence[] = [];
 
-  // if there are min / max values we follow the parent restrictions
-  // TODO: handle min and max
-  for (let combination of combinations(children, num)) {
-    result.push(combination.map((c) => ({ ...c, replaces: node.id })));
-  }
-  return result;
-}
+//   for (let combination of cartesian(nodeReplacements)) {
+//     result.push({
+//       items: combination.flat(),
+//       parent: parentSequence,
+//     });
+//   }
+//   return result;
+// }
+
+// function expandFolder(
+//   node: ClientHandbook,
+//   handbook: ClientHandbook[],
+//   externals: Map<number, Pathway[]>
+// ): ClientHandbook[][] {
+//   let children = handbook.filter((h) => h.parentId === node.id);
+//   let result: ClientHandbook[][] = [];
+
+//   // when expanding a folder, the child nodes can only be subjects
+//   // meaning we have to expand links prior to expanding folder
+//   if (children.some((c) => c.type !== "subject")) {
+//     throw new Error("We can only expand folder with subjects");
+//   }
+
+//   if (!node.number) {
+//     throw new Error("Unsupported");
+//   }
+
+//   let num = creditToNumber(node.number);
+
+//   // if there are min / max values we follow the parent restrictions
+//   // TODO: handle min and max
+//   for (let combination of combinations(children, num)) {
+//     result.push(combination.map((c) => ({ ...c, replaces: node.id })));
+//   }
+//   return result;
+// }
 
 let guid = Date.now();
 

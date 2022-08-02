@@ -1,0 +1,5 @@
+query StepOneExpandCollections($handbook: [HandbookInput!]!) {
+  stepOneExpandCollections(handbook: $handbook) {
+    ...Handbook
+  }
+}

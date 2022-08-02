@@ -23,7 +23,6 @@ export type EmployerCount = {
 
 export type Handbook = {
   __typename?: 'Handbook';
-  collection?: Maybe<Scalars['Int']>;
   credits?: Maybe<Scalars['Int']>;
   flagged?: Maybe<Scalars['Boolean']>;
   folder?: Maybe<Scalars['Boolean']>;
@@ -44,7 +43,7 @@ export type Handbook = {
   subjectCode?: Maybe<Scalars['String']>;
   subjectName?: Maybe<Scalars['String']>;
   text?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
+  type: NodeType;
 };
 
 export type HandbookInput = {
@@ -162,6 +161,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDescription: SkillCluster;
   deleteDescription: SkillCluster;
+  doMe?: Maybe<Scalars['Boolean']>;
   saveProgramHandbook?: Maybe<Program>;
   saveSpecialisationHandbook?: Maybe<Specialisation>;
   saveSubjectSfia?: Maybe<SubjectSfiaSkill>;
@@ -202,6 +202,19 @@ export type MutationUpdateDescriptionArgs = {
   description: SkillClusterDescriptionInput;
 };
 
+export type NodeType =
+  | 'Collection'
+  | 'ConstraintProgram'
+  | 'ConstraintProgramNot'
+  | 'Folder'
+  | 'LinkCollection'
+  | 'LinkElective'
+  | 'LinkMajor'
+  | 'LinkMinor'
+  | 'LinkProgram'
+  | 'Program'
+  | 'Subject';
+
 export type Program = {
   __typename?: 'Program';
   code: Scalars['String'];
@@ -225,6 +238,7 @@ export type Query = {
   __typename?: 'Query';
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
+  isOk?: Maybe<Scalars['Int']>;
   jobCategories: Array<JobCategory>;
   jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
@@ -238,6 +252,10 @@ export type Query = {
   specialisation?: Maybe<Specialisation>;
   specialisations: Array<Specialisation>;
   status?: Maybe<Scalars['String']>;
+  stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
+  stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
+  stepThreeExpandConditions?: Maybe<Array<Array<Handbook>>>;
+  stepTwoExpandExtremes?: Maybe<Array<Array<Handbook>>>;
 };
 
 
@@ -278,6 +296,26 @@ export type QuerySkillClusterArgs = {
 
 export type QuerySpecialisationArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryStepFourResolveNodesArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepOneExpandCollectionsArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepThreeExpandConditionsArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepTwoExpandExtremesArgs = {
+  handbook: Array<HandbookInput>;
 };
 
 export type Selection =
@@ -519,6 +557,7 @@ export type ResolversTypes = {
   JobRoleProfile: ResolverTypeWrapper<JobRoleProfile>;
   JobSkills: ResolverTypeWrapper<JobSkills>;
   Mutation: ResolverTypeWrapper<{}>;
+  NodeType: NodeType;
   Program: ResolverTypeWrapper<Program>;
   ProgramInput: ProgramInput;
   Query: ResolverTypeWrapper<{}>;
@@ -584,7 +623,6 @@ export type EmployerCountResolvers<ContextType = Context, ParentType extends Res
 };
 
 export type HandbookResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Handbook'] = ResolversParentTypes['Handbook']> = {
-  collection?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   credits?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   flagged?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   folder?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -605,7 +643,7 @@ export type HandbookResolvers<ContextType = Context, ParentType extends Resolver
   subjectCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subjectName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['NodeType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -702,6 +740,7 @@ export type JobSkillsResolvers<ContextType = Context, ParentType extends Resolve
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addDescription?: Resolver<ResolversTypes['SkillCluster'], ParentType, ContextType, RequireFields<MutationAddDescriptionArgs, 'clusterId'>>;
   deleteDescription?: Resolver<ResolversTypes['SkillCluster'], ParentType, ContextType, RequireFields<MutationDeleteDescriptionArgs, 'clusterId' | 'descriptionId'>>;
+  doMe?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   saveProgramHandbook?: Resolver<Maybe<ResolversTypes['Program']>, ParentType, ContextType, RequireFields<MutationSaveProgramHandbookArgs, 'input'>>;
   saveSpecialisationHandbook?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType, RequireFields<MutationSaveSpecialisationHandbookArgs, 'input'>>;
   saveSubjectSfia?: Resolver<Maybe<ResolversTypes['SubjectSfiaSkill']>, ParentType, ContextType, RequireFields<MutationSaveSubjectSfiaArgs, 'level' | 'sfiaId' | 'subjectId'>>;
@@ -726,6 +765,7 @@ export type ProgramResolvers<ContextType = Context, ParentType extends Resolvers
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   findSubjectSkills?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectSkillsArgs, 'id'>>;
   findSubjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectsArgs, 'query'>>;
+  isOk?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
   jobRoleProfile?: Resolver<Maybe<ResolversTypes['JobRoleProfile']>, ParentType, ContextType, RequireFields<QueryJobRoleProfileArgs, 'unit'>>;
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
@@ -739,6 +779,10 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   specialisation?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType, RequireFields<QuerySpecialisationArgs, 'id'>>;
   specialisations?: Resolver<Array<ResolversTypes['Specialisation']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  stepFourResolveNodes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook'>>;
+  stepOneExpandCollections?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook'>>;
+  stepThreeExpandConditions?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
+  stepTwoExpandExtremes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
 };
 
 export type SfiaEstimateResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaEstimate'] = ResolversParentTypes['SfiaEstimate']> = {
