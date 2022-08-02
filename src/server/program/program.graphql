@@ -48,29 +48,44 @@ enum Selection {
   OR
 }
 
+enum NodeType {
+  LinkMajor
+  LinkMinor
+  LinkProgram
+  LinkCollection
+  LinkElective
+  Folder
+  Subject
+  ConstraintProgram
+  ConstraintProgramNot
+  Collection
+  Program
+}
+
 type Handbook {
-  id: Int!
-  nodeId: Int!
-  programId: Int
-  program: Program
-  specialisationId: Int
-  specialisation: Specialisation
-  parentId: Int
-  text: String
-  folder: Boolean
-  type: String
-  selection: Selection
-  number: Int
-  maxNumber: Int
+  # collection: Int
   credits: Int
-  level: Int
-  reference: Int
-  collection: Int
   flagged: Boolean
-  selector: String
+  folder: Boolean
+  id: Int!
   index: Int
+  level: Int
+  maxNumber: Int
+  nodeId: Int!
+  number: Int
+  parentId: Int
+  program: Program
+  programId: Int
+  reference: Int
+  selection: Selection
+  selector: String
+  specialisation: Specialisation
+  specialisationId: Int
   subjectCode: String
   subjectName: String
+  text: String
+  type: NodeType
+  # collectionChildren: [Handbook!]
 }
 
 input HandbookInput {

@@ -20,7 +20,6 @@ export type EmployerCount = {
 
 export type Handbook = {
   __typename?: 'Handbook';
-  collection?: Maybe<Scalars['Int']>;
   credits?: Maybe<Scalars['Int']>;
   flagged?: Maybe<Scalars['Boolean']>;
   folder?: Maybe<Scalars['Boolean']>;
@@ -41,7 +40,7 @@ export type Handbook = {
   subjectCode?: Maybe<Scalars['String']>;
   subjectName?: Maybe<Scalars['String']>;
   text?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
+  type: NodeType;
 };
 
 export type HandbookInput = {
@@ -159,6 +158,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addDescription: SkillCluster;
   deleteDescription: SkillCluster;
+  doMe?: Maybe<Scalars['Boolean']>;
   saveProgramHandbook?: Maybe<Program>;
   saveSpecialisationHandbook?: Maybe<Specialisation>;
   saveSubjectSfia?: Maybe<SubjectSfiaSkill>;
@@ -199,6 +199,19 @@ export type MutationUpdateDescriptionArgs = {
   description: SkillClusterDescriptionInput;
 };
 
+export type NodeType =
+  | 'Collection'
+  | 'ConstraintProgram'
+  | 'ConstraintProgramNot'
+  | 'Folder'
+  | 'LinkCollection'
+  | 'LinkElective'
+  | 'LinkMajor'
+  | 'LinkMinor'
+  | 'LinkProgram'
+  | 'Program'
+  | 'Subject';
+
 export type Program = {
   __typename?: 'Program';
   code: Scalars['String'];
@@ -222,6 +235,7 @@ export type Query = {
   __typename?: 'Query';
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
+  isOk?: Maybe<Scalars['Int']>;
   jobCategories: Array<JobCategory>;
   jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
@@ -235,6 +249,10 @@ export type Query = {
   specialisation?: Maybe<Specialisation>;
   specialisations: Array<Specialisation>;
   status?: Maybe<Scalars['String']>;
+  stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
+  stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
+  stepThreeExpandConditions?: Maybe<Array<Array<Handbook>>>;
+  stepTwoExpandExtremes?: Maybe<Array<Array<Handbook>>>;
 };
 
 
@@ -275,6 +293,26 @@ export type QuerySkillClusterArgs = {
 
 export type QuerySpecialisationArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryStepFourResolveNodesArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepOneExpandCollectionsArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepThreeExpandConditionsArgs = {
+  handbook: Array<HandbookInput>;
+};
+
+
+export type QueryStepTwoExpandExtremesArgs = {
+  handbook: Array<HandbookInput>;
 };
 
 export type Selection =

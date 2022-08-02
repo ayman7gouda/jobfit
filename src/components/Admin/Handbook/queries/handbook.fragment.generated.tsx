@@ -1,27 +1,26 @@
 import * as Types from '../../../../generated/clientTypes';
 
 import { gql } from '@apollo/client';
-export type HandbookFragment = { __typename?: 'Handbook', id: number, nodeId: number, parentId?: number | null, text?: string | null, folder?: boolean | null, type?: string | null, selection?: Types.Selection | null, number?: number | null, credits?: number | null, level?: number | null, reference?: number | null, collection?: number | null, flagged?: boolean | null, selector?: string | null, index?: number | null, subjectCode?: string | null, subjectName?: string | null, maxNumber?: number | null };
+export type HandbookFragment = { __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType };
 
 export const HandbookFragmentDoc = gql`
     fragment Handbook on Handbook {
-  id
-  nodeId
-  parentId
-  text
-  folder
-  type
-  selection
-  number
   credits
-  level
-  reference
-  collection
   flagged
-  selector
+  folder
+  id
   index
+  level
+  maxNumber
+  nodeId
+  number
+  parentId
+  reference
+  selection
+  selector
   subjectCode
   subjectName
-  maxNumber
+  text
+  type
 }
     `;

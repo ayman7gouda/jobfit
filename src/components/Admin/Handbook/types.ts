@@ -1,19 +1,6 @@
 import { NodeModel as TreeNodeModel } from '@minoru/react-dnd-treeview';
 
-import { Selection } from 'generated/clientTypes';
-
-export type NodeType =
-  | "link:major"
-  | "link:minor"
-  | "link:program"
-  | "link:collection"
-  | "folder"
-  | "subject"
-  | "constraint:program"
-  | "constraint:program:not"
-  | "link:elective"
-  | "collection"
-  | "program";
+import { NodeType, Selection } from 'generated/clientTypes';
 
 export type FileProperties = {
   type?: NodeType;

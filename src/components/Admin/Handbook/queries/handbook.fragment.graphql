@@ -1,20 +1,20 @@
 fragment Handbook on Handbook {
-  id
-  nodeId
-  parentId
-  text
-  folder
-  type
-  selection
-  number
+  #collection
   credits
-  level
-  reference
-  collection
   flagged
-  selector
+  folder
+  id
   index
+  level
+  maxNumber
+  nodeId
+  number
+  parentId
+  reference
+  selection
+  selector
   subjectCode
   subjectName
-  maxNumber
+  text
+  type
 }

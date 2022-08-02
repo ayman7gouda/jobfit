@@ -1,13 +1,15 @@
 import type { NodeModel } from "./types";
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ClientHandbook } from 'server/handbook/types';
-import {
-  expandCollections, expandMinimumMaximum, expandOrNodes, expandSequence
-} from 'server/handbook/validator';
+import { expandMinimumMaximum, expandOrNodes, expandSequence } from 'server/handbook/validator';
 
 import { daoInNode, nodeToTree } from './helpers';
+import { HandbookFragment } from './queries/handbook.fragment.generated';
+import {
+  useStepOneExpandCollectionsLazyQuery
+} from './queries/stepOneExpandCollections.query.generated';
 
 export function CombinationsExplorer({
   tree,
@@ -20,8 +22,9 @@ export function CombinationsExplorer({
 }) {
   const [originalTree, setOriginalTree] = useState(tree);
   const [error, setError] = useState("");
+  const [activeProgram, setActiveProgram] = useState<number | null>(null);
 
-  const handbook: ClientHandbook[] = useMemo(
+  const handbook: HandbookFragment[] = useMemo(
     () =>
       daoInNode(
         {
@@ -36,7 +39,9 @@ export function CombinationsExplorer({
     []
   );
 
-  const [collections, setCollections] = useState(expandCollections(handbook));
+  const programs = handbook.filter((h) => h.type === "Program");
+
+  const [collections, setCollections] = useState([] as HandbookFragment[][]);
   const [state, setState] = useState({
     collection: {
       index: 0,
@@ -55,6 +60,19 @@ export function CombinationsExplorer({
       handbook,
     },
   });
+
+  const [expandCollection, { loading, data }] =
+    useStepOneExpandCollectionsLazyQuery({
+      context: { clientName: "science" },
+    });
+
+  useEffect(() => {
+    expandCollection({ variables: { handbook } }).then(({ data }) => {
+      if (data && data.stepOneExpandCollections) {
+        setCollections(data.stepOneExpandCollections);
+      }
+    });
+  }, []);
 
   const minMaxes = useMemo(() => {
     if (state.collection.index == 0) {
@@ -160,9 +178,7 @@ export function CombinationsExplorer({
       );
 
       // now append the collection and all its children
-      hb = hb.concat(
-        collectionCombination.flatMap((c) => c.collectionChildren || [])
-      );
+      hb = hb.concat(collectionCombination || []);
 
       // set the tree
       setTree(hb.map((h, j) => nodeToTree(h, j)));
@@ -183,7 +199,29 @@ export function CombinationsExplorer({
       {error && <div className="bg-red-700 text-slate-50 m-2 p-4">{error}</div>}
       <h2 className="font-bold p-2">Combinations Explorer</h2>
       <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
-        <div className="flex-1">1. Expand Collections</div>
+        <div className="flex-1">1. Choose the program</div>
+      </h3>
+      <div className="p-2 flex">
+        {(programs.length === 0 || programs.length === 1) && (
+          <div>There is only one program</div>
+        )}
+        {programs.length > 1 && (
+          <select
+            value={activeProgram || ""}
+            onChange={(e) => {
+              setActiveProgram(parseInt(e.currentTarget.value));
+            }}
+          >
+            <option value="">Please select the program ...</option>
+            {programs.map((p) => (
+              <option value={p.id}>{p.text}</option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
+        <div className="flex-1">2. Expand Collections</div>
       </h3>
       <div className="p-2 flex">
         <button
@@ -214,7 +252,7 @@ export function CombinationsExplorer({
       {(collections.length == 0 || state.collection.index > 0) && (
         <>
           <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
-            <div className="flex-1">2. Expand Minimum / Maximum</div>
+            <div className="flex-1">3. Expand Minimum / Maximum</div>
           </h3>
           <div className="p-2 flex">
             <button
@@ -247,7 +285,7 @@ export function CombinationsExplorer({
       {(collections.length == 0 || state.collection.index > 0) && (
         <>
           <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
-            <div className="flex-1">3. Expand OR Nodes</div>
+            <div className="flex-1">4. Expand OR Nodes</div>
           </h3>
           <div className="p-2 flex">
             <button

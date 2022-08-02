@@ -1,4 +1,4 @@
-import styles from "./Placeholder.module.css";
+import styles from './Placeholder.module.css';
 
 export const Placeholder = (props: any) => {
   const left = props.depth * 24;
