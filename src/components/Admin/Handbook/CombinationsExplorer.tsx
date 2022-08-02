@@ -1,9 +1,10 @@
 import type { NodeModel } from "./types";
+import { clone } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ClientHandbook } from 'server/handbook/types';
-import { expandMinimumMaximum, expandOrNodes, expandSequence } from 'server/handbook/validator';
+import { expandOrNodes, expandSequence } from 'server/handbook/validator';
 
 import { daoInNode, nodeToTree } from './helpers';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
@@ -47,7 +48,7 @@ export function CombinationsExplorer({
   const programs = handbook.filter((h) => h.type === "Program");
 
   const [collections, setCollections] = useState([] as HandbookFragment[][]);
-  // const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
+  const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
 
   const [state, setState] = useState({
     collection: {
@@ -87,22 +88,33 @@ export function CombinationsExplorer({
   useEffect(() => {
     expandCollection({ variables: { handbook } }).then(({ data }) => {
       if (data && data.stepOneExpandCollections) {
-        setCollections(data.stepOneExpandCollections);
+        setCollections(
+          data.stepOneExpandCollections.map((c) =>
+            c.map((d) => {
+              let clone = { ...d };
+              delete clone.__typename;
+              return clone as HandbookFragment;
+            })
+          )
+        );
       }
     });
   }, []);
 
-  const minMaxes = useMemo(() => {
+  useEffect(() => {
     if (state.collection.index == 0) {
-      return [];
+      if (minMaxes == null || minMaxes.length != 0) {
+        setMinMaxes([]);
+      }
+    } else {
+      expandExtremes({ variables: { handbook: state.minMax.handbook } }).then(
+        ({ data }) => {
+          if (data && data.stepTwoExpandExtremes) {
+            setMinMaxes(data.stepTwoExpandExtremes);
+          }
+        }
+      );
     }
-    return expandMinimumMaximum(
-      {
-        parent: null,
-        items: state.minMax.handbook,
-      },
-      collections[state.collection.index - 1]
-    );
   }, [state.collection]);
 
   const orNodes = useMemo(() => {
@@ -160,8 +172,8 @@ export function CombinationsExplorer({
         final: { handbook: state.collection.handbook, index: 0 },
       });
     } else {
-      let currentSequence = minMaxes[currentIndex - 1];
-      let nodes = expandSequence(currentSequence);
+      let nodes = minMaxes[currentIndex - 1];
+      // let nodes = expandSequence(currentSequence);
 
       let hb = nodes.map((n, i) => nodeToTree(n, i));
       setTree(hb);
