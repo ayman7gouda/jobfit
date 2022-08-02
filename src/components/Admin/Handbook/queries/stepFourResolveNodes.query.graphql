@@ -1,0 +1,5 @@
+query StepFourResolveNodes($handbook: [HandbookInput!]!) {
+  stepFourResolveNodes(handbook: $handbook) {
+    ...Handbook
+  }
+}

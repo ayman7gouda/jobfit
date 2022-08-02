@@ -281,6 +281,20 @@ enum Selection {
   OR
 }
 
+enum NodeType {
+  LinkMajor
+  LinkMinor
+  LinkProgram
+  LinkCollection
+  LinkElective
+  Folder
+  Subject
+  ConstraintProgram
+  ConstraintProgramNot
+  Collection
+  Program
+}
+
 model Handbook {
   id               Int             @id @default(autoincrement())
   nodeId           Int
@@ -291,7 +305,7 @@ model Handbook {
   parentId         Int?
   text             String?         @db.Text
   folder           Boolean?
-  type             String?
+  type             NodeType
   selection        Selection?
   number           Int?
   maxNumber        Int?
@@ -313,18 +327,17 @@ model Handbook {
 //     FROM Job as J, ANZSCO as A
 //     WHERE J.ANZSCOCode = A.id;
 
-model AnzscoJob {
-  id              Int    @id
-  name            String
-  major           Int
-  unit            Int
-  minor           Int
-  subMajor        Int
-  code            Int
-  employer        String
-  maxAnnualSalary Float
-  maxHourlySalary Float
-  dateText        String
-  date            Int
-
-}
+// model AnzscoJob {
+//   id              Int    @id
+//   name            String
+//   major           Int
+//   unit            Int
+//   minor           Int
+//   subMajor        Int
+//   code            Int
+//   employer        String
+//   maxAnnualSalary Float
+//   maxHourlySalary Float
+//   dateText        String
+//   date            Int
+// }

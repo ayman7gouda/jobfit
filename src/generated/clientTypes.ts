@@ -61,7 +61,7 @@ export type HandbookInput = {
   subjectCode?: InputMaybe<Scalars['String']>;
   subjectName?: InputMaybe<Scalars['String']>;
   text?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
+  type: NodeType;
 };
 
 export type Job = {

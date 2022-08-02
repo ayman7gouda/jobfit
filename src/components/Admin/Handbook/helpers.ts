@@ -1,9 +1,9 @@
-import { Handbook, ProgramInput, Selection } from 'generated/clientTypes';
+import { Handbook, NodeType, ProgramInput, Selection } from 'generated/clientTypes';
 
 import { ProgramQuery } from './queries/program.query.generated';
 import { SpecialisationQuery } from './queries/specialisation.query.generated';
 import { getGuid } from './shared';
-import { NodeModel, NodeType, TreeNode } from './types';
+import { NodeModel, TreeNode } from './types';
 
 export type Structure = Array<{
   name: string;
@@ -43,7 +43,7 @@ function buildNodes(
     text: name,
     data: {
       selection: "AND",
-      type: "folder",
+      type: "Folder",
     },
   });
 
@@ -59,7 +59,7 @@ function buildNodes(
           index: idx++,
           text: "Structure: " + structure.name,
           data: {
-            type: "folder" as NodeType,
+            type: "Folder",
             selection: "AND" as Selection,
           },
         });
@@ -73,7 +73,7 @@ function buildNodes(
             index: idx++,
             text: subjectCode + " " + subject.name,
             data: {
-              type: "subject" as NodeType,
+              type: "Subject",
               subjectCode: subjectCode!,
               subjectName: subject.name,
             },
@@ -153,7 +153,7 @@ function parseSubjectCode(selected: Handbook) {
   }
   if (
     selected.folder ||
-    (!!selected.type && selected.type !== "subject") ||
+    (!!selected.type && selected.type !== "Subject") ||
     !selected.text
   ) {
     return null;
@@ -179,7 +179,7 @@ function parseSubjectName(selected: Handbook) {
   }
   if (
     selected.folder ||
-    (!!selected.type && selected.type !== "subject") ||
+    (!!selected.type && selected.type !== "Subject") ||
     !selected.text
   ) {
     return null;
@@ -229,9 +229,9 @@ export function nodeToTree(h: Handbook, j: number) {
       dbId: h.id,
       type:
         h.folder && !h.type
-          ? "folder"
+          ? "Folder"
           : !h.folder && !h.type
-          ? "subject"
+          ? "Subject"
           : (h.type! as NodeType),
       selection: h.folder && !h.selection ? "AND" : h.selection!,
       selector: h.selector!,
@@ -256,7 +256,6 @@ export function daoOutNode(
   if (data.handbook && data.handbook.length) {
     handbook = data.handbook
       .map((h, j) => nodeToTree(h, j))
-
       .sort((a, b) => (a.index < b.index ? -1 : 1));
     // handbook = handbook.filter((h, i) => handbook.)
   } else {

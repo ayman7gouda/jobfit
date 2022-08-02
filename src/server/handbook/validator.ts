@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+import { HandbookFragment } from 'components/Admin/Handbook/queries/handbook.fragment.generated';
+
 import { groupByArray } from '../../lib/utils';
 import { HandbookErrorMessage, messages } from './errorMessages';
 import { cartesian, combinations, fact } from './shared';
@@ -692,11 +694,11 @@ function multiplyLinks(collection: ClientHandbook, max?: number) {
 
     max =
       max ||
-      (type === "link:program"
+      (type === "LinkProgram"
         ? 24
-        : type === "link:major"
+        : type === "LinkMajor"
         ? 8
-        : type === "link:minor"
+        : type === "LinkMinor"
         ? 4
         : 0);
 
@@ -920,7 +922,7 @@ export function expandOrNodes(handbook: ClientHandbook[]): Sequence[] {
 
 function findCollectionMaximum(
   id: number,
-  collections: ClientHandbook[],
+  collections: HandbookFragment[],
   level: number | null | undefined
 ) {
   let collection = collections.find((c) => c.id === id);
@@ -971,7 +973,7 @@ function clip(current: number, max: number | null | undefined) {
 
 export function expandMinimumMaximum(
   sequence: Sequence,
-  collections: ClientHandbook[]
+  collections: HandbookFragment[]
 ): Sequence[] {
   let id = 100000;
   let handbook = sequence.items;

@@ -394,7 +394,7 @@ function Import(
         <option value="">Please Select</option>
         <optgroup label="Programs">
           {programNodes
-            .filter((n) => n.data.type === "program" && n.text)
+            .filter((n) => n.data.type === "Program" && n.text)
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {p.text}
@@ -403,7 +403,7 @@ function Import(
         </optgroup>
         <optgroup label="Collections">
           {programNodes
-            .filter((n) => n.data.type === "collection" && n.text)
+            .filter((n) => n.data.type === "Collection" && n.text)
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {p.text}
@@ -412,7 +412,7 @@ function Import(
         </optgroup>
         <optgroup label="Folders">
           {programNodes
-            .filter((n) => n.data.type === "folder" && n.text)
+            .filter((n) => n.data.type === "Folder" && n.text)
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {createPath(p, programNodes)}
@@ -485,7 +485,7 @@ function Import(
                   index: idx++,
                   text: resolved ? "" : subject.join(" "),
                   data: {
-                    type: "subject",
+                    type: "Subject",
                     subjectCode: resolved
                       ? subject[0].replace(/\s/g, "")
                       : undefined,
@@ -502,9 +502,9 @@ function Import(
                 text: "Imported " + importType,
                 data: {
                   type:
-                    importType !== "constraint:program"
-                      ? "collection"
-                      : "folder",
+                    importType !== "ConstraintProgram"
+                      ? "Collection"
+                      : "Folder",
                   selection: "OR",
                   number: 1,
                 },
@@ -518,7 +518,7 @@ function Import(
 
               for (let item of items) {
                 let resolved = !!item.id;
-                let droppable = resolved && importType !== "constraint:program";
+                let droppable = resolved && importType !== "ConstraintProgram";
                 nodes.push({
                   id: getGuid(),
                   parent: root.id,
@@ -527,11 +527,11 @@ function Import(
                   text: item.name,
                   data: {
                     type:
-                      resolved && importType === "constraint:program"
-                        ? "constraint:program"
+                      resolved && importType === "ConstraintProgram"
+                        ? "ConstraintProgram"
                         : resolved
-                        ? (("link:" + importType) as any)
-                        : "subject",
+                        ? (("Link" + importType) as any)
+                        : "Subject",
                     selection: importSelection as Selection,
                     number: importSelection === "OR" ? 0 : undefined,
                     reference: item.id,
