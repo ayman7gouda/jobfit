@@ -1,5 +1,5 @@
-query StepFourResolveNodes($handbook: [HandbookInput!]!) {
-  stepFourResolveNodes(handbook: $handbook) {
+query StepFourResolveNodes($programId: Int!, $handbook: [HandbookInput!]!) {
+  stepFourResolveNodes(programId: $programId, handbook: $handbook) {
     ...Handbook
   }
 }

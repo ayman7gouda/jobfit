@@ -2,9 +2,9 @@ import type { NodeModel } from "./types";
 import { clone } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
+import { Handbook } from 'generated/clientTypes';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ClientHandbook } from 'server/handbook/types';
-import { expandOrNodes, expandSequence } from 'server/handbook/validator';
 
 import { daoInNode, nodeToTree } from './helpers';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
@@ -16,6 +16,16 @@ import {
   useStepThreeExpandConditionsLazyQuery
 } from './queries/stepThreeExpandConditions.query.generated';
 import { useStepTwoExpandExtremesLazyQuery } from './queries/stepTwoExpandExtremes.query.generated';
+
+function trimResults(hb: Handbook[][]) {
+  return hb.map((c) =>
+    c.map((d) => {
+      let clone = { ...d };
+      delete clone.__typename;
+      return clone as HandbookFragment;
+    })
+  );
+}
 
 export function CombinationsExplorer({
   tree,
@@ -32,16 +42,13 @@ export function CombinationsExplorer({
 
   const handbook: HandbookFragment[] = useMemo(
     () =>
-      daoInNode(
-        {
-          handbook: tree,
-          id: 0,
-          code: "",
-          name: "",
-          url: "",
-        },
-        false
-      ).handbook as ClientHandbook[],
+      daoInNode({
+        handbook: tree,
+        id: 0,
+        code: "",
+        name: "",
+        url: "",
+      }).handbook as ClientHandbook[],
     []
   );
 
@@ -49,19 +56,24 @@ export function CombinationsExplorer({
 
   const [collections, setCollections] = useState([] as HandbookFragment[][]);
   const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
+  const [orNodes, setOrNodes] = useState([] as HandbookFragment[][]);
+  const [finalNodes, setFinalNodes] = useState([] as HandbookFragment[][]);
 
   const [state, setState] = useState({
     collection: {
       index: 0,
       handbook,
+      expanded: false,
     },
     minMax: {
       index: 0,
       handbook,
+      expanded: false,
     },
     or: {
       index: 0,
       handbook,
+      expanded: false,
     },
     final: {
       index: 0,
@@ -86,44 +98,123 @@ export function CombinationsExplorer({
   });
 
   useEffect(() => {
-    expandCollection({ variables: { handbook } }).then(({ data }) => {
-      if (data && data.stepOneExpandCollections) {
-        setCollections(
-          data.stepOneExpandCollections.map((c) =>
-            c.map((d) => {
-              let clone = { ...d };
-              delete clone.__typename;
-              return clone as HandbookFragment;
-            })
-          )
-        );
-      }
-    });
-  }, []);
+    expandCollection({
+      variables: {
+        programId: activeProgram || 0,
+        handbook,
+      },
+    })
+      .then((result) => {
+        if (result.error) {
+          setError(result.error.message);
+        }
+        if (result.data && result.data.stepOneExpandCollections) {
+          setError("");
+          setCollections(
+            trimResults(
+              result.data.stepOneExpandCollections.map((c) =>
+                c.filter((f) => f.type !== "Collection")
+              )
+            )
+          );
+          setCollection(0);
+        }
+      })
+      .catch((e) => {
+        debugger;
+        setError(JSON.stringify(e));
+      });
+  }, [handbook]);
 
   useEffect(() => {
-    if (state.collection.index == 0) {
-      if (minMaxes == null || minMaxes.length != 0) {
-        setMinMaxes([]);
-      }
-    } else {
+    if (state.collection.expanded) {
       expandExtremes({ variables: { handbook: state.minMax.handbook } }).then(
-        ({ data }) => {
-          if (data && data.stepTwoExpandExtremes) {
-            setMinMaxes(data.stepTwoExpandExtremes);
+        ({ data, error }) => {
+          if (error) {
+            setError(error.message);
+          } else if (data && data.stepTwoExpandExtremes) {
+            setMinMaxes(trimResults(data.stepTwoExpandExtremes));
+            setMinMax(0);
+            setError("");
           }
         }
       );
     }
-  }, [state.collection]);
+  }, [state.collection.expanded, state.minMax.handbook]);
 
-  const orNodes = useMemo(() => {
+  useEffect(() => {
     try {
-      return expandOrNodes(state.or.handbook);
+      if (state.minMax.expanded) {
+        expandConditions({ variables: { handbook: state.or.handbook } }).then(
+          ({ data, error }) => {
+            if (error) {
+              setError(error.message);
+            }
+            if (data && data.stepThreeExpandConditions) {
+              setError("");
+              setOrNodes(data.stepThreeExpandConditions);
+            }
+          }
+        );
+      }
     } catch (ex: any) {
       setError(ex.message);
     }
-  }, [state.collection]);
+  }, [state.minMax.expanded, state.or.handbook]);
+
+  useEffect(() => {
+    try {
+      if (state.or.expanded) {
+        expandReferences({
+          variables: {
+            programId: activeProgram || 0,
+            handbook: state.or.handbook,
+          },
+        }).then(({ data, error }) => {
+          if (error) {
+            setError(error.message);
+          }
+          if (data && data.stepFourResolveNodes) {
+            setError("");
+            setFinalNodes(data.stepFourResolveNodes);
+          }
+        });
+      }
+    } catch (ex: any) {
+      setError(ex.message);
+    }
+  }, [state.or.expanded, state.final.handbook]);
+
+  function setFinal(currentIndex: number) {
+    if (orNodes == null) {
+      return;
+    }
+    // set return to previous state
+    if (currentIndex == 0) {
+      if (finalNodes.length == 0) {
+        setTree(state.final.handbook.map((n, i) => nodeToTree(n, i)));
+      } else {
+        setCollection(state.collection.index);
+      }
+      setState({
+        ...state,
+        final: { handbook: state.or.handbook, index: 0 },
+      });
+    } else {
+      //let currentSequence = orNodes[currentIndex - 1];
+      //let nodes = expandSequence(currentSequence);
+      let nodes = finalNodes[currentIndex - 1];
+
+      let hb = nodes.map((n, i) => nodeToTree(n, i));
+      setTree(hb);
+      setState({
+        ...state,
+        final: { ...state.final, index: currentIndex },
+      });
+    }
+
+    setExploring(currentIndex > 0);
+  }
 
   function setOr(currentIndex: number) {
     if (orNodes == null) {
@@ -138,18 +229,19 @@ export function CombinationsExplorer({
       }
       setState({
         ...state,
-        or: { handbook: state.minMax.handbook, index: 0 },
+        or: { handbook: state.minMax.handbook, index: 0, expanded: true },
         final: { handbook: state.minMax.handbook, index: 0 },
       });
     } else {
-      let currentSequence = orNodes[currentIndex - 1];
-      let nodes = expandSequence(currentSequence);
+      //let currentSequence = orNodes[currentIndex - 1];
+      //let nodes = expandSequence(currentSequence);
+      let nodes = orNodes[currentIndex - 1];
 
       let hb = nodes.map((n, i) => nodeToTree(n, i));
       setTree(hb);
       setState({
         ...state,
-        or: { handbook: nodes, index: currentIndex },
+        or: { ...state.or, index: currentIndex, expanded: true },
         final: { handbook: nodes, index: 0 },
       });
     }
@@ -167,8 +259,12 @@ export function CombinationsExplorer({
       }
       setState({
         ...state,
-        minMax: { handbook: state.collection.handbook, index: currentIndex },
-        or: { handbook: state.collection.handbook, index: 0 },
+        minMax: {
+          handbook: state.collection.handbook,
+          index: currentIndex,
+          expanded: true,
+        },
+        or: { handbook: state.collection.handbook, index: 0, expanded: false },
         final: { handbook: state.collection.handbook, index: 0 },
       });
     } else {
@@ -179,8 +275,8 @@ export function CombinationsExplorer({
       setTree(hb);
       setState({
         ...state,
-        minMax: { ...state.minMax, index: currentIndex },
-        or: { handbook: nodes, index: 0 },
+        minMax: { ...state.minMax, index: currentIndex, expanded: true },
+        or: { handbook: nodes, index: 0, expanded: false },
         final: { handbook: nodes, index: 0 },
       });
     }
@@ -193,9 +289,9 @@ export function CombinationsExplorer({
       setTree(originalTree);
       setState({
         ...state,
-        collection: { handbook, index: currentIndex },
-        minMax: { handbook, index: 0 },
-        or: { handbook, index: 0 },
+        collection: { handbook, index: currentIndex, expanded: true },
+        minMax: { handbook, index: 0, expanded: false },
+        or: { handbook, index: 0, expanded: false },
         final: { handbook, index: 0 },
       });
     } else {
@@ -204,7 +300,7 @@ export function CombinationsExplorer({
       // remove all collection children
       let existingCollections = handbook.filter((h) => h.type === "Collection");
       let hb = handbook.filter((h) =>
-        existingCollections.every((e) => e.id !== h.parentId)
+        existingCollections.every((e) => e.nodeId !== h.parentId)
       );
 
       // now append the collection and all its children
@@ -215,9 +311,9 @@ export function CombinationsExplorer({
 
       setState({
         ...state,
-        collection: { handbook: hb, index: currentIndex },
-        minMax: { handbook: hb, index: 0 },
-        or: { handbook: hb, index: 0 },
+        collection: { handbook: hb, index: currentIndex, expanded: true },
+        minMax: { handbook: hb, index: 0, expanded: false },
+        or: { handbook: hb, index: 0, expanded: false },
         final: { handbook: hb, index: 0 },
       });
     }
@@ -244,7 +340,7 @@ export function CombinationsExplorer({
           >
             <option value="">Please select the program ...</option>
             {programs.map((p) => (
-              <option value={p.id}>{p.text}</option>
+              <option value={p.nodeId}>{p.text}</option>
             ))}
           </select>
         )}
@@ -340,6 +436,39 @@ export function CombinationsExplorer({
               <HiChevronRight />
             </button>
             <div className="ml-2"> out of {orNodes!.length}</div>
+          </div>
+        </>
+      )}
+
+      {/* Final NODES */}
+      {(collections.length == 0 || state.collection.index > 0) && (
+        <>
+          <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
+            <div className="flex-1">5. Expand Links</div>
+          </h3>
+          <div className="p-2 flex">
+            <button
+              type="button"
+              disabled={state.final.index == 0}
+              className="ml-2 p-1 text-blue-900 rounded-l-lg disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 flex items-center"
+              onClick={() => {
+                setFinal(state.final.index - 1);
+              }}
+            >
+              <HiChevronLeft />
+            </button>
+            <div className="bg-slate-50 px-2">{state.final.index}</div>
+            <button
+              type="button"
+              disabled={state.final.index === finalNodes!.length}
+              className="p-1 text-blue-900 rounded-r-lg disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 flex items-center"
+              onClick={() => {
+                setFinal(state.final.index + 1);
+              }}
+            >
+              <HiChevronRight />
+            </button>
+            <div className="ml-2"> out of {finalNodes!.length}</div>
           </div>
         </>
       )}

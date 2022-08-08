@@ -93,7 +93,7 @@ function buildNodes(
         index: idx++,
         text: parentSequence.program,
         data: {
-          type: "folder" as NodeType,
+          type: "Folder" as NodeType,
           selection: "AND" as Selection,
         },
       });
@@ -107,7 +107,7 @@ function buildNodes(
           index: idx++,
           text: sequence.name ? "Sequence: " + sequence.name : "Sequence",
           data: {
-            type: "folder" as NodeType,
+            type: "Folder" as NodeType,
             selection: "AND" as Selection,
           },
         });
@@ -122,7 +122,7 @@ function buildNodes(
             index: idx++,
             text: subjectCode + " " + subject.name,
             data: {
-              type: "subject" as NodeType,
+              type: "Subject" as NodeType,
               subjectCode: subjectCode!,
               subjectName: subject.name,
             },
@@ -187,13 +187,13 @@ function parseSubjectName(selected: Handbook) {
   return extractName(selected.text);
 }
 
-export function daoInNode(selected: TreeNode, replaceId = true): ProgramInput {
+export function daoInNode(selected: TreeNode): ProgramInput {
   return {
     id: selected.id,
     handbook: selected.handbook
       .filter((h) => !h.data.temp)
       .map((h, i) => ({
-        id: replaceId ? h.data.dbId : h.id,
+        id: h.data.dbId, // replaceId ? h.data.dbId : h.id,
         nodeId: h.id,
         parentId: parseInt(h.parent as string),
         text: h.data.type === "Subject" && h.data.subjectCode ? "" : h.text,

@@ -63,12 +63,42 @@ export function SpecialisationContainer({
       majorOptions={majorOptions}
       minorOptions={minorOptions}
       save={(h) => {
+        let nodes = daoInNode({
+          ...tree,
+          handbook: h,
+        });
+
+        if (
+          nodes.handbook.some(
+            (h) =>
+              !!h.parentId &&
+              nodes.handbook.every((p) => p.nodeId !== h.parentId)
+          )
+        ) {
+          if (
+            confirm(
+              "There are some truncated nodes that are hidden, do you want to remove them?"
+            )
+          ) {
+            while (
+              nodes.handbook.some(
+                (h) =>
+                  !!h.parentId &&
+                  nodes.handbook.every((p) => p.nodeId !== h.parentId)
+              )
+            ) {
+              nodes.handbook = nodes.handbook.filter(
+                (h) =>
+                  !h.parentId ||
+                  nodes.handbook.some((p) => p.nodeId === h.parentId)
+              );
+            }
+          }
+        }
+
         save({
           variables: {
-            input: daoInNode({
-              ...tree,
-              handbook: h,
-            }),
+            input: nodes,
           },
         });
       }}

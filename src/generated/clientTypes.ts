@@ -298,11 +298,13 @@ export type QuerySpecialisationArgs = {
 
 export type QueryStepFourResolveNodesArgs = {
   handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
 export type QueryStepOneExpandCollectionsArgs = {
   handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 

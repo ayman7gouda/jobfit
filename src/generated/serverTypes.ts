@@ -301,11 +301,13 @@ export type QuerySpecialisationArgs = {
 
 export type QueryStepFourResolveNodesArgs = {
   handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
 export type QueryStepOneExpandCollectionsArgs = {
   handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
@@ -779,8 +781,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   specialisation?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType, RequireFields<QuerySpecialisationArgs, 'id'>>;
   specialisations?: Resolver<Array<ResolversTypes['Specialisation']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  stepFourResolveNodes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook'>>;
-  stepOneExpandCollections?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook'>>;
+  stepFourResolveNodes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook' | 'programId'>>;
+  stepOneExpandCollections?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook' | 'programId'>>;
   stepThreeExpandConditions?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
   stepTwoExpandExtremes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
 };

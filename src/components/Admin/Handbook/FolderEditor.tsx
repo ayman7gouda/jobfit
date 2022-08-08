@@ -379,7 +379,7 @@ export function FolderEditor(props: CustomNodeChildProps) {
                     text: "Spring",
                     droppable: true,
                     data: {
-                      type: "folder",
+                      type: "Folder",
                       selection: "AND",
                     },
                   },
