@@ -5,6 +5,7 @@ import { HandbookFragmentDoc } from './handbook.fragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type StepOneExpandCollectionsQueryVariables = Types.Exact<{
+  programId: Types.Scalars['Int'];
   handbook: Array<Types.HandbookInput> | Types.HandbookInput;
 }>;
 
@@ -13,8 +14,8 @@ export type StepOneExpandCollectionsQuery = { __typename?: 'Query', stepOneExpan
 
 
 export const StepOneExpandCollectionsDocument = gql`
-    query StepOneExpandCollections($handbook: [HandbookInput!]!) {
-  stepOneExpandCollections(handbook: $handbook) {
+    query StepOneExpandCollections($programId: Int!, $handbook: [HandbookInput!]!) {
+  stepOneExpandCollections(programId: $programId, handbook: $handbook) {
     ...Handbook
   }
 }
@@ -32,6 +33,7 @@ export const StepOneExpandCollectionsDocument = gql`
  * @example
  * const { data, loading, error } = useStepOneExpandCollectionsQuery({
  *   variables: {
+ *      programId: // value for 'programId'
  *      handbook: // value for 'handbook'
  *   },
  * });

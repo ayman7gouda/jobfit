@@ -1,5 +1,5 @@
-query StepOneExpandCollections($handbook: [HandbookInput!]!) {
-  stepOneExpandCollections(handbook: $handbook) {
+query StepOneExpandCollections($programId: Int!, $handbook: [HandbookInput!]!) {
+  stepOneExpandCollections(programId: $programId, handbook: $handbook) {
     ...Handbook
   }
 }

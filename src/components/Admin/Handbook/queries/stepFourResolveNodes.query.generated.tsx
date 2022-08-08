@@ -5,6 +5,7 @@ import { HandbookFragmentDoc } from './handbook.fragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type StepFourResolveNodesQueryVariables = Types.Exact<{
+  programId: Types.Scalars['Int'];
   handbook: Array<Types.HandbookInput> | Types.HandbookInput;
 }>;
 
@@ -13,8 +14,8 @@ export type StepFourResolveNodesQuery = { __typename?: 'Query', stepFourResolveN
 
 
 export const StepFourResolveNodesDocument = gql`
-    query StepFourResolveNodes($handbook: [HandbookInput!]!) {
-  stepFourResolveNodes(handbook: $handbook) {
+    query StepFourResolveNodes($programId: Int!, $handbook: [HandbookInput!]!) {
+  stepFourResolveNodes(programId: $programId, handbook: $handbook) {
     ...Handbook
   }
 }
@@ -32,6 +33,7 @@ export const StepFourResolveNodesDocument = gql`
  * @example
  * const { data, loading, error } = useStepFourResolveNodesQuery({
  *   variables: {
+ *      programId: // value for 'programId'
  *      handbook: // value for 'handbook'
  *   },
  * });

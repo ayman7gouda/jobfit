@@ -53,7 +53,13 @@ export function getApolloClient(req?: NextRequest, forceNew?: boolean) {
       // uri: process.env.GRAPHQL_ENDPOINT || "http://localhost:3000/api/graphql",
       link: authLink.concat(httpLink as any) as any,
 
-      cache: new InMemoryCache().restore(windowApolloState || {}),
+      cache: new InMemoryCache({
+        typePolicies: {
+          Handbook: {
+            keyFields: false,
+          },
+        },
+      }).restore(windowApolloState || {}),
 
       /**
         // Default options to disable SSR for all queries.
