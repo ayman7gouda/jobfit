@@ -245,6 +245,7 @@ export type Query = {
   jobs?: Maybe<Array<Job>>;
   program?: Maybe<Program>;
   programs: Array<Program>;
+  resolveConstraints: Array<Handbook>;
   sfia?: Maybe<SfiaSkill>;
   sfias: Array<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
@@ -288,6 +289,12 @@ export type QueryJobsArgs = {
 
 export type QueryProgramArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryResolveConstraintsArgs = {
+  handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
@@ -790,6 +797,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
   program?: Resolver<Maybe<ResolversTypes['Program']>, ParentType, ContextType, RequireFields<QueryProgramArgs, 'id'>>;
   programs?: Resolver<Array<ResolversTypes['Program']>, ParentType, ContextType>;
+  resolveConstraints?: Resolver<Array<ResolversTypes['Handbook']>, ParentType, ContextType, RequireFields<QueryResolveConstraintsArgs, 'handbook' | 'programId'>>;
   sfia?: Resolver<Maybe<ResolversTypes['SfiaSkill']>, ParentType, ContextType, RequireFields<QuerySfiaArgs, 'id'>>;
   sfias?: Resolver<Array<ResolversTypes['SfiaSkill']>, ParentType, ContextType>;
   skillCluster?: Resolver<Maybe<ResolversTypes['SkillCluster']>, ParentType, ContextType, Partial<QuerySkillClusterArgs>>;

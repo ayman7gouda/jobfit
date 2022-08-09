@@ -1,0 +1,5 @@
+query ResolveConstraints($programId: Int!, $handbook: [HandbookInput!]!) {
+  resolveConstraints(programId: $programId, handbook: $handbook) {
+    ...Handbook
+  }
+}

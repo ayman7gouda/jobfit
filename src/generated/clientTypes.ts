@@ -242,6 +242,7 @@ export type Query = {
   jobs?: Maybe<Array<Job>>;
   program?: Maybe<Program>;
   programs: Array<Program>;
+  resolveConstraints: Array<Handbook>;
   sfia?: Maybe<SfiaSkill>;
   sfias: Array<SfiaSkill>;
   skillCluster?: Maybe<SkillCluster>;
@@ -285,6 +286,12 @@ export type QueryJobsArgs = {
 
 export type QueryProgramArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryResolveConstraintsArgs = {
+  handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
