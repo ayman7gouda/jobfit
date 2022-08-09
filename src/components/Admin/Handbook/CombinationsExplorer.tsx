@@ -9,6 +9,7 @@ import { ClientHandbook } from 'server/handbook/types';
 import { daoInNode, nodeToTree } from './helpers';
 import { useAllCombinationsLazyQuery } from './queries/allCombinations.query.generated';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
+import { useResolveConstraintsLazyQuery } from './queries/resolveContraints.query.generated';
 import { useStepFourResolveNodesLazyQuery } from './queries/stepFourResolveNodes.query.generated';
 import {
   useStepOneExpandCollectionsLazyQuery
@@ -135,7 +136,6 @@ export function CombinationsExplorer({
 }) {
   const [originalTree, setOriginalTree] = useState(tree);
   const [error, setError] = useState("");
-  const [activeProgram, setActiveProgram] = useState<number | null>(null);
 
   const handbook: HandbookFragment[] = useMemo(
     () =>
@@ -149,7 +149,9 @@ export function CombinationsExplorer({
     []
   );
 
-  const programs = handbook.filter((h) => h.type === "Program");
+  const programs = handbook.filter(
+    (h) => h.type === "Program" || h.type === "ConstraintProgram"
+  );
 
   const [collections, setCollections] = useState([] as HandbookFragment[][]);
   const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
@@ -158,6 +160,11 @@ export function CombinationsExplorer({
   const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState({
+    program: {
+      selected: null,
+      initial: handbook,
+      current: programs.length > 0 ? null : handbook,
+    },
     collection: {
       index: 0,
       initial: handbook,
@@ -177,6 +184,13 @@ export function CombinationsExplorer({
       index: 0,
       initial: handbook,
       current: null as HandbookFragment[],
+    },
+  });
+
+  const [resolveConstraints] = useResolveConstraintsLazyQuery({
+    context: { clientName: "science" },
+    onCompleted() {
+      setLoading(false);
     },
   });
 
@@ -210,36 +224,38 @@ export function CombinationsExplorer({
 
   // COLLECTIONS
   useEffect(() => {
-    setLoading(true);
-    expandCollection({
-      variables: {
-        programId: activeProgram || 0,
-        handbook,
-      },
-    })
-      .then((result) => {
-        if (result.error) {
-          setError(result.error.message);
-        } else {
-          setError("");
-        }
-        if (
-          result.data &&
-          result.data.stepOneExpandCollections &&
-          result.data.stepOneExpandCollections.length > 1
-        ) {
-          setCollections(trimResults(result.data.stepOneExpandCollections));
-          setCollection(0);
-        } else {
-          setCollections([]);
-          setCollection(0);
-        }
+    if (programs.length == 0 || state.program.current != null) {
+      setLoading(true);
+      expandCollection({
+        variables: {
+          programId: state.program.selected || 0,
+          handbook,
+        },
       })
-      .catch((e) => {
-        debugger;
-        setError(JSON.stringify(e));
-      });
-  }, [handbook]);
+        .then((result) => {
+          if (result.error) {
+            setError(result.error.message);
+          } else {
+            setError("");
+          }
+          if (
+            result.data &&
+            result.data.stepOneExpandCollections &&
+            result.data.stepOneExpandCollections.length > 1
+          ) {
+            setCollections(trimResults(result.data.stepOneExpandCollections));
+            setCollection(0);
+          } else {
+            setCollections([]);
+            setCollection(0);
+          }
+        })
+        .catch((e) => {
+          debugger;
+          setError(JSON.stringify(e));
+        });
+    }
+  }, [handbook, state.program.current]);
 
   // MINMAX
   useEffect(() => {
@@ -310,7 +326,7 @@ export function CombinationsExplorer({
         setLoading(true);
         expandReferences({
           variables: {
-            programId: activeProgram || 0,
+            programId: state.program.selected || 0,
             handbook: state.or.current || state.or.initial,
           },
         }).then(({ data, error }) => {
@@ -445,21 +461,21 @@ export function CombinationsExplorer({
 
   function setCollection(currentIndex: number) {
     if (currentIndex == 0) {
-      setTree(originalTree);
+      setTree(state.collection.initial.map((h, j) => nodeToTree(h, j)));
       setState({
         ...state,
         collection: {
-          initial: handbook,
-          current: handbook,
+          initial: state.program.current,
+          current: state.program.current,
           index: currentIndex,
         },
         minMax: {
-          initial: handbook,
+          initial: state.program.current,
           current: null,
           index: 0,
         },
-        or: { initial: handbook, current: null, index: 0 },
-        final: { initial: handbook, current: null, index: 0 },
+        or: { initial: state.program.current, current: null, index: 0 },
+        final: { initial: state.program.current, current: null, index: 0 },
       });
     } else {
       let collectionCombination = collections[currentIndex - 1];
@@ -493,6 +509,40 @@ export function CombinationsExplorer({
     setExploring(currentIndex > 0);
   }
 
+  function setProgram(currentId: number | null, hb: HandbookFragment[]) {
+    if (!currentId) {
+      setTree(state.program.initial.map((h, j) => nodeToTree(h, j)));
+      setState({
+        ...state,
+        program: { initial: handbook, current: null, selected: null },
+        collection: { initial: handbook, current: null, index: 0 },
+        minMax: { initial: handbook, current: null, index: 0 },
+        or: { initial: handbook, current: null, index: 0 },
+        final: { initial: handbook, current: null, index: 0 },
+      });
+    } else {
+      // set the tree
+      setTree(hb.map((h, j) => nodeToTree(h, j)));
+      setState({
+        ...state,
+        program: {
+          ...state.program,
+          current: hb,
+          selected: currentId,
+        },
+        collection: {
+          initial: hb,
+          current: null,
+          index: 0,
+        },
+        minMax: { initial: hb, current: null, index: 0 },
+        or: { initial: hb, current: null, index: 0 },
+        final: { initial: hb, current: null, index: 0 },
+      });
+    }
+    setExploring(!!currentId);
+  }
+
   return (
     <div className="bg-slate-200">
       {error && <div className="bg-red-700 text-slate-50 m-2 p-4">{error}</div>}
@@ -508,14 +558,38 @@ export function CombinationsExplorer({
         )}
         {programs.length > 1 && (
           <select
-            value={activeProgram || ""}
+            value={state.program.selected || ""}
             onChange={(e) => {
-              setActiveProgram(parseInt(e.currentTarget.value));
+              if (e.currentTarget.value) {
+                const id = parseInt(e.currentTarget.value);
+
+                resolveConstraints({
+                  variables: {
+                    programId: id,
+                    handbook,
+                  },
+                }).then(({ data, error }) => {
+                  if (error) {
+                    setError(error.message);
+                  } else {
+                    setError("");
+                  }
+                  if (data?.resolveConstraints) {
+                    tree = data.resolveConstraints.map((h, j) =>
+                      nodeToTree(h, j)
+                    );
+                    const results = trimResults([data.resolveConstraints])[0];
+                    setProgram(id, results);
+                  }
+                });
+              } else {
+                setProgram(null, []);
+              }
             }}
           >
             <option value="">Please select the program ...</option>
             {programs.map((p) => (
-              <option value={p.nodeId}>{p.text}</option>
+              <option value={p.reference}>{p.text}</option>
             ))}
           </select>
         )}
@@ -652,7 +726,7 @@ export function CombinationsExplorer({
         tree={tree}
         setExploring={setExploring}
         setTree={setTree}
-        programId={activeProgram || 0}
+        programId={state.program.selected || 0}
       />
     </div>
   );

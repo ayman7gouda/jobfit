@@ -159,7 +159,7 @@ export function Layout(args: {
   }): any;
 }) {
   const [part, setPart] = useState(args.part);
-  const [leftVisible, toggleLeft] = useState(true);
+  const [leftVisible, toggleLeft] = useState(false);
 
   const { data: programData, loading: loadingPrograms } = useProgramsQuery();
   const { data: specialisationData, loading: loadingSpecialisations } =
