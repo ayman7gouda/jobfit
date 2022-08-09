@@ -110,13 +110,7 @@ export function CombinationsExplorer({
         }
         if (result.data && result.data.stepOneExpandCollections) {
           setError("");
-          setCollections(
-            trimResults(
-              result.data.stepOneExpandCollections.map((c) =>
-                c.filter((f) => f.type !== "Collection")
-              )
-            )
-          );
+          setCollections(trimResults(result.data.stepOneExpandCollections));
           setCollection(0);
         }
       })
@@ -152,7 +146,7 @@ export function CombinationsExplorer({
             }
             if (data && data.stepThreeExpandConditions) {
               setError("");
-              setOrNodes(data.stepThreeExpandConditions);
+              setOrNodes(trimResults(data.stepThreeExpandConditions));
             }
           }
         );
@@ -162,13 +156,14 @@ export function CombinationsExplorer({
     }
   }, [state.minMax.expanded, state.or.handbook]);
 
+  // final
   useEffect(() => {
     try {
-      if (state.or.expanded) {
+      if (state.or.expanded && (state.or.index > 0 || orNodes.length == 0)) {
         expandReferences({
           variables: {
             programId: activeProgram || 0,
-            handbook: state.or.handbook,
+            handbook: state.final.handbook,
           },
         }).then(({ data, error }) => {
           if (error) {
@@ -300,11 +295,13 @@ export function CombinationsExplorer({
       // remove all collection children
       let existingCollections = handbook.filter((h) => h.type === "Collection");
       let hb = handbook.filter((h) =>
-        existingCollections.every((e) => e.nodeId !== h.parentId)
+        existingCollections.every(
+          (e) => e.nodeId !== h.parentId && e.nodeId !== h.nodeId
+        )
       );
 
       // now append the collection and all its children
-      hb = hb.concat(collectionCombination || []);
+      hb = (collectionCombination || []).concat(hb);
 
       // set the tree
       setTree(hb.map((h, j) => nodeToTree(h, j)));
