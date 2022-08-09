@@ -7,6 +7,7 @@ import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ClientHandbook } from 'server/handbook/types';
 
 import { daoInNode, nodeToTree } from './helpers';
+import { useAllCombinationsLazyQuery } from './queries/allCombinations.query.generated';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
 import { useStepFourResolveNodesLazyQuery } from './queries/stepFourResolveNodes.query.generated';
 import {
@@ -24,6 +25,102 @@ function trimResults(hb: Handbook[][]) {
       delete clone.__typename;
       return clone as HandbookFragment;
     })
+  );
+}
+
+export function AllCombinationsExplorer({
+  tree,
+  setTree,
+  setExploring,
+  programId,
+}: {
+  tree: NodeModel[];
+  setTree(tree: NodeModel[]): void;
+  setExploring(isExploring: boolean): void;
+  programId: number;
+}) {
+  const [originalTree, setOriginalTree] = useState(tree);
+  const [error, setError] = useState("");
+  const [index, setIndex] = useState(0);
+  const [options, setOptions] = useState<Handbook[][]>([]);
+
+  const handbook: HandbookFragment[] = useMemo(
+    () =>
+      daoInNode({
+        handbook: tree,
+        id: 0,
+        code: "",
+        name: "",
+        url: "",
+      }).handbook as ClientHandbook[],
+    []
+  );
+
+  const [find, { loading }] = useAllCombinationsLazyQuery({
+    variables: {
+      programId,
+      handbook,
+    },
+    context: { clientName: "science" },
+    onError(error) {
+      setError(error.message);
+    },
+    onCompleted(data) {
+      setError("");
+      setOptions(data.allCombinations);
+    },
+  });
+
+  function processOptions(currentIndex: number) {
+    if (currentIndex == 0) {
+      setTree(originalTree);
+      setIndex(0);
+    } else {
+      let collectionCombination = options[currentIndex - 1];
+
+      // set the tree
+      setTree(collectionCombination.map((h, j) => nodeToTree(h, j)));
+      setIndex(currentIndex);
+    }
+    setExploring(currentIndex > 0);
+  }
+
+  return (
+    <>
+      <h2 className="font-bold p-2 bg-green-500">
+        All Combinations{" "}
+        <button className="bg-green-800 p-1 text-white" onClick={() => find()}>
+          Find
+        </button>
+      </h2>
+
+      {loading && <span>Loading ...</span>}
+      {error && <div className="bg-red-700 text-slate-50 m-2 p-4">{error}</div>}
+      <div className="p-2 flex">
+        <button
+          type="button"
+          disabled={index == 0}
+          className="ml-2 p-1 text-blue-900 rounded-l-lg disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 flex items-center"
+          onClick={() => {
+            processOptions(index - 1);
+          }}
+        >
+          <HiChevronLeft />
+        </button>
+        <div className="bg-slate-50 px-2">{index}</div>
+        <button
+          type="button"
+          disabled={index === options.length}
+          className="p-1 text-blue-900 rounded-r-lg disabled:bg-slate-300 bg-blue-200 hover:bg-blue-300 flex items-center"
+          onClick={() => {
+            processOptions(index + 1);
+          }}
+        >
+          <HiChevronRight />
+        </button>
+        <div className="ml-2"> out of {options.length}</div>
+      </div>
+    </>
   );
 }
 
@@ -107,10 +204,18 @@ export function CombinationsExplorer({
       .then((result) => {
         if (result.error) {
           setError(result.error.message);
-        }
-        if (result.data && result.data.stepOneExpandCollections) {
+        } else {
           setError("");
+        }
+        if (
+          result.data &&
+          result.data.stepOneExpandCollections &&
+          result.data.stepOneExpandCollections.length > 1
+        ) {
           setCollections(trimResults(result.data.stepOneExpandCollections));
+          setCollection(0);
+        } else {
+          setCollections([]);
           setCollection(0);
         }
       })
@@ -136,6 +241,7 @@ export function CombinationsExplorer({
     }
   }, [state.collection.expanded, state.minMax.handbook]);
 
+  // or nodes
   useEffect(() => {
     try {
       if (state.minMax.expanded) {
@@ -143,10 +249,20 @@ export function CombinationsExplorer({
           ({ data, error }) => {
             if (error) {
               setError(error.message);
-            }
-            if (data && data.stepThreeExpandConditions) {
+            } else {
               setError("");
+            }
+
+            if (
+              data &&
+              data.stepThreeExpandConditions &&
+              data.stepThreeExpandConditions.length > 1
+            ) {
               setOrNodes(trimResults(data.stepThreeExpandConditions));
+              setOr(0);
+            } else {
+              setOrNodes([]);
+              setOr(0);
             }
           }
         );
@@ -186,11 +302,8 @@ export function CombinationsExplorer({
     }
     // set return to previous state
     if (currentIndex == 0) {
-      if (finalNodes.length == 0) {
-        setTree(state.final.handbook.map((n, i) => nodeToTree(n, i)));
-      } else {
-        setCollection(state.collection.index);
-      }
+      setTree(state.final.handbook.map((n, i) => nodeToTree(n, i)));
+
       setState({
         ...state,
         final: { handbook: state.or.handbook, index: 0 },
@@ -217,11 +330,8 @@ export function CombinationsExplorer({
     }
     // set return to previous state
     if (currentIndex == 0) {
-      if (orNodes.length == 0) {
-        setTree(state.or.handbook.map((n, i) => nodeToTree(n, i)));
-      } else {
-        setCollection(state.collection.index);
-      }
+      setTree(state.minMax.handbook.map((n, i) => nodeToTree(n, i)));
+
       setState({
         ...state,
         or: { handbook: state.minMax.handbook, index: 0, expanded: true },
@@ -247,11 +357,8 @@ export function CombinationsExplorer({
   function setMinMax(currentIndex: number) {
     // set return to previous state
     if (currentIndex == 0) {
-      if (collections.length == 0) {
-        setTree(state.minMax.handbook.map((n, i) => nodeToTree(n, i)));
-      } else {
-        setCollection(state.collection.index);
-      }
+      setTree(state.collection.handbook.map((n, i) => nodeToTree(n, i)));
+
       setState({
         ...state,
         minMax: {
@@ -320,7 +427,7 @@ export function CombinationsExplorer({
   return (
     <div className="bg-slate-200">
       {error && <div className="bg-red-700 text-slate-50 m-2 p-4">{error}</div>}
-      <h2 className="font-bold p-2">Combinations Explorer</h2>
+      <h2 className="font-bold p-2  bg-green-500">Combinations Explorer</h2>
       <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
         <div className="flex-1">1. Choose the program</div>
       </h3>
@@ -469,6 +576,13 @@ export function CombinationsExplorer({
           </div>
         </>
       )}
+
+      <AllCombinationsExplorer
+        tree={tree}
+        setExploring={setExploring}
+        setTree={setTree}
+        programId={activeProgram || 0}
+      />
     </div>
   );
 }

@@ -9,7 +9,7 @@ export type StepThreeExpandConditionsQueryVariables = Types.Exact<{
 }>;
 
 
-export type StepThreeExpandConditionsQuery = { __typename?: 'Query', stepThreeExpandConditions?: Array<Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }>> | null };
+export type StepThreeExpandConditionsQuery = { __typename?: 'Query', stepThreeExpandConditions: Array<Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }>> };
 
 
 export const StepThreeExpandConditionsDocument = gql`

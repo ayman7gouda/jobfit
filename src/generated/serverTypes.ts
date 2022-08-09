@@ -236,6 +236,7 @@ export type ProgramInput = {
 
 export type Query = {
   __typename?: 'Query';
+  allCombinations: Array<Array<Handbook>>;
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
   isOk?: Maybe<Scalars['Int']>;
@@ -254,8 +255,14 @@ export type Query = {
   status?: Maybe<Scalars['String']>;
   stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
   stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
-  stepThreeExpandConditions?: Maybe<Array<Array<Handbook>>>;
-  stepTwoExpandExtremes?: Maybe<Array<Array<Handbook>>>;
+  stepThreeExpandConditions: Array<Array<Handbook>>;
+  stepTwoExpandExtremes: Array<Array<Handbook>>;
+};
+
+
+export type QueryAllCombinationsArgs = {
+  handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
@@ -323,6 +330,13 @@ export type QueryStepTwoExpandExtremesArgs = {
 export type Selection =
   | 'AND'
   | 'OR';
+
+export type Sequence = {
+  __typename?: 'Sequence';
+  handbook?: Maybe<Handbook>;
+  id?: Maybe<Scalars['Int']>;
+  parentId?: Maybe<Scalars['Int']>;
+};
 
 export type SfiaEstimate = {
   __typename?: 'SfiaEstimate';
@@ -564,6 +578,7 @@ export type ResolversTypes = {
   ProgramInput: ProgramInput;
   Query: ResolverTypeWrapper<{}>;
   Selection: Selection;
+  Sequence: ResolverTypeWrapper<Sequence>;
   SfiaEstimate: ResolverTypeWrapper<SfiaEstimate>;
   SfiaLevel: ResolverTypeWrapper<SfiaLevel>;
   SfiaSkill: ResolverTypeWrapper<SfiaSkill>;
@@ -600,6 +615,7 @@ export type ResolversParentTypes = {
   Program: Program;
   ProgramInput: ProgramInput;
   Query: {};
+  Sequence: Sequence;
   SfiaEstimate: SfiaEstimate;
   SfiaLevel: SfiaLevel;
   SfiaSkill: SfiaSkill;
@@ -765,6 +781,7 @@ export type ProgramResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  allCombinations?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryAllCombinationsArgs, 'handbook' | 'programId'>>;
   findSubjectSkills?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectSkillsArgs, 'id'>>;
   findSubjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectsArgs, 'query'>>;
   isOk?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -783,8 +800,15 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   stepFourResolveNodes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook' | 'programId'>>;
   stepOneExpandCollections?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook' | 'programId'>>;
-  stepThreeExpandConditions?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
-  stepTwoExpandExtremes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
+  stepThreeExpandConditions?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
+  stepTwoExpandExtremes?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
+};
+
+export type SequenceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Sequence'] = ResolversParentTypes['Sequence']> = {
+  handbook?: Resolver<Maybe<ResolversTypes['Handbook']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  parentId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SfiaEstimateResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SfiaEstimate'] = ResolversParentTypes['SfiaEstimate']> = {
@@ -940,6 +964,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   Program?: ProgramResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Sequence?: SequenceResolvers<ContextType>;
   SfiaEstimate?: SfiaEstimateResolvers<ContextType>;
   SfiaLevel?: SfiaLevelResolvers<ContextType>;
   SfiaSkill?: SfiaSkillResolvers<ContextType>;
