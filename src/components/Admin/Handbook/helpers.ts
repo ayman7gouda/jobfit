@@ -1,5 +1,6 @@
 import { Handbook, NodeType, ProgramInput, Selection } from 'generated/clientTypes';
 
+import { HandbookFragment } from './queries/handbook.fragment.generated';
 import { ProgramQuery } from './queries/program.query.generated';
 import { SpecialisationQuery } from './queries/specialisation.query.generated';
 import { getGuid } from './shared';
@@ -203,7 +204,7 @@ export function daoInNode(selected: TreeNode): ProgramInput {
         number: h.data.number,
         maxNumber: h.data.maxNumber,
         credits: h.data.credits,
-        level: h.data.level,
+        level: h.data.level || null,
         reference: h.data.reference,
         collection: h.data.collection,
         selector: h.data.selector,
@@ -272,4 +273,14 @@ export function daoOutNode(
     id: data.id,
     handbook,
   };
+}
+
+export function trimResults(hb: Handbook[][]) {
+  return hb.map((c) =>
+    c.map((d) => {
+      let clone = { ...d };
+      delete clone.__typename;
+      return clone as HandbookFragment;
+    })
+  );
 }
