@@ -155,51 +155,62 @@ export function CombinationsExplorer({
   const [minMaxes, setMinMaxes] = useState([] as HandbookFragment[][]);
   const [orNodes, setOrNodes] = useState([] as HandbookFragment[][]);
   const [finalNodes, setFinalNodes] = useState([] as HandbookFragment[][]);
+  const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState({
     collection: {
       index: 0,
       initial: handbook,
-      current: handbook,
-      expanded: false,
+      current: null as HandbookFragment[],
     },
     minMax: {
       index: 0,
       initial: handbook,
-      current: handbook,
-      expanded: false,
+      current: null as HandbookFragment[],
     },
     or: {
       index: 0,
       initial: handbook,
-      current: handbook,
-      expanded: false,
+      current: null as HandbookFragment[],
     },
     final: {
       index: 0,
       initial: handbook,
-      current: handbook,
+      current: null as HandbookFragment[],
     },
   });
 
   const [expandCollection] = useStepOneExpandCollectionsLazyQuery({
     context: { clientName: "science" },
+    onCompleted() {
+      setLoading(false);
+    },
   });
 
   const [expandExtremes] = useStepTwoExpandExtremesLazyQuery({
     context: { clientName: "science" },
+    onCompleted() {
+      setLoading(false);
+    },
   });
 
   const [expandConditions] = useStepThreeExpandConditionsLazyQuery({
     context: { clientName: "science" },
+    onCompleted() {
+      setLoading(false);
+    },
   });
 
   const [expandReferences] = useStepFourResolveNodesLazyQuery({
     context: { clientName: "science" },
+    onCompleted() {
+      setLoading(false);
+    },
   });
 
   // COLLECTIONS
   useEffect(() => {
+    setLoading(true);
     expandCollection({
       variables: {
         programId: activeProgram || 0,
@@ -233,9 +244,10 @@ export function CombinationsExplorer({
   // MINMAX
   useEffect(() => {
     if (
-      state.collection.expanded &&
+      state.collection.current &&
       (state.collection.index > 0 || collections.length == 0)
     ) {
+      setLoading(true);
       expandExtremes({
         variables: {
           handbook: state.collection.current || state.collection.initial,
@@ -252,15 +264,16 @@ export function CombinationsExplorer({
         }
       });
     }
-  }, [state.collection.expanded, state.collection.current]);
+  }, [state.collection.current]);
 
   // or nodes
   useEffect(() => {
     try {
       if (
-        state.minMax.expanded &&
+        state.minMax.current &&
         (state.minMax.index > 0 || minMaxes.length == 0)
       ) {
+        setLoading(true);
         expandConditions({
           variables: {
             handbook: state.minMax.current || state.minMax.initial,
@@ -288,12 +301,13 @@ export function CombinationsExplorer({
     } catch (ex: any) {
       setError(ex.message);
     }
-  }, [state.minMax.expanded, state.minMax.current]);
+  }, [state.minMax.current]);
 
   // final
   useEffect(() => {
     try {
-      if (state.or.expanded && (state.or.index > 0 || orNodes.length == 0)) {
+      if (state.or.current && (state.or.index > 0 || orNodes.length == 0)) {
+        setLoading(true);
         expandReferences({
           variables: {
             programId: activeProgram || 0,
@@ -312,7 +326,7 @@ export function CombinationsExplorer({
     } catch (ex: any) {
       setError(ex.message);
     }
-  }, [state.or.expanded, state.or.current]);
+  }, [state.or.current]);
 
   function setFinal(currentIndex: number) {
     if (orNodes == null) {
@@ -356,12 +370,11 @@ export function CombinationsExplorer({
           ...state.or,
           current: state.or.initial,
           index: 0,
-          expanded: true,
         },
         final: {
           ...state.final,
           initial: state.or.initial,
-          current: state.or.initial,
+          current: null,
           index: 0,
         },
       });
@@ -378,9 +391,8 @@ export function CombinationsExplorer({
           ...state.or,
           index: currentIndex,
           current: nodes,
-          expanded: true,
         },
-        final: { ...state.final, current: nodes, initial: nodes, index: 0 },
+        final: { ...state.final, current: null, initial: nodes, index: 0 },
       });
     }
 
@@ -398,16 +410,14 @@ export function CombinationsExplorer({
           ...state.minMax,
           current: state.minMax.initial,
           index: currentIndex,
-          expanded: true,
         },
         or: {
-          current: state.minMax.initial,
+          current: null,
           initial: state.minMax.initial,
           index: 0,
-          expanded: false,
         },
         final: {
-          current: state.minMax.initial,
+          current: null,
           initial: state.minMax.initial,
           index: 0,
         },
@@ -424,10 +434,9 @@ export function CombinationsExplorer({
           ...state.minMax,
           index: currentIndex,
           current: nodes,
-          expanded: true,
         },
-        or: { initial: nodes, current: nodes, index: 0, expanded: false },
-        final: { initial: nodes, current: nodes, index: 0 },
+        or: { initial: nodes, current: null, index: 0 },
+        final: { initial: nodes, current: null, index: 0 },
       });
     }
 
@@ -443,16 +452,14 @@ export function CombinationsExplorer({
           initial: handbook,
           current: handbook,
           index: currentIndex,
-          expanded: true,
         },
         minMax: {
           initial: handbook,
-          current: handbook,
+          current: null,
           index: 0,
-          expanded: false,
         },
-        or: { initial: handbook, current: handbook, index: 0, expanded: false },
-        final: { initial: handbook, current: handbook, index: 0 },
+        or: { initial: handbook, current: null, index: 0 },
+        final: { initial: handbook, current: null, index: 0 },
       });
     } else {
       let collectionCombination = collections[currentIndex - 1];
@@ -477,11 +484,10 @@ export function CombinationsExplorer({
           initial: hb,
           current: collectionCombination,
           index: currentIndex,
-          expanded: true,
         },
-        minMax: { initial: hb, current: hb, index: 0, expanded: false },
-        or: { initial: hb, current: hb, index: 0, expanded: false },
-        final: { initial: hb, current: hb, index: 0 },
+        minMax: { initial: hb, current: null, index: 0 },
+        or: { initial: hb, current: null, index: 0 },
+        final: { initial: hb, current: null, index: 0 },
       });
     }
     setExploring(currentIndex > 0);
@@ -490,7 +496,9 @@ export function CombinationsExplorer({
   return (
     <div className="bg-slate-200">
       {error && <div className="bg-red-700 text-slate-50 m-2 p-4">{error}</div>}
-      <h2 className="font-bold p-2  bg-green-500">Combinations Explorer</h2>
+      <h2 className="font-bold p-2  bg-green-500">
+        {loading ? "Loading ..." : "Combinations Explorer"}
+      </h2>
       <h3 className="bg-slate-500 p-2 text-slate-100 flex items-center">
         <div className="flex-1">1. Choose the program</div>
       </h3>
