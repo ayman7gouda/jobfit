@@ -233,6 +233,7 @@ export type ProgramInput = {
 
 export type Query = {
   __typename?: 'Query';
+  allCombinations: Array<Array<Handbook>>;
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
   isOk?: Maybe<Scalars['Int']>;
@@ -251,8 +252,14 @@ export type Query = {
   status?: Maybe<Scalars['String']>;
   stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
   stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
-  stepThreeExpandConditions?: Maybe<Array<Array<Handbook>>>;
-  stepTwoExpandExtremes?: Maybe<Array<Array<Handbook>>>;
+  stepThreeExpandConditions: Array<Array<Handbook>>;
+  stepTwoExpandExtremes: Array<Array<Handbook>>;
+};
+
+
+export type QueryAllCombinationsArgs = {
+  handbook: Array<HandbookInput>;
+  programId: Scalars['Int'];
 };
 
 
@@ -320,6 +327,13 @@ export type QueryStepTwoExpandExtremesArgs = {
 export type Selection =
   | 'AND'
   | 'OR';
+
+export type Sequence = {
+  __typename?: 'Sequence';
+  handbook?: Maybe<Handbook>;
+  id?: Maybe<Scalars['Int']>;
+  parentId?: Maybe<Scalars['Int']>;
+};
 
 export type SfiaEstimate = {
   __typename?: 'SfiaEstimate';

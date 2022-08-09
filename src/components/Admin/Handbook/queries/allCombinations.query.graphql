@@ -1,0 +1,5 @@
+query AllCombinations($programId: Int!, $handbook: [HandbookInput!]!) {
+  allCombinations(programId: $programId, handbook: $handbook) {
+    ...Handbook
+  }
+}
