@@ -1,5 +1,8 @@
 query StepFourResolveNodes($programId: Int!, $handbook: [HandbookInput!]!) {
   stepFourResolveNodes(programId: $programId, handbook: $handbook) {
-    ...Handbook
+    handbook {
+      ...Handbook
+    }
+    combinations
   }
 }

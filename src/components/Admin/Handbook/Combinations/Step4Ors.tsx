@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
-import { nodeToTree, trimResults } from '../helpers';
+import { nodeToTree, resolveMinified } from '../helpers';
 import { HandbookFragment } from '../queries/handbook.fragment.generated';
 import {
   useStepThreeExpandConditionsQuery
@@ -35,10 +35,10 @@ export const Step4Ors = (props: CombinationProps) => {
       setError(error.message);
     },
     onCompleted(data) {
-      if (data?.stepThreeExpandConditions.length < 2) {
+      if (data?.stepThreeExpandConditions.combinations.length < 2) {
         setCurrentHandbook(handbook);
       } else {
-        const results = trimResults(data.stepThreeExpandConditions);
+        const results = resolveMinified(data.stepThreeExpandConditions, true);
         setCombinations(results);
       }
     },

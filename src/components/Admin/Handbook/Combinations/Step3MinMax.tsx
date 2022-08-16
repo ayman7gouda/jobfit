@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
-import { nodeToTree, trimResults } from '../helpers';
+import { nodeToTree, resolveMinified } from '../helpers';
 import { HandbookFragment } from '../queries/handbook.fragment.generated';
 import { useStepTwoExpandExtremesQuery } from '../queries/stepTwoExpandExtremes.query.generated';
 import { NodeModel } from '../types';
@@ -33,10 +33,10 @@ export const Step3MinMax = (props: CombinationProps) => {
       setError(error.message);
     },
     onCompleted(data) {
-      if (data?.stepTwoExpandExtremes.length == 0) {
+      if (data?.stepTwoExpandExtremes.combinations.length == 0) {
         setCurrentHandbook(handbook);
       } else {
-        const results = trimResults(data.stepTwoExpandExtremes);
+        const results = resolveMinified(data.stepTwoExpandExtremes, true);
         setCombinations(results);
       }
     },

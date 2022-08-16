@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
-import { nodeToTree, trimResults } from '../helpers';
+import { nodeToTree, resolveMinified } from '../helpers';
 import { HandbookFragment } from '../queries/handbook.fragment.generated';
 import { useStepFourResolveNodesQuery } from '../queries/stepFourResolveNodes.query.generated';
 import { NodeModel } from '../types';
@@ -33,10 +33,10 @@ export const Step5Links = (props: CombinationProps) => {
       setError(error.message);
     },
     onCompleted(data) {
-      if (data?.stepFourResolveNodes.length == 0) {
+      if (data?.stepFourResolveNodes.combinations.length == 0) {
         setCurrentHandbook(handbook);
       } else {
-        const results = trimResults(data.stepFourResolveNodes);
+        const results = resolveMinified(data.stepFourResolveNodes, true);
         setCombinations(results);
       }
     },

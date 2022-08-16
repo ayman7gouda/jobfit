@@ -3,7 +3,8 @@ import SelectSearch from 'react-select-search';
 
 import { NodeType } from 'generated/clientTypes';
 import CloneIcon, {
-  HiCheck, HiChevronRight, HiDocument, HiDuplicate, HiFolder, HiLockClosed, HiPencil, HiTrash, HiX
+  HiCheck, HiChevronRight, HiDocument, HiDuplicate, HiFolder, HiInformationCircle, HiLockClosed,
+  HiPencil, HiTrash, HiX
 } from 'react-icons/hi';
 
 import styles from './CustomNode.module.css';
@@ -180,6 +181,8 @@ export const LeafNode: React.FC<CustomNodeChildProps> = (props) => {
         <HiLockClosed style={{ color: "purple" }} />
       ) : props.node.data.type === "ConstraintProgram" ? (
         <HiLockClosed style={{ color: "red" }} />
+      ) : props.node.data.type === "Info" ? (
+        <HiInformationCircle style={{ color: "blue" }} />
       ) : (
         <HiDocument />
       )}

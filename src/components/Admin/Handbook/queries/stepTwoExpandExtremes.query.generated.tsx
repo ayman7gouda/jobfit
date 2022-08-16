@@ -9,13 +9,16 @@ export type StepTwoExpandExtremesQueryVariables = Types.Exact<{
 }>;
 
 
-export type StepTwoExpandExtremesQuery = { __typename?: 'Query', stepTwoExpandExtremes: Array<Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }>> };
+export type StepTwoExpandExtremesQuery = { __typename?: 'Query', stepTwoExpandExtremes?: { __typename?: 'CombinationsResult', combinations: Array<Array<number>>, handbook: Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }> } | null };
 
 
 export const StepTwoExpandExtremesDocument = gql`
     query StepTwoExpandExtremes($handbook: [HandbookInput!]!) {
   stepTwoExpandExtremes(handbook: $handbook) {
-    ...Handbook
+    handbook {
+      ...Handbook
+    }
+    combinations
   }
 }
     ${HandbookFragmentDoc}`;

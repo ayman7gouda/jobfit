@@ -1,5 +1,8 @@
 query StepOneExpandCollections($programId: Int!, $handbook: [HandbookInput!]!) {
   stepOneExpandCollections(programId: $programId, handbook: $handbook) {
-    ...Handbook
+    handbook {
+      ...Handbook
+    }
+    combinations
   }
 }

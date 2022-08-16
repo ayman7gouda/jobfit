@@ -282,6 +282,7 @@ enum Selection {
 }
 
 enum NodeType {
+  Info
   LinkMajor
   LinkMinor
   LinkProgram
