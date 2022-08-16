@@ -12,6 +12,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type CombinationsResult = {
+  __typename?: 'CombinationsResult';
+  combinations: Array<Array<Scalars['Int']>>;
+  handbook: Array<Handbook>;
+};
+
 export type EmployerCount = {
   __typename?: 'EmployerCount';
   count?: Maybe<Scalars['Int']>;
@@ -204,6 +210,7 @@ export type NodeType =
   | 'ConstraintProgram'
   | 'ConstraintProgramNot'
   | 'Folder'
+  | 'Info'
   | 'LinkCollection'
   | 'LinkElective'
   | 'LinkMajor'
@@ -233,10 +240,9 @@ export type ProgramInput = {
 
 export type Query = {
   __typename?: 'Query';
-  allCombinations: Array<Array<Handbook>>;
+  allCombinations?: Maybe<CombinationsResult>;
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
-  isOk?: Maybe<Scalars['Int']>;
   jobCategories: Array<JobCategory>;
   jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
@@ -251,10 +257,10 @@ export type Query = {
   specialisation?: Maybe<Specialisation>;
   specialisations: Array<Specialisation>;
   status?: Maybe<Scalars['String']>;
-  stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
-  stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
-  stepThreeExpandConditions: Array<Array<Handbook>>;
-  stepTwoExpandExtremes: Array<Array<Handbook>>;
+  stepFourResolveNodes?: Maybe<CombinationsResult>;
+  stepOneExpandCollections?: Maybe<CombinationsResult>;
+  stepThreeExpandConditions?: Maybe<CombinationsResult>;
+  stepTwoExpandExtremes?: Maybe<CombinationsResult>;
 };
 
 

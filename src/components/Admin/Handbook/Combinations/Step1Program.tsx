@@ -40,7 +40,7 @@ export const Step1Program = (props: CombinationProps) => {
     onCompleted(data) {
       if (data?.resolveConstraints) {
         const newTree = data.resolveConstraints.map((h, j) => nodeToTree(h, j));
-        const results = trimResults([data.resolveConstraints])[0];
+        const results = trimResults(data.resolveConstraints);
         setTree(newTree);
         setCurrentHandbook(results);
       }

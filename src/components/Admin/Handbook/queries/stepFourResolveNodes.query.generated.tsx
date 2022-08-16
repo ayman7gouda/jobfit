@@ -10,13 +10,16 @@ export type StepFourResolveNodesQueryVariables = Types.Exact<{
 }>;
 
 
-export type StepFourResolveNodesQuery = { __typename?: 'Query', stepFourResolveNodes?: Array<Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }>> | null };
+export type StepFourResolveNodesQuery = { __typename?: 'Query', stepFourResolveNodes?: { __typename?: 'CombinationsResult', combinations: Array<Array<number>>, handbook: Array<{ __typename?: 'Handbook', credits?: number | null, flagged?: boolean | null, folder?: boolean | null, id: number, index?: number | null, level?: number | null, maxNumber?: number | null, nodeId: number, number?: number | null, parentId?: number | null, reference?: number | null, selection?: Types.Selection | null, selector?: string | null, subjectCode?: string | null, subjectName?: string | null, text?: string | null, type: Types.NodeType }> } | null };
 
 
 export const StepFourResolveNodesDocument = gql`
     query StepFourResolveNodes($programId: Int!, $handbook: [HandbookInput!]!) {
   stepFourResolveNodes(programId: $programId, handbook: $handbook) {
-    ...Handbook
+    handbook {
+      ...Handbook
+    }
+    combinations
   }
 }
     ${HandbookFragmentDoc}`;

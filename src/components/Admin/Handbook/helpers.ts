@@ -1,4 +1,6 @@
-import { Handbook, NodeType, ProgramInput, Selection } from 'generated/clientTypes';
+import {
+  CombinationsResult, Handbook, NodeType, ProgramInput, Selection
+} from 'generated/clientTypes';
 
 import { HandbookFragment } from './queries/handbook.fragment.generated';
 import { ProgramQuery } from './queries/program.query.generated';
@@ -188,6 +190,22 @@ function parseSubjectName(selected: Handbook) {
   return extractName(selected.text);
 }
 
+export function resolveMinified(data: CombinationsResult, trim = false) {
+  let map = new Map<number, Handbook>();
+
+  for (let hb of data.handbook) {
+    map.set(hb.id, trim ? trimResult(hb) : hb);
+  }
+
+  let combinations = [];
+
+  for (let combination of data.combinations) {
+    combinations.push(combination.map((c) => map.get(c)));
+  }
+
+  return combinations;
+}
+
 export function daoInNode(selected: TreeNode): ProgramInput {
   return {
     id: selected.id,
@@ -275,12 +293,16 @@ export function daoOutNode(
   };
 }
 
-export function trimResults(hb: Handbook[][]) {
-  return hb.map((c) =>
-    c.map((d) => {
-      let clone = { ...d };
-      delete clone.__typename;
-      return clone as HandbookFragment;
-    })
-  );
+export function trimResults(hb: Handbook[]): HandbookFragment[] {
+  return hb.map((c) => {
+    let clone = { ...c };
+    delete clone.__typename;
+    return clone as HandbookFragment;
+  });
+}
+
+export function trimResult(hb: Handbook) {
+  let clone = { ...hb };
+  delete clone.__typename;
+  return clone as HandbookFragment;
 }

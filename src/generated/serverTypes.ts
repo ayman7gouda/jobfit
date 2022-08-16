@@ -15,6 +15,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type CombinationsResult = {
+  __typename?: 'CombinationsResult';
+  combinations: Array<Array<Scalars['Int']>>;
+  handbook: Array<Handbook>;
+};
+
 export type EmployerCount = {
   __typename?: 'EmployerCount';
   count?: Maybe<Scalars['Int']>;
@@ -207,6 +213,7 @@ export type NodeType =
   | 'ConstraintProgram'
   | 'ConstraintProgramNot'
   | 'Folder'
+  | 'Info'
   | 'LinkCollection'
   | 'LinkElective'
   | 'LinkMajor'
@@ -236,10 +243,9 @@ export type ProgramInput = {
 
 export type Query = {
   __typename?: 'Query';
-  allCombinations: Array<Array<Handbook>>;
+  allCombinations?: Maybe<CombinationsResult>;
   findSubjectSkills?: Maybe<Subject>;
   findSubjects: Array<Subject>;
-  isOk?: Maybe<Scalars['Int']>;
   jobCategories: Array<JobCategory>;
   jobRoleProfile?: Maybe<JobRoleProfile>;
   jobs?: Maybe<Array<Job>>;
@@ -254,10 +260,10 @@ export type Query = {
   specialisation?: Maybe<Specialisation>;
   specialisations: Array<Specialisation>;
   status?: Maybe<Scalars['String']>;
-  stepFourResolveNodes?: Maybe<Array<Array<Handbook>>>;
-  stepOneExpandCollections?: Maybe<Array<Array<Handbook>>>;
-  stepThreeExpandConditions: Array<Array<Handbook>>;
-  stepTwoExpandExtremes: Array<Array<Handbook>>;
+  stepFourResolveNodes?: Maybe<CombinationsResult>;
+  stepOneExpandCollections?: Maybe<CombinationsResult>;
+  stepThreeExpandConditions?: Maybe<CombinationsResult>;
+  stepTwoExpandExtremes?: Maybe<CombinationsResult>;
 };
 
 
@@ -568,6 +574,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CombinationsResult: ResolverTypeWrapper<CombinationsResult>;
   EmployerCount: ResolverTypeWrapper<EmployerCount>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Handbook: ResolverTypeWrapper<Handbook>;
@@ -607,6 +614,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  CombinationsResult: CombinationsResult;
   EmployerCount: EmployerCount;
   Float: Scalars['Float'];
   Handbook: Handbook;
@@ -639,6 +647,12 @@ export type ResolversParentTypes = {
   SubjectBgCluster: SubjectBgCluster;
   SubjectBgSkill: SubjectBgSkill;
   SubjectSfiaSkill: SubjectSfiaSkill;
+};
+
+export type CombinationsResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CombinationsResult'] = ResolversParentTypes['CombinationsResult']> = {
+  combinations?: Resolver<Array<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
+  handbook?: Resolver<Array<ResolversTypes['Handbook']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EmployerCountResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EmployerCount'] = ResolversParentTypes['EmployerCount']> = {
@@ -788,10 +802,9 @@ export type ProgramResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  allCombinations?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryAllCombinationsArgs, 'handbook' | 'programId'>>;
+  allCombinations?: Resolver<Maybe<ResolversTypes['CombinationsResult']>, ParentType, ContextType, RequireFields<QueryAllCombinationsArgs, 'handbook' | 'programId'>>;
   findSubjectSkills?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectSkillsArgs, 'id'>>;
   findSubjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QueryFindSubjectsArgs, 'query'>>;
-  isOk?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   jobCategories?: Resolver<Array<ResolversTypes['JobCategory']>, ParentType, ContextType>;
   jobRoleProfile?: Resolver<Maybe<ResolversTypes['JobRoleProfile']>, ParentType, ContextType, RequireFields<QueryJobRoleProfileArgs, 'unit'>>;
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType, RequireFields<QueryJobsArgs, 'id'>>;
@@ -806,10 +819,10 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   specialisation?: Resolver<Maybe<ResolversTypes['Specialisation']>, ParentType, ContextType, RequireFields<QuerySpecialisationArgs, 'id'>>;
   specialisations?: Resolver<Array<ResolversTypes['Specialisation']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  stepFourResolveNodes?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook' | 'programId'>>;
-  stepOneExpandCollections?: Resolver<Maybe<Array<Array<ResolversTypes['Handbook']>>>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook' | 'programId'>>;
-  stepThreeExpandConditions?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
-  stepTwoExpandExtremes?: Resolver<Array<Array<ResolversTypes['Handbook']>>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
+  stepFourResolveNodes?: Resolver<Maybe<ResolversTypes['CombinationsResult']>, ParentType, ContextType, RequireFields<QueryStepFourResolveNodesArgs, 'handbook' | 'programId'>>;
+  stepOneExpandCollections?: Resolver<Maybe<ResolversTypes['CombinationsResult']>, ParentType, ContextType, RequireFields<QueryStepOneExpandCollectionsArgs, 'handbook' | 'programId'>>;
+  stepThreeExpandConditions?: Resolver<Maybe<ResolversTypes['CombinationsResult']>, ParentType, ContextType, RequireFields<QueryStepThreeExpandConditionsArgs, 'handbook'>>;
+  stepTwoExpandExtremes?: Resolver<Maybe<ResolversTypes['CombinationsResult']>, ParentType, ContextType, RequireFields<QueryStepTwoExpandExtremesArgs, 'handbook'>>;
 };
 
 export type SequenceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Sequence'] = ResolversParentTypes['Sequence']> = {
@@ -961,6 +974,7 @@ export type SubjectSfiaSkillResolvers<ContextType = Context, ParentType extends 
 };
 
 export type Resolvers<ContextType = Context> = {
+  CombinationsResult?: CombinationsResultResolvers<ContextType>;
   EmployerCount?: EmployerCountResolvers<ContextType>;
   Handbook?: HandbookResolvers<ContextType>;
   Job?: JobResolvers<ContextType>;

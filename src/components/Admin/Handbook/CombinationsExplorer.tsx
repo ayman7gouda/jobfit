@@ -6,7 +6,7 @@ import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ClientHandbook } from 'server/handbook/types';
 
 import { Step1Program } from './Combinations/Step1Program';
-import { daoInNode, nodeToTree } from './helpers';
+import { daoInNode, nodeToTree, resolveMinified } from './helpers';
 import { useAllCombinationsLazyQuery } from './queries/allCombinations.query.generated';
 import { HandbookFragment } from './queries/handbook.fragment.generated';
 
@@ -49,7 +49,11 @@ export function AllCombinationsExplorer({
     },
     onCompleted(data) {
       setError("");
-      setOptions(data.allCombinations);
+
+      // recreate the combinations
+      if (data.allCombinations) {
+        setOptions(resolveMinified(data.allCombinations));
+      }
     },
   });
 

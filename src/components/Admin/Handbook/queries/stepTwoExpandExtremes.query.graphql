@@ -1,5 +1,8 @@
 query StepTwoExpandExtremes($handbook: [HandbookInput!]!) {
   stepTwoExpandExtremes(handbook: $handbook) {
-    ...Handbook
+    handbook {
+      ...Handbook
+    }
+    combinations
   }
 }
