@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HeaderHero() {
   return (
     <section className="bg-backgrounds-dark-blue overflow-hidden">
@@ -36,14 +38,16 @@ export default function HeaderHero() {
             you land the best job fit for your career goals and skills.
           </p>
           <div className="flex flex-col lg:flex-row md:items-center gap-3 lg:mt-10">
-            <button
-              type="button"
-              className="w-full h-8 md:h-14 md:w-1/2 content-center justify-center lg:w-[264px] lg:h-[66px] btn-red"
-            >
-              <div className="text-xs md:text-sm lg:text-2xl font-bold text-white">
-                Tryout JobFit Now
-              </div>
-            </button>
+            <Link href="/questionnaire">
+              <button
+                type="button"
+                className="w-full h-8 md:h-14 md:w-1/2 content-center justify-center lg:w-[264px] lg:h-[66px] btn-red"
+              >
+                <div className="text-xs md:text-sm lg:text-2xl font-bold text-white">
+                  Tryout JobFit Now
+                </div>
+              </button>
+            </Link>
             <div className="w-full h-[33px] md:w-1/2 md:h-14 lg:w-[233px] lg:h-[66px] p-[2px] btn-brd">
               <button type="button" className="w-full h-full btn-white">
                 <div className="text-xs md:text-sm lg:text-2xl font-bold text-crimson">

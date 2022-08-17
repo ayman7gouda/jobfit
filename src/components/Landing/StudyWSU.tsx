@@ -1,4 +1,4 @@
-import JobFitCard from "components/JobFitCard";
+import JobFitCard from "components/Landing/JobFitCard";
 
 export default function StudyWSU() {
   return (

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-
-import AccordUI from "components/AccordUI";
-import { Data } from "components/Data";
-import LineChartUI from "components/LineChartUI";
+import { Data } from "components/Landing/Data";
+import AccordUI from "components/Landing/AccordUI";
+import LineChartUI from "components/Landing/LineChartUI";
+import Link from "next/link";
 
 export default function CareerData() {
   const [Index, setIndex] = useState(1);
@@ -20,7 +20,6 @@ export default function CareerData() {
             {Data.map((Data) => {
               return (
                 <AccordUI
-                  key={Data.id}
                   title={Data.career}
                   Id={Data.id}
                   children={Data.description}
@@ -34,7 +33,6 @@ export default function CareerData() {
             {Data.map((Data) => {
               return (
                 <LineChartUI
-                  key={Data.id}
                   data={Data}
                   Id={Data.id}
                   Index={Index}
@@ -58,14 +56,16 @@ export default function CareerData() {
             Western Sydney University course recommendations based on your
             interests and skills.
           </p>
-          <button
-            type="button"
-            className="w-full h-[3rem] md:w-[36rem] md:h-[4rem] lg:h-[4rem] btn-red"
-          >
-            <div className="text-base lg:text-2xl font-bold">
-              Take the JobFit questionnaire
-            </div>
-          </button>
+          <Link href="/questionnaire">
+            <button
+              type="button"
+              className="w-full h-[3rem] md:w-[36rem] md:h-[4rem] lg:h-[4rem] btn-red"
+            >
+              <div className="text-base lg:text-2xl font-bold">
+                Take the JobFit questionnaire
+              </div>
+            </button>
+          </Link>
         </div>
       </div>
     </section>

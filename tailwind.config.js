@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     boxShadow: {
       sm: "0 4px 32px 0 rgba(0, 0, 0, 0.16)",
+      btn: "0 2px 8px 0 rgba(0, 0, 0, 0.08)",
     },
     extend: {
       bgGradientDeg: {
@@ -61,8 +62,8 @@ module.exports = {
         "skills-dark-ui-adjustments-green-base": "#81c784",
         "skills-dark-ui-adjustments-teal-base": "#4db6ac",
         "outlines-dark-blue": "#134d78",
-        crimson: "#903",
-        white: "#fff",
+        "crimson": "#903",
+        "white": "#fff",
         "wsu-black": "#262223",
         "hilight-orange": "#ff5c5e",
         "academy-red": "#f03",
@@ -82,6 +83,9 @@ module.exports = {
         "dark-grey": "#3a3537",
         "deep-grey": "#272727",
         "cherry-red": "#ed0033",
+        "light-ui-black-15": "rgba(4, 14, 22, 0.15)",
+        "light-ui-black-30": "rgba(4, 14, 22, 0.3)",
+        "light-ui-black-5": "rgba(4, 14, 22, 0.05)",
       },
       backgroundImage: {
         "split-black-orange":
@@ -94,6 +98,10 @@ module.exports = {
           "linear-gradient(54deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
         "pine-green-61":
           "linear-gradient(61deg, #092031 63%, #3f1831 88%, #5a0013 100%)",
+          "start":"url('/images/start_background.jpg')",
+          "questions":"url('/images/questions_background.jpg')",
+          "careers":"url('/images/careers_background.jpg')",
+          "dashboard-goal": "linear-gradient(61.42deg, #092031 20.31%, #990033 100%);"
       },
       backgroundSize: {
         "size-200": "200% 100%;",

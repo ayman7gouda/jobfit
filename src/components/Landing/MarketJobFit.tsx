@@ -1,5 +1,5 @@
-import JobFitFrame from "components/JobFitFrame";
-import PlayBtn from "components/PlayBtn";
+import JobFitFrame from "components/Landing/JobFitFrame";
+import PlayBtn from "components/Landing/PlayBtn";
 
 export default function MarketJobFit() {
   return (

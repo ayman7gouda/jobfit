@@ -1,0 +1,11 @@
+type Student {
+    id: Int
+    studentId: Int
+    name: String
+}
+
+type Query {
+    students: [Student!]!
+    studentById(id: Int): Student!
+    studentByStudentId(id: Int!): Student!
+}

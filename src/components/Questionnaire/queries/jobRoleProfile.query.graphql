@@ -4,12 +4,12 @@ query JobRoleProfile($unit: Int!) {
     average
     demand
     description
+    projection
     employers {
       count
       name
     }
     jobCount
-    projection
     maxSalary
     minSalary
     skills {
